@@ -1,0 +1,63 @@
+{**
+ * User list template
+ *
+ * @param Nette\Database\Table\Selection $userList Members list
+ *}
+
+{block title}
+	Seznam členů - Furry.cz
+{/block}
+
+{block content}
+	<div class="Header">
+		{$userList->count()}
+		{if $userList->count() >= 5}
+			uživatelů
+		{elseif $userList->count() >= 2}
+			uživatelé
+		{else}
+			uživatel
+		{/if}
+		{if !$presenter->user->isLoggedIn()}
+			| <a n:href="User:register">Registrace</a>
+		{/if}
+		| Filtr: <input type="text" id="UserFilter">
+	</div>
+	<div id="UserListWrapper">
+		<div id="UserList">
+			{foreach $userList as $user}
+				{var $classes = array("User")}
+				{if $user['IsAdmin']}
+					{var $classes[] = "Admin"}
+				{elseif $user['IsBanned']}
+					{var $classes[] = "Banned"}
+				{elseif $user['IsFrozen']}
+					{var $classes[] = "Frozen"}
+				{/if}
+				{if !$user['IsAdult']}
+					{var $classes[] = "Underage"}
+				{/if}
+				<div class="{implode($classes, ' ')}">
+					<a n:href="User:profile $user['Id']">
+						{if $user['AvatarFilename']}
+							<img src="{$baseUrl}/images/avatars/{$user['AvatarFilename']}" class="Avatar">
+						{/if}
+						<span class="Nickname">{$user['Nickname']}</span></a> {* There must be no whitespace before </a> *}
+					{if $user['IsAdmin']}
+						(admin)
+					{elseif $user['IsBanned']}
+						(ban)
+					{elseif $user['IsFrozen']}
+						(zmražen)
+					{/if}
+
+					<br>
+					{$user['OtherNicknames']}
+					<br>
+					{$user['IsOnline'] ? "Online" : "Offline"}
+				</div>
+			{/foreach}
+			<div class="Clear"></div>
+		</div>
+	</div>
+{/block}

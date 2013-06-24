@@ -1,0 +1,28 @@
+{**
+ * Registration page template
+ *}
+
+{block title}
+	Registrace - Furry.cz
+{/block}
+
+{block contentWrapperDivClasses}
+	Registration
+{/block}
+
+{block content}
+	<h1>Registrace členství furry.cz</h1>
+	<div class="Body">
+		<ul>
+			<li>Pole označená hvězdičkou jsou povinná</li>
+			<li>Registrace není automatizovaná, ale prochází schvalovacím procesem. Pokud budete schváleni, příjde vám oznámení na vámi uvedený email.
+				(Při schvalování hraje velkou roli vyplněnost formuláře, registrace s minimem vyplněných položek většinou hned zamítáme.)</li>
+			<li>Potvrzením této registrace se zavazujete, že jste se seznámili s <a n:href="CmsPage:default?idOrAlias=rules">pravidly</a> a budete se jimi řídit.</li>
+			<li>Registrace není nárokovatelná a může být bez udání důvodu zamítnuta.
+				(O zamítnutí nemusí být poslán email. Pro případ administrativního omylu je dobré neúspěšnou registraci po 2-4 týdnech opakovat;
+				další pokusy pak nemají smysl dříve než za několik měsíců.)</li>
+		</ul>
+
+		{control registrationForm}
+	</div>
+{/block}

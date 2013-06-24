@@ -1,0 +1,72 @@
+{**
+ * Furry.cz v2 layout template.
+ *
+ * @param string   $basePath web base path
+ * @param string   $robots   tell robots how to index the content of a page (optional)
+ * @param array    $flashes  flash messages
+ *}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="description" content="">
+	<meta n:ifset="$robots" name="robots" content="{$robots}">
+
+	<title>{block title|striptags}Furry.cz{/block}</title>
+
+	<link rel="shortcut icon" href="{$basePath}/favicon.ico">
+
+	<link rel="stylesheet" href="{$basePath}/css/pc-global.css">
+
+	{block head}{/block}
+</head>
+
+<body>
+	<script> document.body.className+=' js' </script>
+
+	<div n:foreach="$flashes as $flash" class="flash {$flash->type}">{$flash->message}</div>
+
+	<div id="Header">
+		<div id="TopBanner">
+			{if $presenter->user->isLoggedIn()}
+				<div id="UserBox">
+					<a n:href="User:profile" class="ProfileLink">
+						<img src="{$baseUrl}/images/avatars/{$presenter->user->identity->data['avatarFilename']}">
+						{$presenter->user->identity->nickname}</a> {* No space after text! *}
+					|
+					<a n:href="logout!">Odhlásit</a>
+				</div>
+			{else}
+				{form loginForm} {* Component generated in BasePresenter.php *}
+					{input Username}
+					{input Password}
+					{input Permanent} {label Permanent /}
+					{input Login}
+				{/form}
+			{/if}
+			<strong>Furry.cz</strong>
+			<nav class="LightBackground">
+				<ul>
+					<li><a n:href="Homepage:default">Hlavní</a></li>
+					<li><a n:href="Forum:default">Fórum</a></li>
+					<li>Kalendář</li>
+					<li>Galerie</li>
+					<li>Texty</li>
+					<li><a n:href="User:default">Členové</a></li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+
+	<div class="ContentWrapper {block contentWrapperDivClasses}{/block}">
+		{include #content}
+	</div>
+
+	{block scripts}
+		<script src="{$basePath}/js/jquery.js"></script>
+		<script src="{$basePath}/js/netteForms.js"></script>
+		<script src="{$basePath}/js/main.js"></script>
+	{/block}
+</body>
+</html>

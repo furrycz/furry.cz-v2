@@ -1,0 +1,41 @@
+{**
+ * Forum - View topic page template
+ *
+ * @param Nette\Utils\Paginator|null    $paginator
+ * @param Nette\Database\ActiveRow      $content
+ * @param Nette\Database\ActiveRow      $topic
+ * @param Nette\Database\Selection|null $posts
+ * @param array                         $access User permissions
+ * @param int                           $jumpToPostId Id of post to jump to after page loads. 0 = no jump.
+ *}
+
+{block title}
+	{$topic['Name']}
+	{if isset($paginator)}
+		({$paginator->getPage()}/{$paginator->getItemCount()})
+	{/if}
+	- Fórum - Furry.cz
+{/block}
+
+{block content}
+	<div class="Header" id="TopicHeaderPanel">
+		<h1>{$topic['Name']}</h1>
+		<span n:if="isset($paginator)" class="TitleInfo">
+			({$paginator->getItemCount()} příspěvků, strana {$paginator->getPage()}/{$paginator->getPageCount()})
+		</span>
+
+		{if $access['CanViewContent'] == true}
+			<div id="TopicHeader">
+				{!$topic->ref('CmsPages', 'Header')->Text}
+			</div>
+		{else}
+			<div id="TopicHeader" class="ForDisallowedUsers">
+				{!$topic->ref('CmsPages', 'HeaderForDisallowedUsers')->Text}
+			</div>
+		{/if}
+
+		{if $access['CanReadPosts']}
+			{control discussionPaginator}
+		{/if}
+	</div>
+{/block}

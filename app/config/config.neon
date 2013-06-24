@@ -1,0 +1,74 @@
+#
+# Furry.cz v2 config file.
+#
+# SECURITY WARNING: it is CRITICAL that this file & directory are NOT accessible directly via a web browser!
+#
+# If you don't protect this directory from direct web access, anybody will be able to see your passwords.
+# http://nette.org/security-warning
+#
+common:
+
+	parameters:
+		# Time interval since last activity to display user as "offline" (in minutes)
+		offlineStatusTimeoutMinutes: 30
+
+		discussionPaginatorComponent:
+			edgeSpan: 3 # Num. links to display as numbers around first/last
+			currentPageSpan: 3 # Num. links to display as numbers around current page
+			maxLinks: 70 # Max links per page, if exceeded, paginator skips some links.
+
+		fileUploads:
+			directory: upload # Local to application root, enter without slashes
+			types:
+				userAvatar:
+					isImage: true
+					maxWidth: 200
+					maxHeight: 200
+					maxFilesize: 1000000
+					directory: www/images/avatars # Override, local to application root
+
+				userProfilePhoto:
+					isImage: true
+					maxWidth: 200
+					maxHeight: 200
+					maxFilesize: 1000000
+					directory: www/images/portraits
+
+
+	php:
+		date.timezone: Europe/Prague
+		# zlib.output_compression: yes
+
+	nette:
+		application:
+			errorPresenter: Error
+
+		session:
+			expiration: 14 days
+
+		# user config.local.neon to override these defaults
+		database:
+			default:
+				dsn: 'mysql:host=localhost;dbname=fcz-v2'
+				user: user
+				password: password
+				reflection: discovered
+
+
+	services:
+		authenticator: Authenticator
+		routerFactory: RouterFactory
+		router: @routerFactory::createRouter
+		database: @nette.database.default
+
+	factories:
+
+production < common:
+
+development < common:
+	nette:
+		database:
+			default:
+				debugger: true
+				explain: true
+

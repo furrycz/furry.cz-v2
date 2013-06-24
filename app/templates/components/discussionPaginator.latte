@@ -1,0 +1,23 @@
+{**
+ * DiscussionPaginator component template
+ *
+ * @param string|null             $nextPageHref
+ * @param string|null             $prevPageHref
+ * @param array                   $paginatorHtmlLinks
+ *}
+
+<div class="DiscussionPaginator">
+
+	{if $prevPageHref}
+		<a class="Arrow Previous" href="{$prevPageHref}"><span>&lt; Previous</span></a>
+	{/if}
+
+	{if $nextPageHref}
+		<a class="Arrow Next" href="{$nextPageHref}"><span>Next &gt;</span></a>
+	{/if}
+
+	{* There must be no spaces between tags *}
+	<div class="Nav">{foreach $paginatorHtmlLinks as $item}{!$item}{/foreach}</div>
+
+	<div class="Clear">
+</div>

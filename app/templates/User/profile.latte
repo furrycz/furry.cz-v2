@@ -1,0 +1,100 @@
+{**
+ * Profile page template
+ *
+ * @param array $profile
+ *}
+
+{block title}
+	Profil uživatele: {$profile['Nickname']} - Furry.cz
+{/block}
+
+{block content}
+	<div id="ProfileHeader" class="LightBackground">
+		<img src="{$baseUrl}/images/avatars/{$profile['AvatarFilename']}" class="Avatar">
+		{if $profile['CanBeEdited']}
+			<a id="EditProfile" n:href="User:edit $profile['Id']">Upravit</a>
+		{/if}
+		<h1>{$profile['Nickname']}</h1>
+		{if $profile['OtherNicknames'] != null}
+			(Nebo také: <span class="OtherNicknames">{$profile['OtherNicknames']}</span>)
+		{/if}
+	</div>
+
+	<div id="ProfileFurry">
+		{if $profile['Species'] != null}
+			<span class="SpeciesLabel">Druh:</span>
+			<span class="Species">{$profile['Species']}</span>
+			{if $profile['FurrySex'] != null}
+				(<span class="Label">Pohlaví:</span>
+				{$profile['FurrySex']})
+			{/if}
+		{/if}
+		{if $profile['ShortDescription'] != null}
+			<p class="ShortDescription">
+				<span class="Label">Popis:</span>
+				{$profile['ShortDescription']}
+			</p>
+		{/if}
+	</div>
+
+	<div style="clear: both; margin: 0 0 10px 0;"></div>
+
+	{if $profile['ProfileHtml'] != null}
+		<div class="CmsPageContentWrapper" id="ProfileCms">
+			{!$profile['ProfileHtml']}
+		</div>
+	{/if}
+
+	{if $presenter->user->isLoggedIn() && $profile['HasAnyPersonalInfo']}
+		<div id="ProfileReal">
+			<img src="{$baseUrl}/images/portraits/{$profile['ProfilePhotoFilename']}" class="Photo">
+			<dl>
+				{if $profile['FullName'] != null}
+					<dt>Jméno:</dt>
+					<dd>{$profile['FullName']}</dd>
+				{/if}
+
+				{if $profile['Address'] != null}
+					<dt>Bydliště:</dt>
+					<dd>
+						{$profile['Address']}
+						{if $profile['DistanceFromPrague'] != null}
+							(Vzdálenost od Prahy: {$profile['DistanceFromPrague']})
+						{/if}
+					</dd>
+				{/if}
+
+				{if $profile['RealSex'] != null}
+					<dt>Pohlaví a věk:</dt>
+					<dd>{$profile['RealSex']} ({$profile['Age']})</dd>
+				{else}
+					<dt>Věk:</dt>
+					<dd>{$profile['Age']}</dd>
+				{/if}
+
+				{if $profile['Hobbies'] != null}
+					<dt>Oblíbené činnosti:</dt>
+					<dd>{$profile['Hobbies']}</dd>
+				{/if}
+
+				{if $profile['WillingnessToTravel'] != null}
+					<dt>Ochota cestovat:</dt>
+					<dd>{$profile['WillingnessToTravel']}</dd>
+				{/if}
+
+				{if $profile['FavouriteWebsites'] != null}
+					<dt>Oblíbené weby:</dt>
+					<dd>
+						<ul class='FavouriteWebsites'>
+							<li n:foreach="$profile['FavouriteWebsites'] as $url => $label">
+								<a href="{$url}">{$label}</a>
+							</li>
+						</ul>
+					</dd>
+				{/if}
+			</dl>
+		</div>
+
+		<div style="clear: both; margin: 0 0 10px 0;"></div>
+	{/if}
+{/block}

@@ -1,0 +1,16 @@
+{**
+ * CMS page template
+ *
+ * @param Nette\Database\ActiveRow $cmsPage
+ *}
+
+{block title}
+	{$cmsPage['Name']} - Furry.cz
+{/block}
+
+{block content}
+	<h1>{$cmsPage['Name']}</h1>
+	<div class="CmsPageContentWrapper">
+		{!$cmsPage['Text']}
+	</div>
+{/block}

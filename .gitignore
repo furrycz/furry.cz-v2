@@ -1,0 +1,28 @@
+# ============================================================================
+# FCZv2 .gitignore file
+# ============================================================================
+
+# LOCAL CONFIG
+
+app/config/config.local.neon
+
+# UPLOADS
+
+upload/*
+www/images/avatars/*
+www/images/portraits/*
+
+# LOGS
+
+log/*
+
+# TEMPORARIES
+
+temp/cache/*
+temp/sessions/*
+# Write permissions test file
+temp/*.dat
+# Kate text editor backup files (ending with ~)
+*~
+# Other editor backups
+*.bak

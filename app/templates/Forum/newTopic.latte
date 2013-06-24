@@ -1,0 +1,51 @@
+{**
+ * Forum - create new topic page template
+ *
+ *}
+
+{block title}
+	Nové téma - Fórum - Furry.cz
+{/block}
+
+{block content}
+	<h1>Vytvořit nové diskusní téma</h1>
+
+	{form newTopicForm}
+		<div class="Body">
+			<dl>
+				<dt>{label Name /}</dt>
+				<dd>{input Name}</dd>
+
+				<dt>{label Category /}</dt>
+				<dd>{input Category}</dd>
+
+				<dt>Příznaky:</dt>
+				<dd>{input IsForRegisteredOnly} {label IsForRegisteredOnly /}</dd>
+				<dd>{input IsForAdultsOnly} {label IsForAdultsOnly /}</dd>
+				<dd>{input IsFlame} {label IsFlame /}</dd>
+
+				<dt>Výchozí oprávnění:</dt>
+				<dd>{input CanListContent} {label CanListContent /}</dd>
+				<dd>{input CanViewContent} {label CanViewContent /}</dd>
+				<dd>{input CanWritePosts} {label CanWritePosts /}</dd>
+				<dd>{input CanEditOwnPosts} {label CanEditOwnPosts /}</dd>
+				<dd>{input CanDeleteOwnPosts} {label CanDeleteOwnPosts /}</dd>
+				<dd>{input CanEditContentAndAttributes} {label CanEditContentAndAttributes /}</dd>
+				<dd>{input CanEditHeader} {label CanEditHeader /}</dd>
+				<dd>{input CanEditPermissions} {label CanEditPermissions /}</dd>
+				<dd>{input CanDeletePosts} {label CanDeletePosts /}</dd>
+				<dd>{input CanEditPolls} {label CanEditPolls /}</dd>
+
+				<dt>{label Header /}</dt>
+				<dd>{input Header}</dd>
+
+				<dt>{label HeaderForDisallowedUsers /}</dt>
+				<dd>{input HeaderForDisallowedUsers}</dd>
+			</dl>
+		</div>
+
+		<div class="Footer">
+			{input SubmitNewTopic}
+		</div>
+	{/form}
+{/block}

@@ -1,0 +1,88 @@
+{**
+ * Profile edit page template
+ *
+ * @param array $profile
+ *}
+
+{block title}
+	Změna profilu: {$profile['Nickname']} - Furry.cz
+{/block}
+
+{block content}
+	{form editProfileForm}
+		<div id="ProfileHeader">
+			<h1>Změna profilu: {$profile['Nickname']}</h1>
+		</div>
+
+		{* Print errors *}
+		<ul class="errors" n:if="$form->hasErrors()">
+			<li n:foreach="$form->errors as $error">{$error}</li>
+		</ul>
+
+		<dl>
+			<div id="ProfileFurry">
+				<dt>{label nickname /}</dt>
+				<dd>{input nickname}</dd>
+
+				<dt>{label otherNicknames /}</dt>
+				<dd>{input otherNicknames}</dd>
+
+				<dt>{label species /}</dt>
+				<dd>{input species}</dd>
+
+				<dt>{label furrySex /}</dt>
+				<dd>{input furrySex}</dd>
+
+				<dt>{label avatarImage /}</dt>
+				<dd>
+					{input avatarImage}
+					<br>
+					<small>Formát JPEG/PNG, max. velikost 200 x 200 px.</small>
+				</dd>
+
+				<dt>{label profileForMembersText /}</dt>
+				<dd>{input profileForMembersText}</dd>
+
+				<dt>{label profileForGuestsText /}</dt>
+				<dd>{input profileForGuestsText}</dd>
+			</div>
+
+			<div id="ProfileReal">
+				<dt>{label fullName /}</dt>
+				<dd>{input fullName}</dd>
+
+				<dt>{label email /}</dt>
+				<dd>{input email}</dd>
+
+				<dt>{label address /}</dt>
+				<dd>{input address}</dd>
+
+				<dt>{label realSex /}</dt>
+				<dd>{input realSex}</dd>
+
+				<dt>{label profilePhoto /}</dt>
+				<dd>
+					{input profilePhoto}
+					<br>
+					<small>Formát JPEG/PNG, max. velikost 200 x 200 px. <br>Bude zobrazen pouze registrovaným členům.</small>
+				</dd>
+
+				<dt>{label hobbies /}</dt>
+				<dd class="SlimTextarea">{input hobbies}</dd>
+
+				<dt>{label willingnessToTravel /}</dt>
+				<dd>{input willingnessToTravel}</dd>
+
+				<dt>{label favouriteWebsites /}</dt>
+				<dd class="SlimTextarea">
+					{input favouriteWebsites}
+					<small>Zadávejte adresy stránek oddělené mezerami nebo řádkováním</small>
+				</dd>
+			</div>
+
+			<div id="Footer" class="LightBackground">
+				{input saveChanges}
+			</div>
+		</dl>
+	{/form}
+{/block}
