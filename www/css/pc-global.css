@@ -48,10 +48,8 @@ div.DiscussionPaginator a.Dot { position: relative; }
 
 div.DiscussionPaginator a.Dot span { display: none; }
 
-div.DiscussionPaginator a.Dot:hover span {
-	position: absolute; display: block; top: -2px; background: #006aeb; padding: 0 3px; border-radius: 4px; line-height: 17px;
-	text-align: center; min-width: 36px; left: -18px;
-}
+div.DiscussionPaginator a.Dot:hover span {position: absolute; display: block; top: -2px; background: #006aeb;
+	padding: 0 3px; border-radius: 4px; line-height: 17px; text-align: center; min-width: 36px; left: -18px; }
 
 div.DiscussionPaginator div.Nav a.Num,
 div.DiscussionPaginator div.Nav span.CurrentPage,
@@ -61,13 +59,16 @@ div.DiscussionPaginator div.Nav span.CurrentPage { color: #f6edd3; display: inli
 
 div.DiscussionPaginator a.Arrow { display: block; padding: 2px 4px; }
 
-div.DiscussionPaginator a.Arrow span { color: #4095d9; /*#4a66ec;*/ } /* Complicated CSS color override */
+div.DiscussionPaginator a.Arrow span { color: #4095d9; } /* Complicated CSS color override */
+
+div.DiscussionPaginator a.Arrow:hover span,
+div.DiscussionPaginator div.Nav a.Num:hover { color: #fff; background-color: #006aeb; } /* Complicated CSS color override */
 
 div.DiscussionPaginator a.Next { float: right; border-radius: 2px 10px 10px 2px; }
 
 div.DiscussionPaginator a.Previous { float: left; border-radius: 10px 2px 2px 10px; }
 
-div.DiscussionPaginator .Nav { text-align: center; }
+div.DiscussionPaginator .Nav { text-align: center; padding: 0 90px; }
 
 /***** @Layout template *****/
 
