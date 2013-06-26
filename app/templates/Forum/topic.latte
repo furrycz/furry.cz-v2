@@ -25,7 +25,7 @@
 		</span>
 
 		{if $access['CanViewContent'] == true}
-			<div id="TopicHeader">
+			<div id="TopicHeader" class="ForMembers">
 				{!$topic->ref('CmsPages', 'Header')->Text}
 			</div>
 		{else}
@@ -33,7 +33,17 @@
 				{!$topic->ref('CmsPages', 'HeaderForDisallowedUsers')->Text}
 			</div>
 		{/if}
-
+		<a id="discussion" class="Position Topic"></a> {* Intentionally lowercase, used in url *}
+		{if $access['CanReadPosts']}
+			{control discussionPaginator}
+		{/if}
+	</div>
+	<div class="Body">
+		{if $access['CanReadPosts']}
+			{control discussionPosts}
+		{/if}
+	</div>
+	<div class="Footer">
 		{if $access['CanReadPosts']}
 			{control discussionPaginator}
 		{/if}

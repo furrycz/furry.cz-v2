@@ -1,0 +1,21 @@
+{**
+ * DiscussionPosts component template
+ *
+ * @param Nette\Database\Table\Selection $posts
+ *}
+
+<div class="DiscussionPosts">
+	{foreach $posts as $post}
+		<div class="Post">
+			<div class="AvatarBox"><img src="{$baseUrl}/images/avatars/{$post->ref('Author')->AvatarFilename}"></div>
+			<div class="Text">
+				<span class="HeaderBar">
+					<a name="post-{$post['Id']}"></a>
+					<a class="Nick" n:href="User:profile $post['Author']">{$post->ref("Author")->Nickname}</a>
+					<span class="Time">{$post['TimeCreated']->format("d.m.Y h:i")}</span>
+				</span>
+				{$post['Text']}
+			</div>
+		</div>
+	{/foreach}
+</div>

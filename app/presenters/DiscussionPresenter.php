@@ -16,7 +16,7 @@ abstract class DiscussionPresenter extends BasePresenter
 	{
 		$database = $this->context->database;
 
-		$numPosts = $database->table('Posts')->count('ContentId', $content['Id']);
+		$numPosts = $database->table('Posts')->where('ContentId', $content['Id'])->count();
 		$paginator = new Nette\Utils\Paginator;
 		$paginator->setItemCount($numPosts);
 		$paginator->setItemsPerPage($this->user->identity->data['postsPerPage']);
@@ -79,14 +79,14 @@ abstract class DiscussionPresenter extends BasePresenter
 
 
 
-	public function createComponentDiscussion()
+	public function createComponentDiscussionPosts()
 	{
 		$data = $this->discussionComponentsData;
 		if ($data === null)
 		{
 			throw new Exception("Discussion component requested, input data not provided");
 		}
-		return new Fcz\Discussion($this, $data['content'], $data['access'], $data['paginator']);
+		return new Fcz\DiscussionPosts($this, $data['content'], $data['access'], $data['paginator']);
 	}
 
 }

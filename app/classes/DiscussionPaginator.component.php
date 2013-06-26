@@ -50,7 +50,7 @@ class DiscussionPaginator extends \Nette\Application\UI\Control
 		$items = array();
 		for ($i = $firstPage; $i <= $lastPage; $i++)
 		{
-			$href = $staticUrl . "/" . $i;
+			$href = $staticUrl . "/" . $i . '#discussion';
 
 			if ($i == $currentPage)
 			{
@@ -62,15 +62,15 @@ class DiscussionPaginator extends \Nette\Application\UI\Control
 			{
 				$items[] = "<a href='$href' class='Num'>$i</a\n>";
 			}
-			else if ($i % $precisionSkip == 0)
+			else if ($precisionSkip > 0 && $i % $precisionSkip == 0)
 			{
 				$items[] = "<a href='$href' class='Dot'><span>$i</span>.</a\n>";
 			}
 		}
 
 		// Generate arrow links
-		$nextPageHref = ($currentPage < $lastPage) ? $staticUrl . "/" . ($currentPage + 1) : null;
-		$prevPageHref = ($currentPage > $firstPage) ? $staticUrl . "/" . ($currentPage - 1) : null;
+		$nextPageHref = ($currentPage < $lastPage) ? $staticUrl . "/" . ($currentPage + 1) . '#discussion' : null;
+		$prevPageHref = ($currentPage > $firstPage) ? $staticUrl . "/" . ($currentPage - 1) . '#discussion' : null;
 
 		// Setup template
 		$template = $this->presenter->template;
