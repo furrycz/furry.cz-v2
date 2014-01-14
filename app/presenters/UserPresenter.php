@@ -429,9 +429,7 @@ class UserPresenter extends BasePresenter
 		// Submit
 
 		$form->addSubmit('saveChanges', 'Uložit změny');
-
 		$form->onValidate[] = $this->validateEditProfileForm;
-
 		$form->onSuccess[] = $this->processValidatedEditProfileForm;
 
 		// Default values
@@ -479,10 +477,10 @@ class UserPresenter extends BasePresenter
 		$uploadComponent = $form->getComponent('avatarImage', true);
 		if ($uploadComponent->isFilled() == true) // If anything was uploaded...
 		{
-			$avatarOk = $uploadHandler->validateUpload($uploadComponent->getValue(), 'userAvatar');
-			if ($avatarOk[0] == false)
+			list($result, $errMsg) = $uploadHandler->validateUpload($uploadComponent->getValue(), 'userAvatar');
+			if ($result == false)
 			{
-				$form->addError('Avatar: ' . $avatarOk[1]);
+				$form->addError('Avatar: ' . $errMsg);
 			}
 		}
 
@@ -490,10 +488,10 @@ class UserPresenter extends BasePresenter
 		$uploadComponent = $form->getComponent('profilePhoto', true);
 		if ($uploadComponent->isFilled() == true) // If anything was uploaded...
 		{
-			$avatarOk = $uploadHandler->validateUpload($uploadComponent->getValue(), 'profilePhoto');
-			if ($avatarOk[0] == false)
+			list($result, $errMsg) = $uploadHandler->validateUpload($uploadComponent->getValue(), 'profilePhoto');
+			if ($result == false)
 			{
-				$form->addError('Fotka: ' . $avatarOk[1]);
+				$form->addError('Fotka: ' . $errMsg);
 			}
 		}
 	}
