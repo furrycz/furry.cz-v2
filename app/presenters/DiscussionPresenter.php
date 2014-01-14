@@ -66,6 +66,10 @@ abstract class DiscussionPresenter extends BasePresenter
 		);
 	}
 
+
+
+	/** Nette component factory function
+	*/
 	public function createComponentDiscussionPaginator()
 	{
 		$data = $this->discussionComponentsData;
@@ -79,6 +83,8 @@ abstract class DiscussionPresenter extends BasePresenter
 
 
 
+	/** Nette component factory function
+	*/
 	public function createComponentDiscussionPosts()
 	{
 		$data = $this->discussionComponentsData;
@@ -87,6 +93,57 @@ abstract class DiscussionPresenter extends BasePresenter
 			throw new Exception("Discussion component requested, input data not provided");
 		}
 		return new Fcz\DiscussionPosts($this, $data['content'], $data['access'], $data['paginator']);
+	}
+
+
+
+
+	/** Template utility function - formats a "deleted/ignored" post block
+	* @return array ("css": string, "text": string)
+	*/
+	public function formatHiddenPosts($numIgnored, $numDeleted)
+	{
+		if ($numIgnored == 1 and $numDeleted == 0)
+		{
+			$css = "Ignored";
+			$text = "Ignorovaný příspěvek";
+		}
+		else if ($numIgnored == 0 and $numDeleted == 1)
+		{
+			$css = "Deleted";
+			$text = "Smazaný příspěvek";
+		}
+		else
+		{
+			$textDeleted = $numDeleted . " "
+				. Fcz\LanguageUtilities::czechCount($numDeleted, array("smazan", "ý", "é", "ých"));
+			$textIgnored = $numIgnored . " "
+				. Fcz\LanguageUtilities::czechCount($numIgnored, array("ignorovan", "ý", "é", "ých"));
+
+			if ($numIgnored > 0 and $numDeleted > 0)
+			{
+				$text = "$textDeleted, $textIgnored";
+				//$textNum = $numIgnored;
+				$css = "Ignored Deleted";
+			}
+			else if ($numDeleted > 0)
+			{
+				$text = $textDeleted;
+				//$textNum = $numDeleted;
+				$css = "Deleted";
+			}
+			else
+			{
+				$text = $textIgnored;
+				//$textNum = $numIgnored;
+				$css = "Ignored";
+			}
+		}
+
+		return array(
+			"css" => $css,
+			"text" => $text
+		);
 	}
 
 }

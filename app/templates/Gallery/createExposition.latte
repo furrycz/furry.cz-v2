@@ -1,0 +1,43 @@
+{**
+ * Provides a form to create a new image exposition.
+ *}
+
+{block title}
+	Nova expozice - Furry.cz
+{/block}
+
+{block scripts}
+	<script src="{$basePath}/js/jquery.js"></script>
+	<script src="{$basePath}/js/netteForms.js"></script>
+	<script src="{$basePath}/js/main.js"></script>
+{/block}
+
+{block content}
+
+	<div class="Header LightBackground">
+		<h1>Nova expozice</h1>
+	</div>
+
+	{form newExpositionForm}
+		<div class="Body">
+			<dl>
+				<dt>{label Name /}</dt>
+				<dd>{input Name}</dd>
+
+				<dt>{label Description /}</dt>
+				<dd>{input Description}</dd>
+
+				<dt>{label Thumbnail /}</dt>
+				<dd>{input Thumbnail}</dd>
+
+				<dt>{label PresentationText /}</dt>
+				<dd>{input PresentationText}</dd>
+			</dl>
+		</div>
+
+		<div class="Footer">
+			{input SubmitNewExposition}
+		</div>
+	{/form}
+
+{/block}

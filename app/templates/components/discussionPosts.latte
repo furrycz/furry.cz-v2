@@ -2,20 +2,65 @@
  * DiscussionPosts component template
  *
  * @param Nette\Database\Table\Selection $posts
+ * @param array                          $access
  *}
 
 <div class="DiscussionPosts">
-	{foreach $posts as $post}
-		<div class="Post">
-			<div class="AvatarBox"><img src="{$baseUrl}/images/avatars/{$post->ref('Author')->AvatarFilename}"></div>
-			<div class="Text">
-				<span class="HeaderBar">
-					<a name="post-{$post['Id']}"></a>
-					<a class="Nick" n:href="User:profile $post['Author']">{$post->ref("Author")->Nickname}</a>
-					<span class="Time">{$post['TimeCreated']->format("d.m.Y h:i")}</span>
-				</span>
-				{$post['Text']}
+	{if $access['CanWritePosts'] == true}
+		{form discussionPosts-newPostForm} {* Nette sub-component *}
+			<div class="NewPostForm">
+				<div class="AvatarBox"><img src="{$baseUrl}/images/avatars/{$presenter->user->identity->data['avatarFilename']}"></div>
+				{input text}
+				<div class="Clear"></div>
+				{input preview} {input save}
 			</div>
-		</div>
+		{/form}
+	{/if}
+
+	{var $numIgnoredPosts = 0}
+	{var $numDeletedPosts = 0}
+
+	{foreach $posts as $post}
+
+		{var $resRelated = $post->ref("Users", "Author")->related("Ignorelist", "IgnoredUserId")}
+		{if (count($resRelated) > 0)}
+
+			{var $numIgnoredPosts++}
+			<?php continue; ?>
+
+		{elseif $post["Deleted"] == true}
+
+			{var $numDeletedPosts++}
+			<?php continue; ?>
+
+		{else}
+
+			{if $numIgnoredPosts > 0 or $numDeletedPosts > 0}
+				{var $hidden = $presenter->formatHiddenPosts($numIgnoredPosts, $numDeletedPosts)}
+				<div class="Post HiddenPosts {$hidden['css']}">
+					<div class="AvatarBox"></div>
+					<div class="Text">
+						<span class="HeaderBar">{$hidden["text"]}</span>
+					</div>
+				</div>
+				{var $numIgnoredPosts = 0}
+				{var $numDeletedPosts = 0}
+			{/if}
+			<div class="Post">
+				<div class="AvatarBox"><img src="{$baseUrl}/images/avatars/{$post->ref('Author')->AvatarFilename}"></div>
+				<div class="Text">
+					<span class="HeaderBar">
+						<a name="post-{$post['Id']}"></a>
+						<a class="Nick" n:href="User:profile $post['Author']">{$post->ref("Author")->Nickname}</a>
+						<span class="Time">{$post['TimeCreated']->format("d.m.Y h:i")}</span>
+					</span>
+					{$post['Text']}
+				</div>
+			</div>
+		{/if}
 	{/foreach}
+	{if $numIgnoredPosts > 0 or $numDeletedPosts > 0}
+		{var $hidden = $presenter->formatHiddenPosts($numDeletedPosts, $numIgnoredPosts)}
+		<div class="HiddenPosts {$hidden->css}">{$hidden->text}</div>
+	{/if}
 </div>

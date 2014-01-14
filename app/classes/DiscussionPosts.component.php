@@ -59,10 +59,51 @@ class DiscussionPosts extends \Nette\Application\UI\Control
 		$template = $this->presenter->template;
 		$template->setFile(__DIR__ . '/../templates/components/discussionPosts.latte');
 		$template->setParameters(array(
-			'posts' => $posts
+			'posts' => $posts,
+			'access' => $this->access,
+			'presenter' => $this->presenter
 		));
 		$template->render();
 	}
+
+
+
+	/** Nette sub-component factory function
+	*/
+	public function createComponentNewPostForm()
+	{
+		$form = new \Nette\Application\UI\Form;
+
+		$form->addTextArea('text', 'Text', 1, 1) // Small rows/cols to allow css scaling
+			->setRequired('Nelze uložit prázdný příspěvek')
+			->addRule(\Nette\Application\UI\Form::PATTERN, "Nelze uložit prázdný příspěvek", "\S+") // Deny whitespace-only posts
+			->setAttribute('placeholder', 'Tvůj příspěvek ...');
+
+		$form->addSubmit('preview', 'Náhled');
+
+		$form->addSubmit('save', 'Připsat');
+
+		$form->onSuccess[] = $this->handleValidatedNewPostForm;
+
+		return $form;
+	}
+
+
+
+	/** Nette form callback
+	*/
+	public function handleValidatedNewPostForm(\Nette\Application\UI\Form $form)
+	{
+		if ($form->getComponent('preview')->isSubmittedBy())
+		{
+			// Display preview
+		}
+		else
+		{
+			// Save post
+		}
+	}
+
 }
 
 } // namespace Fcz

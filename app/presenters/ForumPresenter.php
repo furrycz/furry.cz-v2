@@ -11,7 +11,7 @@ class ForumPresenter extends DiscussionPresenter
 {
 
 	/**
-	 * Shows a list of forum topics
+	 * Action: Shows a list of forum topics
 	 */
 	public function renderDefault()
 	{
@@ -27,7 +27,7 @@ class ForumPresenter extends DiscussionPresenter
 
 
 	/**
-	* Cretates new topic
+	* Action: Cretates new topic
 	*/
 	public function renderNewTopic()
 	{

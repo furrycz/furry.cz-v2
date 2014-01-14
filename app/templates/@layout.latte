@@ -51,7 +51,7 @@
 					<li><a n:href="Homepage:default">Hlavní</a></li>
 					<li><a n:href="Forum:default">Fórum</a></li>
 					<li>Kalendář</li>
-					<li>Galerie</li>
+					<li><a n:href="Gallery:default">Galerie</a></li>
 					<li>Texty</li>
 					<li><a n:href="User:default">Členové</a></li>
 				</ul>
@@ -59,7 +59,8 @@
 		</div>
 	</div>
 
-	<div class="ContentWrapper {block contentWrapperDivClasses}{/block}">
+	<div id="Content-{$presenter->request->presenterName}-{$presenter->action}"
+		class="ContentWrapper {block contentWrapperDivClasses}{/block}">
 		{include #content}
 	</div>
 

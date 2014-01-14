@@ -45,6 +45,7 @@
 		<div id="ForumToolsPanel">
 			{if $presenter->user->isInRole('approved')}
 				<a n:href="Forum:new-topic">Založit nové téma</a>
+				<a n:href="Ignorelist:edit">Nastavit ignorelist</a>
 			{/if}
 			{if $presenter->user->isInRole('admin')}
 				<a n:href="Forum:manage-categories">Spravovat sekce</a>

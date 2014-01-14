@@ -23,10 +23,7 @@ class UploadPresenter extends BasePresenter
 	*/
 	public function generateKey($index)
 	{
-		// abcde fghij klmno pqrst uvwxy z = 16 (With uppercase = 32)
-		// 0-9 = 10
-		// Total: 42 combinations per character
-		// 6 characters = 5 489 031 744 (INT_MAX is 2147483648)
+
 
 
 	}

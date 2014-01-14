@@ -1,8 +1,16 @@
-/* ----------------------- */
-/* FCZv2 global stylesheet */
-/* ----------------------- */
+/****************************************************************************/
+/*                       FCZv2 global stylesheet                            */
+/*                       =======================                            */
+/****************************************************************************/
 
-/***** Global stuff *****/
+/*
+ * Background-brown: #2B2725
+ * Lighter brown: #3C3732
+ */
+
+/****************************************************************************/
+/*                             Global stuff                                 */
+/****************************************************************************/
 
 html { overflow-y: scroll; }
 
@@ -40,7 +48,9 @@ form tr, form td { vertical-align: top; font-weight: normal; }
 
 form .required label { font-weight: bold; }
 
+/*********************************/
 /* DiscussionPaginator component */
+/*********************************/
 
 div.DiscussionPaginator { margin: 0; line-height: 25px; }
 
@@ -72,21 +82,45 @@ div.DiscussionPaginator a.Previous { float: left; border-radius: 10px 2px 2px 10
 
 div.DiscussionPaginator .Nav { text-align: center; padding: 0 90px; }
 
+/*****************************/
 /* DiscussionPosts component */
+/*****************************/
 
-div.DiscussionPosts div.Post { background-color: #3c3732; min-height: 70px; border-radius: 10px 10px 10px 0; margin: 0 0 10px; }
+div.DiscussionPosts div.Post,
+div.DiscussionPosts div.NewPostForm { background-color: #3c3732; min-height: 70px; border-radius: 10px 10px 10px 0; margin: 0 0 10px; }
+
+div.DiscussionPosts div.NewPostForm { min-height: 150px; padding-bottom: 5px; }
 
 div.DiscussionPosts div.Post:last-child { margin: 0; }
 
 div.DiscussionPosts span.HeaderBar { display: block; }
 
-div.DiscussionPosts div.Post div.AvatarBox { background-color: #453f3a; height: 70px; width: 70px; float: left; margin: 0 5px 0 0; border-radius: 10px 0 0; position: relative; text-align: center; line-height: 69px; }
+div.DiscussionPosts div.Post div.AvatarBox,
+div.DiscussionPosts div.NewPostForm div.AvatarBox { background-color: #453f3a; height: 70px; width: 70px; float: left; margin: 0 5px 0 0;
+	border-radius: 10px 0 0; position: relative; text-align: center; line-height: 69px; }
 
-div.DiscussionPosts div.Post div.AvatarBox img { max-height: 70px; max-width: 70px; padding: 0; border-radius: 10px 0 0; vertical-align: middle; }
+div.DiscussionPosts div.NewPostForm div.AvatarBox { margin:0; } /* Override */
+
+div.DiscussionPosts div.NewPostForm div.AvatarBox .Clear { clear: both; }
+
+div.DiscussionPosts div.Post div.AvatarBox img,
+div.DiscussionPosts div.NewPostForm div.AvatarBox img { max-height: 70px; max-width: 70px; padding: 0; border-radius: 10px 0 0; vertical-align: middle; }
 
 div.DiscussionPosts div.Post span.Time { color: #b6ad93; }
 
-/***** @Layout template *****/
+div.DiscussionPosts div.HiddenPosts { min-height: 25px; line-height: 25px; color: #b6ad93; }
+
+div.DiscussionPosts div.HiddenPosts div.AvatarBox { height: 25px; }
+
+#frmnewPostForm-text { border-radius: 0 10px 10px 0; margin: 0; float: right; min-width: 90%; max-width: 90%; min-height: 130px; margin: 5px 5px 5px 0; padding: 5px; border: 0; }
+
+#frmnewPostForm-preview { margin: 0 0 0 75px; }
+
+#frmnewPostForm-save { float: right; margin: 0 5px 0; }
+
+/****************************************************************************/
+/*                           @Layout template                               */
+/****************************************************************************/
 
 div#TopBanner { border: none; border-radius: 10px; background-color: #2b2725; margin: 0; line-height: 40px; }
 
@@ -148,9 +182,13 @@ input#frmloginForm-Password { width: 150px; }
 
 div.Clear { clear: both; }
 
-/***** User presenter *****/
+/****************************************************************************/
+/*                            User presenter                                */
+/****************************************************************************/
 
+/*************/
 /* User list */
+/*************/
 
 div#UserListWrapper { margin: 0 5px; padding: 0 0 10px; }
 
@@ -160,7 +198,9 @@ div#UserList div.User { width: 32.8%; height: 70px; margin: 5px 0.53% 0 0; backg
 
 div#UserList div.User img.Avatar { max-width: 100px; max-height: 70px; border: none; margin: 0 5px 0 0; float: left; border-radius: 5px 0 0 5px; }
 
+/****************/
 /* User profile */
+/****************/
 
 div#ProfileHeader { padding: 0 10px; background-color: #63973d; color: #2b2725; border-radius: 10px 10px 0 0; line-height: 50px; }
 
@@ -206,15 +246,23 @@ textarea#frmeditProfileForm-favouriteWebsites { width: 400px; height: 300px; }
 
 div#Footer { padding: 10px; background-color: #63973d; color: #2b2725; border-radius: 0 0 10px 10px; }
 
-/***** Cms presenter *****/
+/****************************************************************************/
+/*                            Cms presenter                                 */
+/****************************************************************************/
 
+/************/
 /* Cms page */
+/************/
 
 div.CmsPageContentWrapper { padding: 5px 10px; }
 
-/***** Forum presenter *****/
+/****************************************************************************/
+/*                            Forum presenter                               */
+/****************************************************************************/
 
+/*********/
 /* Index */
+/*********/
 
 div#ForumListingHeader { background-color: #63973d; padding: 5px 10px; border-radius: 10px 10px 0 0; color: #000; }
 
@@ -226,7 +274,9 @@ table#ForumListing td.Category { font-size: 0.8em; color: #b6ad93; text-align: c
 
 th#ForumListingCategory { width: 10%; }
 
+/*********/
 /* Topic */
+/*********/
 
 div#TopicHeaderPanel h1 { display: inline; }
 
@@ -244,6 +294,47 @@ div#TopicHeader.ForMembers { margin-bottom: 0px; }
 
 a#discussion.Topic { margin:0; padding:0; display:block; height:10px; } /* URL landing anchor */
 
+/****************************************************************************/
+/*                               Ignorelist                                 */
+/****************************************************************************/
 
+div#Content-Ignorelist-edit { padding: 0 0 10px 0; }
 
+div#Content-Ignorelist-edit h1 { margin: 0 0 10px 0; }
 
+div#Content-Ignorelist-edit img.Avatar { max-height: 35px; vertical-align: middle; margin: 0 10px 0 10px; }
+
+/****************************************************************************/
+/*                                 Gallery                                  */
+/****************************************************************************/
+
+/* Default */
+
+#GalleryAuthorList { display: block; float: right; border-left: 3px solid #3C3732; padding: 0 10px; }
+
+#GalleryAuthorList li { list-style: none }
+
+#GalleryLatestPosts { padding: 10px; }
+
+#Content-Gallery-default .BottomClear { clear: both; }
+
+/* User */
+
+#Content-Gallery-user div.Header { padding: 0 10px; background-color: #63973d; color: #2b2725; border-radius: 10px 10px 0 0; line-height: 50px; }
+
+#Content-Gallery-user div.Header img.Avatar { float: left; position: relative; top: 10px; margin: 0 10px 0 0; max-width: 200px; max-height: 200px; border-radius: 10px; }
+#Content-Gallery-user div.Header h1 { display: inline; background: transparent; margin: 0; padding: 0; }
+
+#MyGallery { float: right; padding: 0 10px 0 10px; }
+
+#MyGalleryTools a { float: right; padding: 0 3px; line-height: 49px; margin: 3px 0 0; display: block; }
+
+#Content-Gallery-exposition div.Header { padding: 0; background-color: #63973d; color: #2b2725; border-radius: 10px 10px 0 0; line-height: 50px; }
+
+#Content-Gallery-exposition div.Header h1 { float: left; display: inline; }
+
+#Content-Gallery-exposition div.Header img.Avatar { float: left; margin: 0 10px 0 0; max-width: 50px; max-height: 50px; border-radius: 10px 0 0; }
+
+#MyExpoTools { float: right; margin: 0 10px 0 0; }
+
+#MyExpoTools a { padding: 0 5px; line-height: 40px; margin: 5px 0 0; display: block; float: right; }

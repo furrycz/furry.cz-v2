@@ -1,0 +1,71 @@
+{**
+ * Shows a portfolio of an artist.
+ *
+ * @param string $presentationHtml
+ * @param Nette\Database\Table\Selection $recentPosts
+ * @param Nette\Database\Table\Selection $user
+ * @param Nette\Database\Table\Selection $expositions
+ *}
+
+{block title}
+	Portfolio uzivatele {$user['Nickname']} - Furry.cz
+{/block}
+
+{block scripts}
+	<script src="{$basePath}/js/jquery.js"></script>
+	<script src="{$basePath}/js/netteForms.js"></script>
+	<script src="{$basePath}/js/main.js"></script>
+{/block}
+
+{block content}
+	{var $my = $user['Id'] == $presenter->user->id}
+
+	<div class="Header LightBackground">
+		{if $my}
+			<span id="MyGalleryTools">
+				<a n:href="Gallery:createExposition">[+] Expozice</a>
+				<a n:href="Gallery:add">[+] Obrazek</a>
+			</span>
+		{/if}
+		<img src="{$baseUrl}/images/avatars/{$user['AvatarFilename']}" class="Avatar">
+		<h1>
+			{if $my}
+				Moje galerie
+			{else}
+				{$user['Nickname']}: portfolio
+			{/if}
+		</h1>
+	</div>
+
+	<ul id="UserPortolioExpositions">
+		{if isset($expositions) && count($expositions) > 0}
+			Expozice:
+			<li n:foreach="$expositions as $expo">
+				<a n:href="Gallery:exposition $expo['Id']">
+					<img src="">
+					<span class="Name">{$expo['Name']}</span>
+				</a>
+			</li>
+		{/if}
+	</ul>
+
+	<div style="clear: both; margin: 0 0 10px 0;"></div>
+
+	{if $user["ImageGalleryPresentation"] != null}
+		{var $cms = $user->ref("ImageGalleryPresentation")}
+		<div class="CmsPageContentWrapper" id="ProfileCms">
+			{!$cms["Text"]}
+		</div>
+	{/if}
+
+	<div id="UserPortfolioLatestPosts">
+		{if count($recentPosts) == 0}
+			Zadne nove obrazky
+		{else}
+			Nejnovejsi prispevky:
+			<li n:foreach="$recentPosts as $post">
+
+			</li>
+		{/if}
+	</div>
+{/block}

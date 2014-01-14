@@ -37,7 +37,7 @@ class FileUploadHandler extends \Nette\Object
 
 	/** Validates file upload.
 	* @param Nette\Http\FileUpload $fileUpload
-	* @param string                $rules { isImage, imgMaxWidth, imgMaxHeight, maxFilesize }
+	* @param string                $uploadType Defined in config file.
 	* @return array {bool:result, string:error_message} Result: True if file is OK to upload, false on errors.
 	*/
 	public function validateUpload(\Nette\Http\FileUpload $fileUpload, $uploadType)
@@ -86,19 +86,44 @@ class FileUploadHandler extends \Nette\Object
 
 
 
+	/** Validates file upload and adds error report to form.
+	* @param Nette\Application\UI\Form $form
+	* @param Nette\Http\FileUpload     $fileUpload
+	* @param string                    $errMsgFieldName
+	* @param string                    $uploadType Defined in config file.
+	* @return array {bool:result, string:error_message} Result: True if file is OK to upload, false on errors.
+	*/
+	public function validateFormUpload(\Nette\Application\UI\Form $form, $errMsgFieldName, \Nette\Http\FileUpload $fileUpload, $uploadType)
+	{
+		list($result, $errMsg) = $this->validateUpload($fileUpload, $uploadType);
+		if (! $result)
+		{
+			$form->addError("$errMsgFieldName: $errMsg");
+		}
+		return $result;
+	}
+
+
+
 	/**
 	* @param int Nonzero index
 	* @return string Hash
 	*/
 	private function generateFileKey($index)
 	{
-		$dictionaries = array(
-			"_tHGl5Ayw7BjS6m3Y2faRFiW4DbN9vgoQXKLMOZV0ePnd1kqTIExUhJzCrcp8su", // Starting underscore is never printed for nonzero input.
-			"6y1e8lWj4VmYqNsw0H2iOKArthvguSkCRcX7ZaGz3PnF5E9bxDUBfodpTQMLIJ",
-			"v1pL3WyiHrZ8TPafRUA7mIe4kldCuXSb0x5cGsqtYJwDhOoE6VQjzBngNF92KM",
-			"J2sHxhC984I1lyEXutmRcqvB57MrSnkDWipOg3eVLdNzPbQKUoYZ6aTwjF0AfG",
-			"Wfc542ztemhqdCUkBylVuT7RE1gjOn6SXP93oQI8KsLGNprHFvbZwAaiM0YxDJ",
-			"K9kdCa8EzrHQ6eGUlWoy2vhcqnSFsTD5L1YPV0gb3wmBixNZI7uJfXAOpR4Mjt"
+		// abcde fghij klmno pqrst uvwxy z = 16 chars (With uppercase = 32 chars)
+		// 0-9 = 10 chars
+		// Total: 42 combinations per character
+		// 6 characters = 5 489 031 744 (INT_MAX is 2147483648)
+
+		$config = $this->presenter->context->parameters['fileUploads']['keyGeneratorDictionaries'];
+		$dictionaries = array (
+			$config['d1'],
+			$config['d2'],
+			$config['d3'],
+			$config['d4'],
+			$config['d5'],
+			$config['d6'],
 		);
 
 		$offset = (int) ($index / 6);
@@ -133,39 +158,45 @@ class FileUploadHandler extends \Nette\Object
 
 
 
-	public function handleUpload(\Nette\Http\FileUpload $fileUpload)
+	/** Handles file upload.
+	* @param \Nette\Http\FileUpload $fileUpload The data.
+	* @param string                 $sourceType {GalleryImage, [Special]*Cms[Image/Attachment], Forum[Image/Attachment]}
+	* @param int                    $sourceId   Id of 'Content' where the file was downloaded from.
+	* @return array                 {id, key}   Database keys of the uploaded file.
+	*/
+	public function handleUpload(\Nette\Http\FileUpload $fileUpload, $sourceType, $sourceId)
 	{
-		if (!$fileUpload.isOk())
-		{
-			throw new Exception("The file didn't upload correctly");
-		}
 		$database = $this->presenter->context->database;
-		$config = $this->presenter->parameters;
+		$config = $this->presenter->context->parameters;
 		$user = $this->presenter->user;
 
-		$database->beginTransaction();
+		if (!$fileUpload->isOk())
+		{
+			throw new Exception("Upload se nezdaril.");
+		}
 
 		// Generate IDs
-		$id = $database->table('UploadedFiles')->max('Id');
+		$id = $database->table('UploadedFiles')->max('Id') + 1;
 		$key = $this->generateFileKey($id);
-		$path = $config["fileUploads"]["directory"]
-			. '/user_' . $this->presenter->user->id
-			. '_' . $key . $this->getFileUploadExtension($fileUpload);
+		$path = $config["fileUploads"]["types"]["genericFile"]["directory"]. '/' . $key;
 
 		// Save database entry
-		$database->table('UploadedFiles')->insert(array(
-			'Id' => $id,
-			'Key' => $key,
-			'FileName' => $path,
-			'Name' => 'User avatar: ' . $user->identity->data['username'] . " (ID: " . $user->id . ")"
+		$dbEntry = $database->table('UploadedFiles')->insert(array(
+			'Id'         => $id,
+			'Key'        => $key,
+			'FileName'   => $path,
+			'Name'       => $fileUpload->getName() . " (" . $user->identity->data['username'] . ")",
+			"SourceType" => $sourceType,
+			"SourceId"   => $sourceId
 		));
-
-		$database->commit();
 
 		// Move the file
 		$fileUpload->move($config["baseDirectory"] . "/" . $path);
 
-		return true;
+		return array(
+			$dbEntry["Id"],
+			$dbEntry["Key"]
+		);
 	}
 
 
@@ -185,7 +216,7 @@ class FileUploadHandler extends \Nette\Object
 		$fileUpload = $fileUploadControl->getValue();
 		if (!$fileUpload->isOk())
 		{
-			throw new Exception("The file didn't upload correctly");
+			throw new Exception("Soubor se nepodarilo nahrat");
 		}
 		$database = $this->presenter->context->database;
 		$config = $this->presenter->context->parameters;
@@ -202,6 +233,28 @@ class FileUploadHandler extends \Nette\Object
 		$fileUpload->move($path);
 
 		return $filename;
+	}
+
+
+
+	/**
+	* Deletes file and it's database entry.
+	*/
+	public function deleteUploadedFile($id)
+	{
+		$database = $this->presenter->context->database;
+		$config = $this->presenter->context->parameters;
+
+		$entry = $database->table("UploadedFiles")->where("Id", $id)->fetch();
+
+		// Delete the file
+		$path = $config["baseDirectory"]
+			. '/' . $upConfig["types"][$uploadType]["directory"]
+			. '/' . $entry["FileName"];
+		unlink($path);
+
+		// Delete db entry
+		$entry->delete();
 	}
 }
 

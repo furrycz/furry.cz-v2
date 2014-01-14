@@ -9,17 +9,23 @@
 common:
 
 	parameters:
+		baseUrl: http://localhost/fcz-v2/www
+
+		# baseDirectory (added in bootstrap.php)
+
 		# Time interval since last activity to display user as "offline" (in minutes)
 		offlineStatusTimeoutMinutes: 30
 
 		discussionPaginatorComponent:
-			edgeSpan: 3 # Num. links to display as numbers around first/last
+			edgeSpan: 3        # Num. links to display as numbers around first/last
 			currentPageSpan: 3 # Num. links to display as numbers around current page
-			maxLinks: 70 # Max links per page, if exceeded, paginator skips some links.
+			maxLinks: 70       # Max links per page, if exceeded, paginator skips some links.
 
 		fileUploads:
-			directory: upload # Local to application root, enter without slashes
 			types:
+				genericFile: # Any file uploded in forum/cms/events/polls etc...
+					directory: upload # Local to application root, enter without slashes
+
 				userAvatar:
 					isImage: true
 					maxWidth: 200
@@ -34,6 +40,19 @@ common:
 					maxFilesize: 1000000
 					directory: www/images/portraits
 
+				expositionThumbnail:
+					isImage: true
+					maxWidth: 200
+					maxHeight: 200
+					maxFilesize: 1000000
+
+			keyGeneratorDictionaries:
+				d1: '_tHGl5Ayw7BjS6m3Y2faRFiW4DbN9vgoQXKLMOZV0ePnd1kqTIExUhJzCrcp8su' # Underscore is printed for illegal zero input
+				d2: '6y1e8lWj4VmYqNsw0H2iOKArthvguSkCRcX7ZaGz3PnF5E9bxDUBfodpTQMLIJ'
+				d3: 'v1pL3WyiHrZ8TPafRUA7mIe4kldCuXSb0x5cGsqtYJwDhOoE6VQjzBngNF92KM'
+				d4: 'J2sHxhC984I1lyEXutmRcqvB57MrSnkDWipOg3eVLdNzPbQKUoYZ6aTwjF0AfG'
+				d5: 'Wfc542ztemhqdCUkBylVuT7RE1gjOn6SXP93oQI8KsLGNprHFvbZwAaiM0YxDJ'
+				d6: 'K9kdCa8EzrHQ6eGUlWoy2vhcqnSFsTD5L1YPV0gb3wmBixNZI7uJfXAOpR4Mjt'
 
 	php:
 		date.timezone: Europe/Prague
@@ -53,7 +72,6 @@ common:
 				user: user
 				password: password
 				reflection: discovered
-
 
 	services:
 		authenticator: Authenticator

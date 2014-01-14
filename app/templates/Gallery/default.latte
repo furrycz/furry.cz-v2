@@ -1,0 +1,48 @@
+{**
+ * Shows a gallery main page.
+ * Gallery main page contains a list of authors & recent additions and changes.
+ *
+ * @param Nette\Database\Table\Selection $authors
+ * @param Nette\Database\Table\Selection $recentPosts
+ *}
+
+{block title}
+	Galerie - Furry.cz
+{/block}
+
+{block scripts}
+	<script src="{$basePath}/js/jquery.js"></script>
+	<script src="{$basePath}/js/netteForms.js"></script>
+	<script src="{$basePath}/js/main.js"></script>
+{/block}
+
+{block content}
+	<div id="ForumListingHeader" class="LightBackground">
+		{if $presenter->user->isInRole("approved")}
+			<a id="MyGallery" n:href="Gallery:user">Moje</a>
+		{/if}
+		<strong>Galerie</strong>
+	</div>
+
+	<ul id="GalleryAuthorList">
+		Autori:
+		<li n:foreach="$authors as $author">
+			<a n:href="Gallery:user $author['Id']">
+				{$author['Nickname']} (6/9)
+			</a>
+		</li>
+	</ul>
+
+	<div id="GalleryLatestPosts">
+		{if count($recentPosts) == 0}
+			Zadne nove obrazky
+		{else}
+			Nejnovejsi prispevky:
+			<li n:foreach="$recentPosts as $post">
+
+			</li>
+		{/if}
+	</div>
+
+	<div class="BottomClear"></div>
+{/block}

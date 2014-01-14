@@ -1,0 +1,56 @@
+{**
+ * Shows a portfolio of an artist.
+ *
+ * @param Nette\Database\Table\Selection $exposition
+ * @param Nette\Database\Table\Selection $user
+ *}
+
+{block title}
+	Expozice {$user['Nickname']} - Furry.cz
+{/block}
+
+{block scripts}
+	<script src="{$basePath}/js/jquery.js"></script>
+	<script src="{$basePath}/js/netteForms.js"></script>
+	<script src="{$basePath}/js/main.js"></script>
+{/block}
+
+{block content}
+	{var $my = $user['Id'] == $presenter->user->id}
+
+	<div class="Header LightBackground">
+		<a n:href="Gallery:user $user['Id']" id="ExpoAvatarLink">
+			<img src="{$baseUrl}/images/avatars/{$user['AvatarFilename']}" class="Avatar">
+		</a>
+		{if $my}
+			<span id="MyExpoTools">
+				<a n:href="Gallery:removeExposition $exposition['Id']">Odstranit</a>
+				<a n:href="Gallery:editExposition $exposition['Id']">Upravit</a>
+			</span>
+		{/if}
+		<h1>
+			{$exposition["Name"]}
+		</h1>
+	</div>
+
+	{if $exposition["Presentation"] != null}
+		{var $cms = $exposition->ref("Presentation")}
+		<div class="CmsPageContentWrapper" id="ProfileCms">
+			{!$cms["Text"]}
+		</div>
+	{/if}
+
+	<div class="Footer">
+		<ul id="Expositions">
+			{if isset($expositions) and count($expositions) > 0}
+				Expozice:
+				<li n:foreach="$expositions as $expo">
+					<a n:href="Gallery:exposition $expo['Id']">
+						<img src="">
+						<span class="Name">{$expo['Name']}</span>
+					</a>
+				</li>
+			{/if}
+		</ul>
+	</div>
+{/block}
