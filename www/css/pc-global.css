@@ -338,3 +338,19 @@ div#Content-Ignorelist-edit img.Avatar { max-height: 35px; vertical-align: middl
 #MyExpoTools { float: right; margin: 0 10px 0 0; }
 
 #MyExpoTools a { padding: 0 5px; line-height: 40px; margin: 5px 0 0; display: block; float: right; }
+
+
+    /* calendar */
+	h1 .pu {position: absolute;background: #568136;text-decoration: none;border-radius: 5px;top:2px;}
+	h1 .pu:hover {background:#77D333;}
+	
+    table.calendar { border-left:1px solid #63973D;margin:0px auto;margin-top:10px;}
+    tr.calendar-row { -background-color:#63973D; }
+    td.calendar-day { min-height:80px; font-size:11px; position:relative;position:relative; } * html div.calendar-day { height:80px; }
+    td.calendar-day-np { background:#444343; min-height:80px; } * html div.calendar-day-np { height:80px; }
+    td.calendar-day-head { font-weight:bold; text-align:center; width:120px; padding:5px; border:1px solid #63973D;border-left:0px; }
+    div.day-number { background:#63973D; padding:5px; color:#fff; font-weight:bold; float:right; margin:-5px -5px 0 0; width:20px; text-align:center;border-bottom-left-radius: 6px;position:absolute;top:5px;right:5px; }
+	div.day-number.actual {background:#008FFF;}
+	div.day-number.svatek {background:#D36E00;}
+    /* shared */
+    td.calendar-day, td.calendar-day-np { width:120px; padding:5px; border-bottom:1px solid #63973D; border-right:1px solid #63973D; }

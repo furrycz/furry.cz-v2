@@ -107,10 +107,12 @@ class UserPresenter extends BasePresenter
 			->setType('date') // HTML5 <input> type
 			->addRule(
 				UI\Form::PATTERN,
-				'Musíte zadat platné datum ve formátu "15. 5. 2005"',
-				// Doesn't check if date exists, i.e. "32. 2. 2010" passes
+				'Musíte zadat platné datum ve formátu "15-5-2005"',
+				// Doesn't check if date exists, i.e. "32-2-2010" passes
 				// Complete validation is done by callback
-				'\s*[0-3]{0,1}\s*[0-9]{1}\s*\.\s*[0-1]{0,1}\s*[0-9]{1}\s*\.\s*[1-2]{1}\s*[0-9]{1}\s*[0-9]{1}\s*[0-9]{1}\s*');
+				'\s*[0-3]{0,1}\s*[0-9]{1}\s*\-\s*[0-1]{0,1}\s*[0-9]{1}\s*\-\s*[1-2]{1}\s*[0-9]{1}\s*[0-9]{1}\s*[0-9]{1}\s*');
+				//'0?[1-9]|[12][0-9]|3[01]\-?0?[1-9]|1[0-2]\-?20[0-9]{2}');
+				
 
 
 		$form->addText('email', 'E-mail * :')

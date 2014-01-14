@@ -32,6 +32,11 @@ class RouterFactory
 
 		// Forum
 		$router[] = new Route('forum/<action>[/<topicId>][/<page=1>]', 'Forum:default');
+		
+		// Calendar
+		$router[] = new Route('events/new[/<year>][/<month>]', 'Events:new');
+		$router[] = new Route('events/view[/<eventId>]', 'Events:view');
+		$router[] = new Route('events/[<year>/][<month>]', 'Events:default');		
 
 		// Default route
 		$router[] = new Route('<presenter>/<action>[/<id>]', 'Homepage:default');

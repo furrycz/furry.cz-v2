@@ -1,0 +1,76 @@
+{block title}
+	Nová událost - Furry.cz
+{/block}
+
+{block content}
+
+<h1>Nová událost</h1>
+{form newEventForm}
+		<div class="Body">
+			<dl>
+				<dt>{label Name /}</dt>
+				<dd>{input Name}</dd>
+				
+				<dt>{label Description /}</dt>
+				<dd>{input Description}</dd>				
+				
+				<dt>{label Kapacita /}</dt>
+				<dd>{input Kapacita} 0 - Neomezeno</dd>
+
+				<dt>Parametry</dt>
+				<dd>{input IsOnlyAdult} {label IsOnlyAdult /}</dd>
+				<dd>{input IsRegistrace} {label IsRegistrace /}</dd>
+				
+				<dt>{label Konani /}</dt>
+				<dd>{input Konani}<br>Pouze název místa třeba "<i>Ostrava - Vítkovice</i>" nebo "<i>Čajovna Šambala</i>"</dd>
+				
+				<dt>Kdy se akce koná?</dt>
+				<dd>{label StartTime /} {input StartTime} {label EndTime /} {input EndTime}</dd>
+				
+				<dt>{label GPS /}</dt>
+				<dd>{input GPS}</dd>
+				
+				<div id=map-canvas-pap style='width:100%;height:280px;'></div>
+				<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&language=cs"></script>
+<script type="text/javascript" src="http://maps.google.com/maps?file=api&v=2&key=AIzaSyAnPL6SiRa9DGSXYQimemSTd50QF-9GvGI"></script>
+<script n:syntax="off">
+/* <![CDATA[ */
+    function load() {
+            var map = new GMap2(document.getElementById('map-canvas-pap'));
+            map.setCenter(new GLatLng(49.84019666664545, 18.287429809570312), 7);        
+            map.addControl(new GLargeMapControl3D());        
+    
+            var center = map.getCenter();
+    
+            var marker = new GMarker(center, {draggable: true});
+
+            GEvent.addListener(marker, "dragstart", function() {
+                map.closeInfoWindow();
+            });
+
+            GEvent.addListener(marker, "dragend", function() {
+                center = marker.getLatLng();
+                document.getElementById("frmnewEventForm-GPS").value = center.toString();
+            });
+    
+            map.addOverlay(marker);
+    
+            GEvent.addListener(map, "moveend", function() {
+                center = map.getCenter();
+                marker.setLatLng(center);
+                document.getElementById("frmnewEventForm-GPS").value = center.toString();
+            });
+    }
+	load();
+    /* ]]> */
+</script>	
+				
+			</dl>
+		</div>
+
+		<div class="Footer">
+			{input Create}
+		</div>
+	{/form}
+
+{/block}
