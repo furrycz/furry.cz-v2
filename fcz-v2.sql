@@ -1,18 +1,9 @@
-------------------------------
--- Furry.cz v2 database schema
--- 
--- Exported 2013-06-21
-------------------------------
-
+-- Adminer 3.3.3 MySQL dump
 
 SET NAMES utf8;
 SET foreign_key_checks = 0;
 SET time_zone = 'SYSTEM';
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
-
-DROP DATABASE IF EXISTS `fcz-v2`;
-CREATE DATABASE `fcz-v2` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_czech_ci */;
-USE `fcz-v2`;
 
 DROP TABLE IF EXISTS `Access`;
 CREATE TABLE `Access` (
@@ -76,7 +67,7 @@ CREATE TABLE `CmsPages` (
   KEY `Alias` (`Alias`),
   KEY `ContentId` (`ContentId`),
   CONSTRAINT `CmsPages_ibfk_3` FOREIGN KEY (`ContentId`) REFERENCES `Content` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
 DROP TABLE IF EXISTS `ContactTypes`;
@@ -121,7 +112,7 @@ CREATE TABLE `Content` (
   KEY `DefaultPermissions` (`DefaultPermissions`),
   CONSTRAINT `Content_ibfk_1` FOREIGN KEY (`LastModifiedByUser`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `Content_ibfk_3` FOREIGN KEY (`DefaultPermissions`) REFERENCES `Permissions` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
 DROP TABLE IF EXISTS `EditedPostHistory`;
@@ -205,14 +196,17 @@ DROP TABLE IF EXISTS `ImageExpositions`;
 CREATE TABLE `ImageExpositions` (
   `Id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'PK',
   `Name` varchar(50) COLLATE utf8_czech_ci NOT NULL,
+  `Owner` int(11) unsigned NOT NULL COMMENT 'FK - User Id',
   `Description` tinytext COLLATE utf8_czech_ci,
   `Thumbnail` int(11) unsigned DEFAULT NULL COMMENT 'FK - Uploaded file Id',
   `Presentation` int(11) unsigned DEFAULT NULL COMMENT 'FK - CMS page Id',
   PRIMARY KEY (`Id`),
   KEY `Thumbnail` (`Thumbnail`),
   KEY `Presentation` (`Presentation`),
+  KEY `Owner` (`Owner`),
   CONSTRAINT `ImageExpositions_ibfk_1` FOREIGN KEY (`Thumbnail`) REFERENCES `UploadedFiles` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `ImageExpositions_ibfk_2` FOREIGN KEY (`Presentation`) REFERENCES `CmsPages` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `ImageExpositions_ibfk_2` FOREIGN KEY (`Presentation`) REFERENCES `CmsPages` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `ImageExpositions_ibfk_3` FOREIGN KEY (`Owner`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -223,6 +217,7 @@ CREATE TABLE `Images` (
   `UploadedFileId` int(11) unsigned NOT NULL COMMENT 'FK',
   `Name` varchar(100) COLLATE utf8_czech_ci NOT NULL,
   `Description` text COLLATE utf8_czech_ci NOT NULL,
+  `Exposition` int(10) unsigned DEFAULT NULL COMMENT 'FK',
   PRIMARY KEY (`Id`),
   KEY `ContentId` (`ContentId`),
   KEY `UploadedFileId` (`UploadedFileId`),
@@ -269,7 +264,7 @@ CREATE TABLE `Permissions` (
   `CanEditPermissions` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `CanEditPolls` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`Id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
 DROP TABLE IF EXISTS `PollAnswers`;
@@ -327,7 +322,7 @@ CREATE TABLE `Posts` (
   KEY `Author` (`Author`),
   CONSTRAINT `Posts_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `Content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `Posts_ibfk_2` FOREIGN KEY (`Author`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=11008 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
 DROP TABLE IF EXISTS `PrivateMessages`;
@@ -386,15 +381,17 @@ CREATE TABLE `Topics` (
   CONSTRAINT `Topics_ibfk_2` FOREIGN KEY (`CategoryId`) REFERENCES `TopicCategories` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `Topics_ibfk_3` FOREIGN KEY (`Header`) REFERENCES `CmsPages` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `Topics_ibfk_4` FOREIGN KEY (`HeaderForDisallowedUsers`) REFERENCES `CmsPages` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
 DROP TABLE IF EXISTS `UploadedFiles`;
 CREATE TABLE `UploadedFiles` (
   `Id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `Key` varchar(50) COLLATE utf8_czech_ci NOT NULL,
-  `FileName` tinytext COLLATE utf8_czech_ci NOT NULL,
-  `Name` varchar(50) COLLATE utf8_czech_ci NOT NULL,
+  `FileName` tinytext COLLATE utf8_czech_ci NOT NULL COMMENT 'Server file path',
+  `Name` varchar(50) COLLATE utf8_czech_ci NOT NULL COMMENT 'File description',
+  `SourceType` enum('GalleryImage','CmsImage','CmsAttachment','ForumImage','ForumAttachment','SpecialCmsImage','SpecialCmsAttachment','ExpositionThumbnail') COLLATE utf8_czech_ci DEFAULT NULL,
+  `SourceId` int(11) unsigned DEFAULT NULL COMMENT 'FK - Id of event/topic/cms etc. where the file was uploaded from.',
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
@@ -447,7 +444,7 @@ CREATE TABLE `Users` (
   CONSTRAINT `Users_ibfk_11` FOREIGN KEY (`WritingsPresentation`) REFERENCES `CmsPages` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION,
   CONSTRAINT `Users_ibfk_13` FOREIGN KEY (`ProfileForMembers`) REFERENCES `CmsPages` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION,
   CONSTRAINT `Users_ibfk_9` FOREIGN KEY (`ImageGalleryPresentation`) REFERENCES `CmsPages` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
 DROP TABLE IF EXISTS `WritingCategories`;
@@ -476,4 +473,4 @@ CREATE TABLE `Writings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
--- 2013-06-21 16:42:22
+-- 2014-01-14 12:36:01
