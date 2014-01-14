@@ -510,7 +510,7 @@ class GalleryPresenter extends DiscussionPresenter
 			if ($values["KeepPresentation"] == true)
 			{
 				$cmsPage->update(array(
-					"Name" => "(orphaned) " . $cmsPage["Name"]
+					"Name" => "(orphaned) " . $cmsPage["Name"],
 					"Description" => "(orphaned) " . $cmsPage["Description"]
 				));
 			}
@@ -522,7 +522,10 @@ class GalleryPresenter extends DiscussionPresenter
 			// Handle images
 			if ($values["ImageOperation"] == "Delete")
 			{
-				foreach ($id in $database->table("Images"))
+				foreach ($database->table("Images") as $image)
+				{
+					// TODO
+				}
 			}
 
 			$database->commit();
