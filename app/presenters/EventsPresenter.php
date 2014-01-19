@@ -98,12 +98,14 @@ class EventsPresenter extends BasePresenter
 	//$template->Mesic = ">>".$this->month;
     //$template->render();
 	
-	$day = date("d",time());$month = $this->month;$year = $this->year;
+	$day = date("d",time());$month = (int)date("m",time());$year = date("Y",time());
 	$p=0;
-	$template->show="";
+	$template->show=NULL;
 	for($i=0;$i<7;$i++){
 		if(isset($template->events[$year][$month][$day][0][0])){
-			$template->show[$p][] = $template->headings[date("w",strtotime("+".$i." day"))]." ".date('d. m. Y', strtotime("+".$i." day"));
+			$ds = date("w",strtotime("+".$i." day"));
+			$ds--;if($ds<0){$ds=6;}
+			$template->show[$p][] = $template->headings[$ds]." ".date('d. m. Y', strtotime("+".$i." day"));
 			$s=1;
 			for($a=0;$a<count($template->events[$year][$month][$day][0]);$a++){
 				if($template->events[$year][$month][$day][2][$a]!=1){
@@ -112,6 +114,7 @@ class EventsPresenter extends BasePresenter
 					if($template->events[$year][$month][$day][4][$a]==1){$template->show[$p][$s][2]=date('d. m. Y H:m', $template->events[$year][$month][$day][6][$a]);}else{$template->show[$p][$s][2]=date('H:m', $template->events[$year][$month][$day][6][$a]);}
 					$template->show[$p][$s][3] = $template->events[$year][$month][$day][7][$a];
 					$template->show[$p][$s][4] = $template->events[$year][$month][$day][8][$a];
+					$template->show[$p][$s][5] = $template->events[$year][$month][$day][0][$a];
 					$s++;
 				}
 			}

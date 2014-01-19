@@ -384,3 +384,4 @@ div#Content-Ignorelist-edit img.Avatar { max-height: 35px; vertical-align: middl
 .DayInfo {padding: 3px 10px;}
 .DayInfo .Name {font-weight: bold;border-left: 4px solid #63973D;padding-left: 6px;}
 .DayInfo .Info {float: right;font-weight: initial;background-color: #63973D;color: #1A501F;padding: 0px 9px;}
+.DayInfo .Name a {text-decoration:none;display:block;padding: 0px;border-radius: 0px;}

@@ -21,7 +21,7 @@ namespace Fcz
 				$data = array(
 							"Permisions" => array(  //Permision data
 												"CanListContent" => array("L","Uvidí ve výpisu","","","Context",1), //$Zkratka 1 písmeno(""==Nezobrazí), $Popis, $BarvaPozadí, $Parent(""!=Nezobrazí), $Zařazení práv, $default check
-												"CanViewContent" => array("V","Může vidět","","","Context",1),
+												"CanViewContent" => array("V","Může vidět","","","Context",1),		//$Parent > Přiváže k jinému oprávnění a bude nabývat stejného stavu
 												"CanEditContentAndAttributes" => array("E","Může upravit","","","Context - Správce",0),
 												"CanEditHeader" => array("H","Může upravit popis","","","Context",0),
 												"CanEditOwnPosts" => array("WE","Může upravit vlastní příspěvky","007AFF","","Téma",1),
@@ -54,7 +54,7 @@ namespace Fcz
 			{			
 				$owner = $database->table('Ownership')->where('ContentId', $this->content["Id"])->fetch();
 				
-				$accessAll = "";$mamUser="";$allUsers="";
+				$accessAll = NULL;$userExists = NULL;$allUsers = NULL;
 				
 				$acce = $database->table('Access')->where('ContentId', $this->content["Id"]);
 				foreach($acce as $ac){
@@ -73,18 +73,18 @@ namespace Fcz
 						"CanEditPermissions" => $perm["CanEditPermissions"],
 						"CanEditPolls" => $perm["CanEditPolls"]
 						);
-					$mamUser[$ac["UserId"]] = true;
+					$userExists[$ac["UserId"]] = true;
 				}
 				
 				if($accessAll==""){$accessAll=array();}
 				
 				$users = $database->table('Users')->order('Nickname');
 				foreach($users as $user){
-					if(!isset($mamUser[$user["Id"]]) and $owner["UserId"]!=$user["Id"])
+					if(!isset($userExists[$user["Id"]]) and $owner["UserId"]!=$user["Id"])
 					$allUsers[] = array($user["Id"],$user["Nickname"]);
 				}
 				
-				if($allUsers==""){$allUsers=array();}
+				if($allUsers==NULL){$allUsers=array();}
 				
 				$template = $this->presenter->template;
 				$template->setFile(__DIR__ . '/../templates/components/permissions.latte');								

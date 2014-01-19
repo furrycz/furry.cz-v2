@@ -59,15 +59,48 @@
     </tr>
 </table>
 
-<div style="padding:10px;">Vytvořit novou: <a n:href="Events:new">Událost</a> | <a href="">Upomínku</a></div>
+<div style="padding:10px;">Vytvořit novou: <a n:href="Events:new">Událost</a><div  style="display:none;"> | <a href="">Upomínku</a></div></div>
+
+{if $show!=NULL}
 
 {for $i=0;$i<count(@$show);$i++}
 	<div class="DayName"><div style="float:right;color:#1A501F;">Událostí: {count($show[$i])-1}</div>{$show[$i][0]}</div>
 	{for $a=1;$a<count($show[$i]);$a++}
 		<div class="DayInfo">
-			<div class="Name"><div class="Info"><b>Kde:</b> {$show[$i][$a][3]}, <b>Od:</b> {$show[$i][$a][1]}, <b>Do:</b> {$show[$i][$a][2]}</div>{$show[$i][$a][0]}</div>
+			<div class="Name"><div class="Info"><b>Kde:</b> {$show[$i][$a][3]}, <b>Od:</b> {$show[$i][$a][1]}, <b>Do:</b> {$show[$i][$a][2]}</div><a n:href="Events:view $show[$i][$a][5], year=>NULL, month=>NULL">{$show[$i][$a][0]}</a></div>
+			
+				<div>
+					<b style="float:left;">Účastní se: </b>
+					<div n:foreach="$show[$i][$a][4][1] as $Ucast" style="float:left;">
+						{if $Ucast[0]!=""}
+						<img src="{$Ucast[1]}"> <a n:href="User:Profile $Ucast[2]">{$Ucast[0]}</a>
+						{/if}
+					</div>
+					<div style="clear:left;"></div>
+				</div>
+				<div>
+					<b style="float:left;">Možná se účastní: </b>
+					<div n:foreach="$show[$i][$a][4][3] as $Ucast" style="float:left;">
+						{if $Ucast[0]!=""}
+						<img src="{$Ucast[1]}"> <a n:href="User:Profile $Ucast[2]">{$Ucast[0]}</a>
+						{/if}
+					</div>
+					<div style="clear:left;"></div>
+				</div>
+				<div>
+					<b style="float:left;">Neúčastní se: </b>
+					<div n:foreach="$show[$i][$a][4][2] as $Ucast" style="float:left;">
+						{if $Ucast[0]!=""}
+						<img src="{$Ucast[1]}"> <a n:href="User:Profile $Ucast[2]">{$Ucast[0]}</a>
+						{/if}
+					</div>
+					<div style="clear:left;"></div>
+				</div>
+			
 		</div>
 	{/for}
 {/for}
+
+{/if}
 
 {/block}
