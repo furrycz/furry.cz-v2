@@ -23,7 +23,12 @@
 </head>
 
 <body>
-	<script> document.body.className+=' js' </script>
+	{block scripts}
+		<script src="{$basePath}/js/jquery.js"></script>
+		<script src="{$basePath}/js/netteForms.js"></script>
+		<script src="{$basePath}/js/main.js"></script>
+		<script> document.body.className+=' js' </script>
+	{/block}	
 
 	<div n:foreach="$flashes as $flash" class="flash {$flash->type}">{$flash->message}</div>
 
@@ -50,7 +55,7 @@
 				<ul>
 					<li><a n:href="Homepage:default">Hlavní</a></li>
 					<li><a n:href="Forum:default">Fórum</a></li>
-					<li><a n:href="Events:default">Kalendář</a></li>
+					<li><a n:href="Events:default, month=>0, year=>0">Kalendář</a></li>
 					<li><a n:href="Gallery:default">Galerie</a></li>
 					<li>Texty</li>
 					<li><a n:href="User:default">Členové</a></li>
@@ -58,16 +63,10 @@
 			</nav>
 		</div>
 	</div>
-
+	
 	<div id="Content-{$presenter->request->presenterName}-{$presenter->action}"
 		class="ContentWrapper {block contentWrapperDivClasses}{/block}">
 		{include #content}
 	</div>
-
-	{block scripts}
-		<script src="{$basePath}/js/jquery.js"></script>
-		<script src="{$basePath}/js/netteForms.js"></script>
-		<script src="{$basePath}/js/main.js"></script>
-	{/block}
 </body>
 </html>

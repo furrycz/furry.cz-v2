@@ -1,15 +1,16 @@
 {block title}
-	Nová událost - Furry.cz
+	Upravit událost - Furry.cz
 {/block}
 
 {block content}
 
-<h1>Nová událost</h1>
+<h1 style="position: relative;padding-left:45px;"><a n:href="Events:View $EventId" class=pu style="left:14px;">&lt;</a>Upravit událost</h1>
 {form newEventForm}
 		<div class="Body">
-			<dl>
+			<dl>								
 				<dt>{label Name /}</dt>
-				<dd>{input Name}</dd>
+				<dd style="display:none;">{input Name}</dd>
+				<dd>{$Name}</dd>	
 				
 				<dt>{label Description /}</dt>
 				<dd>{input Description}</dd>				
@@ -33,11 +34,11 @@
 				<div id=map-canvas-pap style='width:100%;height:280px;'></div>
 				<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&language=cs"></script>
 <script type="text/javascript" src="http://maps.google.com/maps?file=api&v=2&key=AIzaSyAnPL6SiRa9DGSXYQimemSTd50QF-9GvGI"></script>
-<script n:syntax="off">
+<script n:syntax="double">
 /* <![CDATA[ */
     function load() {
             var map = new GMap2(document.getElementById('map-canvas-pap'));
-            map.setCenter(new GLatLng(49.84019666664545, 18.287429809570312), 7);        
+            map.setCenter(new GLatLng({{$GPS[0]}},{{$GPS[1]}}), 7);        
             map.addControl(new GLargeMapControl3D());        
     
             var center = map.getCenter();
@@ -54,12 +55,13 @@
             });
     
             map.addOverlay(marker);
-    
+			/*
             GEvent.addListener(map, "moveend", function() {
                 center = map.getCenter();
                 marker.setLatLng(center);
                 document.getElementById("frmnewEventForm-GPS").value = center.toString();
             });
+			*/
     }
 	load();
     /* ]]> */
@@ -69,7 +71,7 @@
 		</div>
 
 		<div class="Footer">
-			{input Create}
+			{input Update}
 		</div>
 	{/form}
 

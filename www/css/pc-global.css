@@ -349,8 +349,38 @@ div#Content-Ignorelist-edit img.Avatar { max-height: 35px; vertical-align: middl
     td.calendar-day { min-height:80px; font-size:11px; position:relative;position:relative; } * html div.calendar-day { height:80px; }
     td.calendar-day-np { background:#444343; min-height:80px; } * html div.calendar-day-np { height:80px; }
     td.calendar-day-head { font-weight:bold; text-align:center; width:120px; padding:5px; border:1px solid #63973D;border-left:0px; }
-    div.day-number { background:#63973D; padding:5px; color:#fff; font-weight:bold; float:right; margin:-5px -5px 0 0; width:20px; text-align:center;border-bottom-left-radius: 6px;position:absolute;top:5px;right:5px; }
-	div.day-number.actual {background:#008FFF;}
+    div.day-number { cursor:pointer;z-index:10;background:#63973D; padding:5px; color:#fff; font-weight:bold; float:right; margin:-5px -5px 0 0; width:20px; text-align:center;border-bottom-left-radius: 6px;position:absolute;top:5px;right:5px; }
 	div.day-number.svatek {background:#D36E00;}
+	div.day-number.actual {background:#008FFF;}
+	div.day-number:hover {background:#97933D;}
+	div.day-number a {color:white;text-decoration:none;}
     /* shared */
     td.calendar-day, td.calendar-day-np { width:120px; padding:5px; border-bottom:1px solid #63973D; border-right:1px solid #63973D; }
+	td.calendar-day .evenName {height: 18px;overflow: hidden;position:relative;}
+	td.calendar-day .evenName:hover {background-color:rgba(0, 112, 255, 0.21);}
+	td.calendar-day .evenName:hover a {color:white;}
+	td.calendar-day .evenName a{z-index:5;text-decoration:none;position: absolute;left: 0px;padding-left: 14px;top: -3px;width: 100px;}
+
+/* Events */
+
+.Event .popis {padding:10px;}
+.Event .box {border: 1px solid black;padding: 10px;margin: 5px 10px;background-color: rgb(54, 54, 54);}
+.EventVisible {border: 1px solid #63973D;margin: 5px 0px;padding: 7px;}
+
+.permisionTable {border:1px solid #63973D;border-collapse: collapse;margin: 5px 0px;}
+.permisionTable  tr th {padding:3px 3px;background-color:#63973D;}
+.permisionTable  tr td {padding:3px 3px;}
+
+.noPadding {padding:0px;margin:0px;}
+.noPadding tr {padding:0px;margin:0px;}
+.noPadding tr td {padding:0px;margin:0px;}
+
+.DayName {
+	padding: 3px 10px;
+	margin: 3px 10px;
+	background-color: #63973D;
+	font-size: 17px;
+}
+.DayInfo {padding: 3px 10px;}
+.DayInfo .Name {font-weight: bold;border-left: 4px solid #63973D;padding-left: 6px;}
+.DayInfo .Info {float: right;font-weight: initial;background-color: #63973D;color: #1A501F;padding: 0px 9px;}

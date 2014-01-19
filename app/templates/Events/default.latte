@@ -20,10 +20,15 @@
     {for $list_day = 1; $list_day <= $days_in_month; $list_day++}
     <td class="calendar-day" style="height:80px;" valign=top>
         {* add in the day number *}
-        <div class="day-number{if ($selectDay==$list_day)} actual{/if}{if ($aktualCra==5 or $aktualCra==6)} svatek{/if}">{$list_day}</div>
+        <div class="day-number{if ($aktualCra==5 or $aktualCra==6)} svatek{/if}{if ($selectDay==$list_day)} actual{/if}"><a n:href="Events:day 2014, 5, $list_day">{$list_day}</a></div>
 		{? $i=0}
 		{while @$events[$year][$month][$list_day][0][$i]}
-			{$i+1}. <a n:href="Events:view $events[$year][$month][$list_day][0][$i]">{$events[$year][$month][$list_day][1][$i]|truncate:15}</a>
+			{if $events[$year][$month][$list_day][2][$i]==1}
+				<div class="evenName"><span style="color:green;">-.</span> <a title="Pokračující událost ze dne {$events[$year][$month][$list_day][3][$i]}" n:href="Events:view $events[$year][$month][$list_day][0][$i], year=>NULL, month=>NULL">{$events[$year][$month][$list_day][1][$i]|truncate:15}</a></div>
+			{/if}
+			{if $events[$year][$month][$list_day][2][$i]!=1}
+				<div class="evenName">{$i+1}. <a n:href="Events:view $events[$year][$month][$list_day][0][$i], year=>NULL, month=>NULL">{$events[$year][$month][$list_day][1][$i]|truncate:15}</a></div>
+			{/if}
 			{? $i++}
 		{/while}
 
@@ -55,5 +60,14 @@
 </table>
 
 <div style="padding:10px;">Vytvořit novou: <a n:href="Events:new">Událost</a> | <a href="">Upomínku</a></div>
+
+{for $i=0;$i<count(@$show);$i++}
+	<div class="DayName"><div style="float:right;color:#1A501F;">Událostí: {count($show[$i])-1}</div>{$show[$i][0]}</div>
+	{for $a=1;$a<count($show[$i]);$a++}
+		<div class="DayInfo">
+			<div class="Name"><div class="Info"><b>Kde:</b> {$show[$i][$a][3]}, <b>Od:</b> {$show[$i][$a][1]}, <b>Do:</b> {$show[$i][$a][2]}</div>{$show[$i][$a][0]}</div>
+		</div>
+	{/for}
+{/for}
 
 {/block}
