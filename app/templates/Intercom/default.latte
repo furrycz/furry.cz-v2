@@ -61,7 +61,7 @@
 				{/form}
 				<div style="clear:both;"></div>
 			</div>
-			<div style="margin:10px;border:1px solid #646464;background-color:#727272;height:530px;overflow:auto;">
+			<div style="margin:10px;border:1px solid #646464;background-color:#727272;height:530px;overflow-y: scroll;overflow-x: hidden;">
 				<div n:foreach="$messageActualShow as $mess" class="messageText type_{$mess["typ"]} read_{$mess["read"]}">
 					<img src="{$mess["senderAvatar"]}" class="image">
 					<div class="body">

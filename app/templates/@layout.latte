@@ -34,19 +34,39 @@
 		<script src="{$basePath}/js/jquery-nette.js"></script>
 		<script src="{$basePath}/tinymce/tinymce.min.js"></script>
 		<script type="text/javascript">
+		var openWindow;
 		tinymce.init({
 			setup: function(editor) {
 				editor.addButton('furrafinityLinker', {
 					text: false,
-					tooltip: "Furrafinity linker",
+					tooltip: "Furraffinity linker",
 					image: '{!$basePath}\/images\/fur-affinity_icon_sm_zps6825a89d.png',
 					onclick: function() {
 						//editor.insertContent('Main button');
-						editor.windowManager.open({
+						openWindow = editor.windowManager.open({
 							title: "Furrafinity linker",
-							url: '{link Ajax:furrafinity}',
-							width: 700,
-							height: 600
+							url: {link Ajax:furrafinity},
+							width: 600,
+							height: 150,
+							buttons: [{
+										text: 'Vložit',
+										onclick: function(){ 
+												$.ajax({
+													url: "{!$presenter->link('Ajax:furrafinityget')}",
+													data: {
+														url: jQuery(jQuery("#"+openWindow._id+"-body").find('iframe').contents()).contents().find('#urlFurrafinity')[0].value
+													},
+													success: function( data ) {
+														if(data.Error!=0)
+															tinyMCE.activeEditor.windowManager.alert(data.Error);
+														else{
+															editor.insertContent('<a href="'+data.urlDefault+'" target="_blank"><img src="'+data.urlImage+'" border=3></a>');	
+															top.tinymce.activeEditor.windowManager.close();
+														}	
+													}
+												});
+										}
+									}]
 						});
 					}
 				});
