@@ -252,7 +252,7 @@ class UserPresenter extends BasePresenter
 			|| $profile['Address'] != null
 			|| $profile['RealSex'] != null
 			|| $profile['FavouriteWebsites'] != null
-			|| $profile['ProfilePhoto'] != null
+			|| $profile['ProfilePhotoFilename'] != null
 			|| $profile['Hobbies'] != null
 			|| $profile['DistanceFromPrague'] != null
 			|| $profile['WillingnessToTravel'] != null);
@@ -287,6 +287,8 @@ class UserPresenter extends BasePresenter
 		$profile['WillingnessToTravel'] = ($profile['WillingnessToTravel'] != null && $profile['WillingnessToTravel'] != '')
 			? $willingnessToTravelValues[$profile['WillingnessToTravel']]
 			: null;
+			
+		$profile['LastLogin'] = date("d. m. Y H:i", strtotime($profile["LastLogin"]));
 
 		// Format favourite websites
 		$favouries = array();

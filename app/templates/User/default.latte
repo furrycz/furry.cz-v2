@@ -9,6 +9,19 @@
 {/block}
 
 {block content}
+	<script>
+	function filter(text){
+		for(i=0;i<UserIDFilter.length;i++){
+			//alert(" "+UserIDFilter[i][1].toLowerCase().indexOf(text));
+			if(" "+UserIDFilter[i][1].toLowerCase().indexOf(text.toLowerCase())!=-1){
+				$("#User_"+UserIDFilter[i][0]).fadeIn( "slow", function() {} );
+			}else{
+				//$("#User_"+UserIDFilter[i][2]).hide();
+				$("#User_"+UserIDFilter[i][0]).fadeOut( "slow", function() {} );
+			}
+		}
+	}
+	</script>
 	<div class="Header">
 		{$userList->count()}
 		{if $userList->count() >= 5}
@@ -21,10 +34,12 @@
 		{if !$presenter->user->isLoggedIn()}
 			| <a n:href="User:register">Registrace</a>
 		{/if}
-		| Filtr: <input type="text" id="UserFilter">
+		| Filtr: <input type="text" id="UserFilter" onKeyUp="filter(this.value);">
 	</div>
 	<div id="UserListWrapper">
 		<div id="UserList">
+			<script>UserIDFilter = new Array();</script>
+			{? $i=0;}
 			{foreach $userList as $user}
 				{var $classes = array("User")}
 				{if $user['IsAdmin']}
@@ -37,10 +52,10 @@
 				{if !$user['IsAdult']}
 					{var $classes[] = "Underage"}
 				{/if}
-				<div class="{implode($classes, ' ')}">
+				<div class="{implode($classes, ' ')}" id="User_{$user['Id']}">
 					<a n:href="User:profile $user['Id']">
 						{if $user['AvatarFilename']}
-							<img src="{$baseUrl}/images/avatars/{$user['AvatarFilename']}" class="Avatar">
+							<img src="{$user['AvatarFilename']}" class="Avatar">
 						{/if}
 						<span class="Nickname">{$user['Nickname']}</span></a> {* There must be no whitespace before </a> *}
 					{if $user['IsAdmin']}
@@ -56,6 +71,8 @@
 					<br>
 					{$user['IsOnline'] ? "Online" : "Offline"}
 				</div>
+				<script>UserIDFilter[{$i}] = new Array({$user['Id']},"{!$user['Nickname']}");</script>
+				{? $i++;}
 			{/foreach}
 			<div class="Clear"></div>
 		</div>

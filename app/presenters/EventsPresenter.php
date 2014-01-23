@@ -389,10 +389,8 @@ class EventsPresenter extends BasePresenter
 		$values = $form->getValues();
 		$database = $this->context->database;
 		
-		echo 22222;
 		if($values["EventId"]!=""){
 		
-			echo 1111;
 			$this->processValidatedUpdateEventForm($form);
 			
 		}else{

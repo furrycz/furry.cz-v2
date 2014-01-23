@@ -14,10 +14,13 @@
 	<meta n:ifset="$robots" name="robots" content="{$robots}">
 
 	<title>{block title|striptags}Furry.cz{/block}</title>
-
+	
 	<link rel="shortcut icon" href="{$basePath}/favicon.ico">
 
+	<link rel="stylesheet" href="{$basePath}/css/jquery-ui-1.10.4.custom.css">
 	<link rel="stylesheet" href="{$basePath}/css/pc-global.css">
+	<link rel="stylesheet" href="{$basePath}/css/autocomplete.css">
+	<link rel="stylesheet" href="{$basePath}/css/rte-content.css">
 
 	{block head}{/block}
 </head>
@@ -27,6 +30,51 @@
 		<script src="{$basePath}/js/jquery.js"></script>
 		<script src="{$basePath}/js/netteForms.js"></script>
 		<script src="{$basePath}/js/main.js"></script>
+		<script src="{$basePath}/js/jquery-ui.js"></script>
+		<script src="{$basePath}/js/jquery-nette.js"></script>
+		<script src="{$basePath}/tinymce/tinymce.min.js"></script>
+		<script type="text/javascript">
+		tinymce.init({
+			setup: function(editor) {
+				editor.addButton('furrafinityLinker', {
+					text: false,
+					tooltip: "Furrafinity linker",
+					image: '{!$basePath}\/images\/fur-affinity_icon_sm_zps6825a89d.png',
+					onclick: function() {
+						//editor.insertContent('Main button');
+						editor.windowManager.open({
+							title: "Furrafinity linker",
+							url: '{link Ajax:furrafinity}',
+							width: 700,
+							height: 600
+						});
+					}
+				});
+			},
+			selector: "textarea.tinimce",
+			plugins: [
+				"advlist autolink lists link image charmap print preview anchor spellchecker",
+				"searchreplace visualblocks code fullscreen preview",
+				"insertdatetime media table contextmenu paste textcolor mention link"
+			],
+			toolbar: "insertfile undo redo | styleselect | furrafinityLinker | removeformat | bold italic | forecolor backcolor | bullist numlist outdent indent | link image charmap | preview fullscreen ",
+			menubar: false,
+			toolbar_items_size: 'small',
+			//statusbar: false,
+			convert_urls: false,
+			mentions: {
+				delimiter: "#",
+				source: function(query, process) {					
+					$.getJSON('{!$presenter->link('Ajax:autocomplete')}', function(data) {
+						process(data);
+					});
+				},
+				insert: function(item) {
+					return '<a href="http://{!$_SERVER['HTTP_HOST']}{!$presenter->link('User:profile')}/' + item.id + '">' + item.name.trim() + '</a>';
+				}	
+			}
+		});
+		</script>
 		<script> document.body.className+=' js' </script>
 	{/block}	
 
@@ -40,6 +88,10 @@
 						<img src="{$baseUrl}/images/avatars/{$presenter->user->identity->data['avatarFilename']}">
 						{$presenter->user->identity->nickname}</a> {* No space after text! *}
 					|
+					<a n:href="Intercom:default">Intercom</a> 
+					{? $countDBM = $presenter->context->database->table('Privatemessages')->where("AddresseeId = ? AND Read = 0",$presenter->user->identity->id)->count()}
+					{if $countDBM>0}<span style="background-color:red;border-radius:5px;padding: 3px 6px;color: white;font-weight: bold;text-decoration: none;">{$countDBM}</span>{/if}
+					| 
 					<a n:href="logout!">Odhlásit</a>
 				</div>
 			{else}

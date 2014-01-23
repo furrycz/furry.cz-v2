@@ -28,11 +28,15 @@ abstract class BasePresenter extends UI\Presenter
 
 	public function processValidatedLoginForm($form)
 	{
+		$database = $this->context->database;
 		$values = $form->getValues();
 		$user = $this->getUser();
 		try {
 			$user->login($values['Username'], $values['Password']);
 			$user->setExpiration($values['Permanent'] ? '+ 7 days' : '+ 30 minutes', false);
+			$content = $database->table('Users')->where('Username', $values['Username'])->update(array(
+				'LastLogin' => date("Y-m-d H:i:s",time())
+			));
 		} catch (\Nette\Security\AuthenticationException $ex) {
 			$this->flashMessage($ex->getMessage(), 'error');
 		}

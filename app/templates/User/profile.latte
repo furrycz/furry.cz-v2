@@ -10,7 +10,7 @@
 
 {block content}
 	<div id="ProfileHeader" class="LightBackground">
-		<img src="{$baseUrl}/images/avatars/{$profile['AvatarFilename']}" class="Avatar">
+		<img src="{$profile['AvatarFilename']}" class="Avatar">
 		{if $profile['CanBeEdited']}
 			<a id="EditProfile" n:href="User:edit $profile['Id']">Upravit</a>
 		{/if}
@@ -25,10 +25,12 @@
 			<span class="SpeciesLabel">Druh:</span>
 			<span class="Species">{$profile['Species']}</span>
 			{if $profile['FurrySex'] != null}
-				(<span class="Label">Pohlaví:</span>
-				{$profile['FurrySex']})
+				<br><span class="Label">Pohlaví:</span>	{$profile['FurrySex']}
 			{/if}
 		{/if}
+		<br>
+		<span class="SpeciesLabel">Naposled přihlášen:</span>
+		<span class="Species">{$profile['LastLogin']}</span>		
 		{if $profile['ShortDescription'] != null}
 			<p class="ShortDescription">
 				<span class="Label">Popis:</span>
@@ -37,7 +39,7 @@
 		{/if}
 	</div>
 
-	<div style="clear: both; margin: 0 0 10px 0;"></div>
+	<div style="clear: both; margin: 0 0 20px 0;"></div>
 
 	{if $profile['ProfileHtml'] != null}
 		<div class="CmsPageContentWrapper" id="ProfileCms">
@@ -47,7 +49,7 @@
 
 	{if $presenter->user->isLoggedIn() && $profile['HasAnyPersonalInfo']}
 		<div id="ProfileReal">
-			<img src="{$baseUrl}/images/portraits/{$profile['ProfilePhotoFilename']}" class="Photo">
+			<img src="{$profile['ProfilePhotoFilename']}" class="Photo">
 			<dl>
 				{if $profile['FullName'] != null}
 					<dt>Jméno:</dt>
