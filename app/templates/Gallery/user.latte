@@ -2,7 +2,6 @@
  * Shows a portfolio of an artist.
  *
  * @param string $presentationHtml
- * @param Nette\Database\Table\Selection $recentPosts
  * @param Nette\Database\Table\Selection $user
  * @param Nette\Database\Table\Selection $expositions
  *}
@@ -39,10 +38,11 @@
 
 	<ul id="UserPortolioExpositions">
 		{if isset($expositions) && count($expositions) > 0}
-			Expozice:
 			<li n:foreach="$expositions as $expo">
 				<a n:href="Gallery:exposition $expo['Id']">
-					<img src="">
+					{if $expo["Thumbnail"] != null}
+						<img src="{$baseUrl}/file/{$expo->ref("Thumbnail")["Key"]}">
+					{/if}
 					<span class="Name">{$expo['Name']}</span>
 				</a>
 			</li>
@@ -57,15 +57,6 @@
 			{!$cms["Text"]}
 		</div>
 	{/if}
-
-	<div id="UserPortfolioLatestPosts">
-		{if count($recentPosts) == 0}
-			Zadne nove obrazky
-		{else}
-			Nejnovejsi prispevky:
-			<li n:foreach="$recentPosts as $post">
-
-			</li>
-		{/if}
-	</div>
+	
+	{control mainExpositionThumbnails}
 {/block}

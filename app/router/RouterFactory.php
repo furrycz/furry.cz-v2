@@ -26,12 +26,18 @@ class RouterFactory
 
 		// Gallery
 		$router[] = new Route('gallery/exposition/create', 'Gallery:createExposition');
+		$router[] = new Route('gallery/exposition/edit/<expositionId>', 'Gallery:editExposition');
+		$router[] = new Route('gallery/exposition/delete/<expositionId>', 'Gallery:deleteExposition');
+		$router[] = new Route('gallery/exposition/<expositionId>', 'Gallery:exposition');
 		$router[] = new Route('gallery/add', 'Gallery:addImage');
 		$router[] = new Route('gallery/user[/<userId>][/<page=1>]', 'Gallery:user');
 		$router[] = new Route('gallery/<action>[/<userId>][/<page=1>]', 'Gallery:default');
 
 		// Forum
 		$router[] = new Route('forum/<action>[/<topicId>][/<page=1>]', 'Forum:default');
+		
+		// File download
+		$router[] = new Route('file/<key>', 'Files:default');
 
 		// Default route
 		$router[] = new Route('<presenter>/<action>[/<id>]', 'Homepage:default');

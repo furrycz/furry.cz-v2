@@ -20,23 +20,33 @@
 
 	{form deleteExpositionForm}
 		<div class="Body">
-			<dl>
-				<dt>{label Name /}</dt>
-				<dd>{input Name}</dd>
+			<p>Opravdu chcete odstranit expozici {$exposition["Name"]}?</p>
+		
+			<p id="DelExpoOptions">
+			{input KeepThumbnail}
+			{label KeepThumbnail /}
+			<br>
+			{input KeepPresentation}
+			{label KeepPresentation /}
+			</p>
+		
+			{if $imageCount > 0}
+				<dl>
+					<p>V expozici je {$imageCount} <?php echo Fcz\LanguageUtilities::czechCount($imageCount, array("obráz", "ek", "ky", "ků")) ?>, 
+						co s {if $imageCount == 1}ním{else}nimi{/if} chcete udělat?</p>
+				
+					<dt>{label ImageOperation /}</dt>
+					<dd>{input ImageOperation}</dd>
 
-				<dt>{label Description /}</dt>
-				<dd>{input Description}</dd>
-
-				<dt>{label Thumbnail /}</dt>
-				<dd>{input Thumbnail}</dd>
-
-				<dt>{label PresentationText /}</dt>
-				<dd>{input PresentationText}</dd>
-			</dl>
+					<dt>{label TargetExpo /}</dt>
+					<dd>{input TargetExpo}</dd>
+				</dl>
+			{/if}
+		
 		</div>
 
 		<div class="Footer">
-			{input SubmitNewExposition}
+			{input SubmitDeleteExpo}
 		</div>
 	{/form}
 

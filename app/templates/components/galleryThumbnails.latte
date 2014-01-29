@@ -1,0 +1,18 @@
+{**
+ * Shows gallery image thumbnails.
+ *
+ * @param Nette\Database\Table\Selection $images
+ *}
+
+{if count($images) != 0}
+	<ul class="GalleryThumbnails">
+		{foreach $images as $image}
+			<li>
+				<a n:href="Files:default $image->ref('UploadedFileId')['Key']">
+					<img src="{$baseUrl}/file/{$image->ref('UploadedFileId')['Key']}"><span class="Name">{$image["Name"]}</span></a></li> {* TODO: Implement thumbnails! *}
+					
+		{/foreach}
+	</ul>
+{else}
+	<p class="ThisExpoIsEmpty">V této expozici nejsou žádné obrázky</p>
+{/if}

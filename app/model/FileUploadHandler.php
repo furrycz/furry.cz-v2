@@ -240,13 +240,27 @@ class FileUploadHandler extends \Nette\Object
 	/**
 	* Deletes file and it's database entry.
 	*/
-	public function deleteUploadedFile($id)
+	public function deleteUploadedFileById($id)
 	{
+		if (! is_int($id))
+		{
+			throw Exception("deleteUploadedFileById(): wrong param 'id', expected int, got: " . gettype($id));
+		}
+	
 		$database = $this->presenter->context->database;
+
+		$this->deleteUploadedFile($database->table("UploadedFiles")->where("Id", $id)->fetch());
+	}
+	
+	
+	
+	/**
+	* Deletes file and it's database entry.
+	*/
+	public function deleteUploadedFile(\Nette\Database\Table\ActiveRow $entry)
+	{
 		$config = $this->presenter->context->parameters;
-
-		$entry = $database->table("UploadedFiles")->where("Id", $id)->fetch();
-
+	
 		// Delete the file
 		$path = $config["baseDirectory"]
 			. '/' . $upConfig["types"][$uploadType]["directory"]

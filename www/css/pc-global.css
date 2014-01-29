@@ -118,6 +118,24 @@ div.DiscussionPosts div.HiddenPosts div.AvatarBox { height: 25px; }
 
 #frmnewPostForm-save { float: right; margin: 0 5px 0; }
 
+/*******************************/
+/* GalleryThumbnails component */
+/*******************************/
+
+ul.GalleryThumbnails { margin: 0 10px 10px; padding: 0; text-align: center; }
+
+ul.GalleryThumbnails li { list-style-type: none; display: inline-block; margin: 5px; min-width: 170px; }
+
+ul.GalleryThumbnails a:hover { background-color: #006aeb; }
+
+ul.GalleryThumbnails a { display: block; padding: 3px; background-color: #3C3732; border-radius: 5px; }
+
+ul.GalleryThumbnails li img { max-width: 200px; max-height: 200px; border-radius: 5px; }
+
+ul.GalleryThumbnails li span { display: block; text-align: center; }
+
+p.ThisExpoIsEmpty {  }
+
 /****************************************************************************/
 /*                           @Layout template                               */
 /****************************************************************************/
@@ -318,6 +336,10 @@ div#Content-Ignorelist-edit img.Avatar { max-height: 35px; vertical-align: middl
 
 #Content-Gallery-default .BottomClear { clear: both; }
 
+/* Exposition */
+
+section#ExpositionThumbnails { min-height: 10px; margin: 0 10px; }
+
 /* User */
 
 #Content-Gallery-user div.Header { padding: 0 10px; background-color: #63973d; color: #2b2725; border-radius: 10px 10px 0 0; line-height: 50px; }
@@ -338,3 +360,17 @@ div#Content-Ignorelist-edit img.Avatar { max-height: 35px; vertical-align: middl
 #MyExpoTools { float: right; margin: 0 10px 0 0; }
 
 #MyExpoTools a { padding: 0 5px; line-height: 40px; margin: 5px 0 0; display: block; float: right; }
+
+    /* >>> Expositions */
+
+#UserPortolioExpositions { margin: 0 10px 10px; padding: 0; overflow-x: scroll; margin-top: 10px; height: 140px; }
+
+#UserPortolioExpositions li { list-style-type: none; display: inline-block; margin: 2px; min-width: 100px; text-align: center; }
+
+#UserPortolioExpositions a:hover { background-color: #006aeb; }
+
+#UserPortolioExpositions a { display: block; padding: 3px; background-color: #3C3732; border-radius: 5px; }
+
+#UserPortolioExpositions li img { max-width: 100px; max-height: 80px; border-radius: 5px; }
+
+#UserPortolioExpositions span { display: block; }

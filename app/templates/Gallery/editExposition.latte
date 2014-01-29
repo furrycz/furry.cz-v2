@@ -15,7 +15,7 @@
 {block content}
 
 	<div class="Header LightBackground">
-		<h1>Uprava expozice</h1>
+		<h1>Úprava expozice</h1>
 	</div>
 
 	{form editExpositionForm}
@@ -26,6 +26,9 @@
 
 				<dt>{label Description /}</dt>
 				<dd>{input Description}</dd>
+				
+				<dt>Ikona</dt>
+				<dd>{label NewThumbnail /}: {input NewThumbnail}<br>{input DeleteThumbnail}{label DeleteThumbnail /}</dd>
 
 				<dt>{label PresentationText /}</dt>
 				<dd>{input PresentationText}</dd>

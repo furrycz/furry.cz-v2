@@ -1,5 +1,6 @@
 <?php
 
+use Nette\Application;
 use Nette\Application\UI;
 use Nette\Utils\Html;
 use Nette\Diagnostics\Debugger;
@@ -9,9 +10,6 @@ use Nette\Diagnostics\Debugger;
  */
 class GalleryPresenter extends DiscussionPresenter
 {
-	/// @var \Nette\Database\Table\ActiveRow
-	/// Temporary variable; data are loaded in render*() but form generated in createComponent*()
-	private $expositionToModify = null;
 
 	private $newImageTargetExposition = null;
 
@@ -55,32 +53,27 @@ class GalleryPresenter extends DiscussionPresenter
 		$user = $database->table("Users")->where(array("Id"=> $userId))->fetch();
 
 		$expositions = $database->table("ImageExpositions")->where("Owner", $userId);
-
-		$recentPosts = null;
-
+			
 		$this->template->setParameters(array(
 			'user' => $user,
-			'recentPosts' => $recentPosts,
 			'expositions' => $expositions
 		));
 	}
 
 
 
-	public function renderEditExposition($id)
+	public function renderEditExposition($expositionId)
 	{
-		$database = $this->context->database;
-
-		$this->expositionToModify = $database->table("ImageExpositions")->where("Id", $id)->fetch();
+		
 	}
 
 
 
-	public function renderExposition($id)
+	public function renderExposition($expositionId)
 	{
 		$database = $this->context->database;
 
-		$exposition = $database->table("ImageExpositions")->where("Id", $id)->fetch();
+		$exposition = $database->table("ImageExpositions")->where("Id", $expositionId)->fetch();
 
 		$this->template->setParameters(array(
 			'user' => $exposition->ref("Owner"),
@@ -90,28 +83,43 @@ class GalleryPresenter extends DiscussionPresenter
 
 
 
-	public function renderDeleteExposition($id)
+	public function renderDeleteExposition($expositionId)
 	{
-		if ($id == null)
+		// Check permissions (general)
+		if (! $this->user->isLoggedIn() || ! $this->user->isInRole('approved'))
+		{
+			throw new ForbiddenRequestException("Nemáte oprávnění");
+		}
+	
+		// Check params
+		if ($expositionId == null)
 		{
 			throw new BadRequestException("Zadana expozice neexistuje");
 		}
 
+		// Check data
 		$database = $this->context->database;
-
-		$expo = $database->table("ImageExpositions")->select("Name")->where("Id", $id);
-		if (count($expo) == 0)
+		$expo = $database->table("ImageExpositions")->where("Id", $expositionId)->fetch();
+		if ($expo === false)
 		{
 			throw new BadRequestException("Zadana expozice neexistuje");
 		}
+		
+		// Check permissions (specific)
+		if ($expo["Owner"] != $this->user->id)
+		{
+			throw new ForbiddenRequestException("Nemáte oprávnění");
+		}
 
-		$imageCount = $expo->related("Images", "ExpositionId")->count();
-
+		// Prepare form
 		$form = $this["deleteExpositionForm"];
-		$form["ExpositionId"] = $id;
+		$expoList = $this->composeExpositionSelectList();
+		unset($expoList[$expositionId]); // Exclude the expo we're about to remove.
+		$form["TargetExpo"]->setItems($expoList);
 
+		// Setup template
 		$this->template->setParameters(array(
-			"imageCount" => $imageCount,
+			"imageCount" => $expo->related("Images", "Exposition")->count(),
 			"exposition" => $expo
 		));
 	}
@@ -132,6 +140,44 @@ class GalleryPresenter extends DiscussionPresenter
 		$this->template->setParameters(array(
 
 		));
+	}
+	
+	
+	
+	public function createComponentGalleryThumbnails()
+	{
+		if ($this->action == 'user')
+		{
+			return new Fcz\GalleryThumbnails($this, $this->getParameter('userId'), null);
+		}
+		else
+		{
+			return new Fcz\GalleryThumbnails($this, null, $this->getParameter('id'));
+		}
+	}
+	
+	
+	
+	public function createComponentMainExpositionThumbnails()
+	{
+		$userId = $this->getParameter('userId');
+		if ($userId == null)
+		{
+			$userId = $this->user->id;
+		}
+		return new Fcz\GalleryThumbnails($this, $userId, null);
+	}
+	
+	
+	
+	public function createComponentExpositionThumbnails()
+	{
+		$expoId = $this->getParameter('expositionId');
+		if ($expoId == null)
+		{
+			throw new BadRequestException();
+		}
+		return new Fcz\GalleryThumbnails($this, null, $expoId);
 	}
 
 
@@ -184,7 +230,7 @@ class GalleryPresenter extends DiscussionPresenter
 			if ($values["PresentationText"] != "")
 			{
 				$cms = $database->table("CmsPages")->insert(array(
-					"Name" => "Exposition (user {$this->user->login})",
+					"Name" => "Exposition (user {$this->user->identity->nickname})",
 					"Text" => $values["PresentationText"]
 				));
 				$cmsId = $cms["Id"];
@@ -205,7 +251,9 @@ class GalleryPresenter extends DiscussionPresenter
 				));
 
 			// Thumb: source id update
-			$database->table("UploadedFiles")->where("Id", $thumbId)->update("SourceId", $exposition["Id"]);
+			$database->table("UploadedFiles")->where("Id", $thumbId)->update(array(
+				"SourceId" => $exposition["Id"]
+			));
 
 			// Finish
 			$this->flashMessage("Expozice vytvorena", 'ok');
@@ -224,73 +272,143 @@ class GalleryPresenter extends DiscussionPresenter
 
 
 
-	public function processValidatedEditExpositionForm($form)
+	public function processValidatedEditExpositionForm(UI\Form $form)
 	{
-		$values = $form->getHttpData();
+		$values = $form->getValues();
 		$database = $this->context->database;
+		
+		$exposition = $database->table("ImageExpositions")->where("Id", $this->getParameter("expositionId"))->fetch();
 
 		// CMS
 		$cmsId = null;
-		if ($values["CmsId"] == "")
+		if ($exposition["Presentation"] == null)
 		{
-			$cms = $database->table("CmsPages")->insert(array(
-				"Name" => "{$this->user->login} Gallery",
-				"Text" => $values["PresentationText"]
-			));
-			$cmsId = $cms["Id"];
-			$this->flashMessage("Byla vytvorena prezentace");
+			if ($values["PresentationText"] != "")
+			{
+				$cms = $database->table("CmsPages")->insert(array(
+					"Name" => "{$this->user->identity->nickname} Gallery",
+					"Text" => $values["PresentationText"]
+				));
+				$cmsId = $cms["Id"];
+				$this->flashMessage("Byla vytvořena prezentace");
+			}
 		}
 		elseif ($values["PresentationText"] == "")
 		{
-			$database->table("CmsPages")->where("Id", $values["CmsId"])->remove();
-			$this->flashMessage("Prezentace byla smazana");
+			if ($exposition["Presentation"] != null)
+			{
+				$exposition->ref("Presentation")->remove();
+				$this->flashMessage("Prezentace byla smazána");
+			}
 		}
 		else
 		{
-			$database->table("CmsPages")->where("Id", $values["CmsId"])->update(array(
+			$cmsPage = $exposition->ref("Presentation");
+			$cmsPage->update(array(
 				"Text" => $values["PresentationText"]
 			));
-			$cmsId = $values["CmsId"];
+			$cmsId = $cmsPage["Id"];
+			$this->flashMessage("Prezentace byla upravena");
+		}
+		
+		// Thumbnail
+		$thumbnailId = null;
+		
+		$deleteThumb = ($values["DeleteThumbnail"] == true) || $values["NewThumbnail"]->isOk(); 
+		$thumbDeleted = false;
+		$thumbAdded = false;
+		if ($exposition["Thumbnail"] != null && $deleteThumb)
+		{
+			$this->getUploadHandler()->deleteUploadedFile($exposition["Thumbnail"]);
+			$thumbDeleted = true;
+			$thumbnailId = null;
+		}
+		
+		if ($values["NewThumbnail"]->isOk())
+		{
+			$uploadComponent = $form->getComponent('NewThumbnail', true);
+			if ($uploadComponent->isFilled() == true) // If anything was uploaded...
+			{
+				list($thumbnailId, $uploadKey) = $this->getUploadHandler()->handleUpload(
+					$values["NewThumbnail"], 
+					'ExpositionThumbnail', 
+					$exposition['Id']
+				);
+				$thumbAdded = true;
+			}
+		}
+		
+		if ($thumbDeleted != $thumbAdded)
+		{
+			if ($thumbDeleted)
+			{
+				$this->flashMessage("Ikona smazána");
+			}
+			else
+			{
+				$this->flashMessage("Ikona přidána");
+			}
 		}
 
 		// Exposition
-		$database->table("ImageExpositions")->where("Id", $values["ExpositionId"])->update(array(
+		$database->table("ImageExpositions")->where("Id", $exposition["Id"])->update(array(
 				"Name" => $values["Name"],
 				"Description" => $values["Description"],
-				"Presentation" => $cmsId
+				"Presentation" => $cmsId,
+				"Thumbnail" => $thumbnailId
 			));
 
 		$this->flashMessage("Expozice byla upravena");
-		$this->redirect("Gallery:exposition", $values['ExpositionId']);
+		$this->redirect("Gallery:exposition", $exposition["Id"]);
 
+	}
+	
+	
+	
+	public function validateEditExpositionForm(UI\Form $form)
+	{
+		$uploadHandler = new Fcz\FileUploadHandler($this);
+
+		// Validate thumbnail
+		$uploadComponent = $form->getComponent('NewThumbnail', true);
+		if ($uploadComponent->isFilled() == true) // If anything was uploaded...
+		{
+			list($result, $errMsg) = $uploadHandler->validateUpload($uploadComponent->getValue(), 'ExpositionThumbnail');
+			if ($result == false)
+			{
+				$form->addError('Ikona: ' . $errMsg);
+			}
+		}
 	}
 
 
 
 	public function createComponentEditExpositionForm()
 	{
+		$database = $this->context->database;
+
+		$exposition = $database->table("ImageExpositions")->where("Id", $this->getParameter("expositionId"))->fetch();
+		
+		if ($exposition == null)
+		{
+			throw new Nette\FileNotFoundException();
+		}
+	
 		$form = new UI\Form;
 
-		$form->addText("Name", "Nazev");
-		$form->addText("Description", "Popis");
-		$form->addTextArea("PresentationText", "Prezentace");
-
-		$form->addSubmit("SubmitUpdatedExposition", "Ulozit");
-		$form->onSuccess[] = $this->processValidatedEditExpositionForm;
-
-		// Set defaults
-		$expo = $this->expositionToModify;
-		if ($expo != null)
+		$form->addText("Name", "Název")->setValue($exposition["Name"]);
+		$form->addText("Description", "Popis")->setValue($exposition["Description"]);
+		$form->addCheckbox("DeleteThumbnail", "Smazat ikonu");
+		$form->addUpload("NewThumbnail", "Nová ikona");
+		$presentation = $form->addTextArea("PresentationText", "Prezentace");
+		if ($exposition["Presentation"] != null)
 		{
-			$form->setDefaults(array(
-				"Name" => $expo["Name"],
-				"Description" => $expo["Description"],
-				"PresentationText" => $expo->ref("CmsPages", "Presentation")["Text"]
-			));
-
-			$form->addHidden("ExpositionId", $expo["Id"]);
-			$form->addHidden("CmsId", $expo["Presentation"]);
+			$presentation->setValue($exposition->ref("CmsPages", "Presentation")["Text"]);
 		}
+
+		$form->addSubmit("SubmitUpdatedExposition", "Uložit");
+		$form->onValidate[] = $this->validateEditExpositionForm;
+		$form->onSuccess[] = $this->processValidatedEditExpositionForm;
 
 		return $form;
 	}
@@ -299,6 +417,8 @@ class GalleryPresenter extends DiscussionPresenter
 
 	public function composeExpositionSelectList()
 	{
+		$database = $this->context->database;
+	
 		$expoSelectList = array(
 			0 => "~ Centralni ~",
 		);
@@ -311,6 +431,8 @@ class GalleryPresenter extends DiscussionPresenter
 		{
 			$expoSelectList[$id] = $values["Name"];
 		}
+		
+		return $expoSelectList;
 	}
 
 
@@ -329,7 +451,7 @@ class GalleryPresenter extends DiscussionPresenter
 			->getControlPrototype()->class = 'Wide';
 
 		// Description text
-		$form->AddTextArea("Description", "Popis", 2, 5); // Small dimensions to allow CSS scalinh
+		$form->AddTextArea("Description", "Popis", 2, 5); // Small dimensions to allow CSS scaling
 
 		// Exposition
 
@@ -370,12 +492,13 @@ class GalleryPresenter extends DiscussionPresenter
 
 	public function validateAddImageForm($form)
 	{
+		$database = $this->context->database;
 		$values = $form->getValues();
 
 		// Check if exposition exists
 		if ($values["ExpositionId"] != 0)
 		{
-			$expoResult = $this->database->table("ImageExpositions")->select("Id", $values["ExpositionId"])->count();
+			$expoResult = $database->table("ImageExpositions")->select("Id", $values["ExpositionId"])->count();
 			if ($expoResult == 0)
 			{
 				$form->addError("Zadana expozice neexistuje");
@@ -459,15 +582,12 @@ class GalleryPresenter extends DiscussionPresenter
 	{
 		$form = new UI\Form();
 
-		$form->addRadioList("ImageOperation", "Jak nalozit s obrazky:", array(
+		$form->addRadioList("ImageOperation", "Akce:", array(
 			"Delete" => "Vymazat",
 			"Move" => "Presunout do jine expozice:"
 		));
 
-		$expoList = $this->composeExpositionSelectList();
-		unset($expoList[$this->getParameter("id")]); // Exclude the expo we're about to remove.
-		echo $this->getParameter("id"); // debug
-		$form->addSelectList("TargetExpo", "Kam presunout: ", $expoList);
+		$form->addSelect("TargetExpo", "Kam přesunout: ");
 
 		$form->addCheckbox("KeepThumbnail", "Ponechat si ikonu");
 
@@ -475,56 +595,75 @@ class GalleryPresenter extends DiscussionPresenter
 
 		$form->addSubmit("SubmitDeleteExpo", "Smazat");
 		$form->onSuccess[] = $this->processValidatedDeleteExpositionForm;
+		
+		return $form;
 	}
 
 
 
-	public function processValidatedDeleteExpositionForm()
+	public function processValidatedDeleteExpositionForm($form)
 	{
 		$values = $form->getValues();
 		$database = $this->context->database;
-		$database->beginTransaction();
-		$expoId = $this->getParameter("id");
+		$expoId = $this->getParameter("expositionId");
 
 		/*try
 		{*/
-			$expo = $database->table("ImageExpositions")->where("Id", $expoId);
+			$database->beginTransaction();
+		
+			$expo = $database->table("ImageExpositions")->where("Id", $expoId)->fetch();
+			$expoThumbnail = $expo->ref("UploadedFiles", "Thumbnail");
+			$expoCmsPage = $expo->ref("CmsPages", "Presentation");
+			
+			$expo->delete();
 
 			// Handle thumbnail
-			if ($values["KeepThumbnail"] == true)
+			if ($expoThumbnail != null)
 			{
-				$database->table("UploadedFiles")->where("ExpositionId", $expoId)->update(array(
-					"SourceType" => null,
-					"SourceId" => null
-				));
-			}
-			else
-			{
-				// Delete file
-				$handler = new Fcz\FileUploadHandler($this);
-				$handler->deleteUploadedFile($id);
+				if ($values["KeepThumbnail"] == true)
+				{
+					$expoThumbnail->update(array(
+						"SourceType" => null,
+						"SourceId" => null
+					));
+				}
+				else
+				{
+					// Delete file
+					$this->getUploadHandler()->deleteUploadedFile($expoThumbnail);
+				}
 			}
 
 			// Handle presentation
-			$cmsPage = $expo->ref("CmsPages", "Presentation");
-			if ($values["KeepPresentation"] == true)
+			if ($expoCmsPage != null)
 			{
-				$cmsPage->update(array(
-					"Name" => "(orphaned) " . $cmsPage["Name"],
-					"Description" => "(orphaned) " . $cmsPage["Description"]
-				));
-			}
-			else
-			{
-				$cmsPage->delete();
+				if ($values["KeepPresentation"] == true)
+				{
+					$expoCmsPage->update(array(
+						"Name" => "(orphaned) " . $cmsPage["Name"],
+						"Description" => "(orphaned) " . $cmsPage["Description"]
+					));
+				}
+				else
+				{
+					$expoCmsPage->delete();
+				}
 			}
 
 			// Handle images
 			if ($values["ImageOperation"] == "Delete")
 			{
-				foreach ($database->table("Images") as $image)
+				foreach ($expo->related("Images") as $image)
 				{
-					// TODO
+					$this->getContentManager()->deleteImage($image);
+				}
+			}
+			else if ($values["ImageOperation"] == "Move")
+			{
+				$newExpo = $values["TargetExpo"] == 0 ? null : (int) $values["TargetExpo"];
+				foreach ($expo->related("Images") as $image)
+				{
+					$image->update("ExpositionId", $newExpo);
 				}
 			}
 
@@ -536,6 +675,7 @@ class GalleryPresenter extends DiscussionPresenter
 			Nette\Diagnostics\Debugger::log($exception);
 		}*/
 
+		$this->redirect("Gallery:user");
 	}
 
 }
