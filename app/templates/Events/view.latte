@@ -1,0 +1,86 @@
+{block title}
+	{$Name} - Událost - Furry.cz
+{/block}
+
+{block content}
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&language=cs"></script>
+	<script type="text/javascript" src="http://maps.google.com/maps?file=api&v=2&key=AIzaSyAnPL6SiRa9DGSXYQimemSTd50QF-9GvGI"></script>
+	<h1>Událost: {$Name}</h1>
+	<div class=Event>
+		<div class="popis">{$Description}</div>
+		<div class="box" style="position:relative;">
+			<div style="float:right;width:375px;height:270px;">							
+				<div id='map-canvas' style='position:absolute;width:375px;height:270px;right:0px;'></div>
+				<script>
+				{syntax double}
+				$("#map-canvas").hover(function() {
+					$(this).animate({
+						width: "750px", height: "450px"
+					}, 300 );
+				}, function() {	
+					$(this).animate({
+						width: "375px", height: "270px"
+					}, 300 );
+				});
+				{{syntax latte}}
+				map = new GMap2(document.getElementById('map-canvas'));
+				map.setCenter(new GLatLng({$GPS[0]}, {$GPS[1]}), 17);        
+				map.addControl(new GScaleControl());        	
+				var center = map.getCenter();			
+				map.setMapType(G_SATELLITE_MAP);			
+				map.enableRotation();    
+				var marker = new GMarker(center, {l}draggable: false{r});    
+				map.addOverlay(marker);
+				</script>
+			</div>
+			<b>Datum a čas zahájení: </b> {$StartTime}<br>
+			<b>Datum a čas ukončení: </b> {$EndTime}<br>
+			<b>Místo konání: </b> {$Place} {if $Kapacita>0}[<i>Kapacita: {$Kapacita}</i>]{/if}<br>
+			<b>GPS souřadnice: </b> {$GPS[0]}, {$GPS[1]}
+			<div style="height:1px;width: 58%;margin-top: 5px;border-top:1px solid silver;margin-bottom: 5px;"></div>
+				<div>
+					<b style="float:left;">Účastní se: </b>
+					<div n:foreach="$Ucastnici[1] as $Ucast" style="float:left;">
+						{if $Ucast[0]!=""}
+						<img src="{$Ucast[1]}" style="width: 20px;height: 20px;" valign="bottom"> <a n:href="User:Profile $Ucast[2]">{$Ucast[0]}</a>
+						{/if}
+					</div>
+					<div style="clear:left;"></div>
+				</div>
+				<div>
+					<b style="float:left;">Možná se účastní: </b>
+					<div n:foreach="$Ucastnici[3] as $Ucast" style="float:left;">
+						{if $Ucast[0]!=""}
+						<img src="{$Ucast[1]}" style="width: 20px;height: 20px;" valign="bottom"> <a n:href="User:Profile $Ucast[2]">{$Ucast[0]}</a>
+						{/if}
+					</div>
+					<div style="clear:left;"></div>
+				</div>
+				<div>
+					<b style="float:left;">Neúčastní se: </b>
+					<div n:foreach="$Ucastnici[2] as $Ucast" style="float:left;">
+						{if $Ucast[0]!=""}
+						<img src="{$Ucast[1]}" style="width: 20px;height: 20px;" valign="bottom"> <a n:href="User:Profile $Ucast[2]">{$Ucast[0]}</a>
+						{/if}
+					</div>
+					<div style="clear:left;"></div>
+				</div>
+				<div>
+					<div style="margin-top:7px;">
+					{form eventAttendForm}
+					<b style="float:left;">{label Attend /}</b>
+					{input Attend}
+					{input Change}
+					{/form}
+					</div>
+					{if $EditVisible==1 or $Edit==1}
+						<div style="background-color: #474747;margin-top:7px;width:57%;padding:6px;">Editačná panel události: <br>
+							{if $Edit==1}<a n:href="Events:edit $EventId">Upravit</a> |{/if}{if $Owner==1} <a n:href="delete!">Smazat</a> |{/if}{if $EditVisible==1} <a n:href="Events:visible $EventId">Nastavení oprávnění</a>{/if}</div>
+						</div>
+					{/if}
+				</div>
+			<div style="clear:both;"></div>
+		</div>
+		<div style="padding:5px;"></div>
+	</div>
+{/block}

@@ -104,13 +104,16 @@ class UserPresenter extends BasePresenter
 			->setOption('description', 'Tento údaj nebude nikde zobrazen')
 			->setRequired('Datum narození je povinné')
 			->addRule(callback($this->checkValidDate), 'Zadané datum narození je neplatné.')
-			->setType('date') // HTML5 <input> type
+			->setType('date'); // HTML5 <input> type
+			/*
 			->addRule(
 				UI\Form::PATTERN,
-				'Musíte zadat platné datum ve formátu "15. 5. 2005"',
-				// Doesn't check if date exists, i.e. "32. 2. 2010" passes
+				'Musíte zadat platné datum ve formátu "15-5-2005"',
+				// Doesn't check if date exists, i.e. "32-2-2010" passes
 				// Complete validation is done by callback
-				'\s*[0-3]{0,1}\s*[0-9]{1}\s*\.\s*[0-1]{0,1}\s*[0-9]{1}\s*\.\s*[1-2]{1}\s*[0-9]{1}\s*[0-9]{1}\s*[0-9]{1}\s*');
+				'\s*[0-3]{0,1}\s*[0-9]{1}\s*\-\s*[0-1]{0,1}\s*[0-9]{1}\s*\-\s*[1-2]{1}\s*[0-9]{1}\s*[0-9]{1}\s*[0-9]{1}\s*');
+				//'0?[1-9]|[12][0-9]|3[01]\-?0?[1-9]|1[0-2]\-?20[0-9]{2}');
+			*/	
 
 
 		$form->addText('email', 'E-mail * :')
@@ -249,7 +252,7 @@ class UserPresenter extends BasePresenter
 			|| $profile['Address'] != null
 			|| $profile['RealSex'] != null
 			|| $profile['FavouriteWebsites'] != null
-			|| $profile['ProfilePhoto'] != null
+			|| $profile['ProfilePhotoFilename'] != null
 			|| $profile['Hobbies'] != null
 			|| $profile['DistanceFromPrague'] != null
 			|| $profile['WillingnessToTravel'] != null);
@@ -284,6 +287,8 @@ class UserPresenter extends BasePresenter
 		$profile['WillingnessToTravel'] = ($profile['WillingnessToTravel'] != null && $profile['WillingnessToTravel'] != '')
 			? $willingnessToTravelValues[$profile['WillingnessToTravel']]
 			: null;
+			
+		$profile['LastLogin'] = date("d. m. Y H:i", strtotime($profile["LastLogin"]));
 
 		// Format favourite websites
 		$favouries = array();

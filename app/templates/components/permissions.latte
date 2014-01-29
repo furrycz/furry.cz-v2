@@ -1,0 +1,90 @@
+	<div style="float:left;width:49%;padding:5px;">		
+		{form permissions-permisionForm}
+		<table class="permisionTable">
+			<tr><th width=320>Uživatel</th>
+				{foreach $Permisions as $key => $Perm}
+					{if $Perm["0"]!=""}
+						<th style="{if $Perm["2"]!=""}background:#{$Perm["2"]};{/if}{if strlen($Perm["0"])>1}font-size:7px;padding:0px;padding-top:9px;{/if}">{$Perm["0"]}</th>
+					{/if}
+				{/foreach}
+				<th style="background:red;">D</th>
+			</tr>
+			{? $i=0}
+			{if $DefaultShow}
+				<tr>
+					<td><b>Defaultní práva</b><input type=hidden name="user[{$i}]" value=''><input type=hidden name="permisionId[{$i}]" value='{$DefaultId}'></td>
+					{foreach $Permisions as $key => $Perm}
+						{if $Perm["0"]!=""}
+							<td{if $Perm["2"]!=""} style="background:#{$Perm["2"]};"{/if}>
+								<input type="checkbox" name="{$key}[{$i}]" title='{$Perm["0"]} - {$Perm["1"]}' {if $DefaultPermision[$key]}checked{/if} value=1>
+							</td>	
+						{/if}{if $Perm["0"]==""}
+							<input type="hidden" name="{$key}[{$i}]" value="{$Perm["5"]}">
+						{/if}					
+					{/foreach}
+					<td style="background:red;"><input type="checkbox" name="delete[{$i}]" value=0 disabled></td>
+				</tr>
+				{? $i++}
+			{/if}
+			{foreach $accessAll as $access}
+				<tr>
+					<td>{$access["Name"]}<input type=hidden name="user[{$i}]" value='{$access["Id"]}'><input type=hidden name="permisionId[{$i}]" value='{$access["PermisionId"]}'></td>
+					{foreach $Permisions as $key => $Perm}
+						{if $Perm["0"]!=""}
+							<td{if $Perm["2"]!=""} style="background:#{$Perm["2"]};"{/if}>
+								<input type="checkbox" name="{$key}[{$i}]" title='{$Perm["0"]} - {$Perm["1"]}' {if $access[$key]}checked{/if} value=1>
+							</td>	
+						{/if}{if $Perm["0"]==""}
+							<input type="hidden" name="{$key}[{$i}]" value="{$Perm["5"]}">
+						{/if}					
+					{/foreach}
+					<td style="background:red;"><input type="checkbox" name="delete[{$i}]" value=1></td>
+				</tr>
+				{? $i++}
+			{/foreach}
+			<tr>
+				<td>
+					<input type="hidden" name="permisionId[{$i}]" value>
+					<select name="user[{$i}]" style="width:100%;">
+						<option value>Přidat uživatele</option>
+						{foreach $allUsers as $user}
+							<option value="{$user[0]}">{$user[1]}</option>
+						{/foreach}
+					</select>
+				</td>
+				{foreach $Permisions as $key => $Perm}
+					{if $Perm["0"]!=""}
+						<td{if $Perm["2"]!=""} style="background:#{$Perm["2"]};"{/if}><input type="checkbox" name="{$key}[{$i}]" title='{$Perm["0"]} - {$Perm["1"]}' {if $Perm["5"]==1}checked{/if} value=1></td>
+					{/if}{if $Perm["0"]==""}
+							<input type="hidden" name="{$key}[{$i}]" value="{$Perm["5"]}">
+					{/if}	
+				{/foreach}
+				<td style="background:red;"><input type="checkbox" name="delete[{$i}]" disabled value=0></td>
+			</tr>
+		</table>
+		{input Change}
+		{/form}
+	</div>
+	<div style="float:right;width:48%;padding:5px;">
+		{if !$DefaultShow}
+			<div class="EventVisible">
+			{form permissions-visibleForm}
+				<b>{label visible /}</b><br>{input visible} {input Change}
+			{/form}
+			</div>
+		{/if}
+		<div style="font-size:10px;">
+			<table style="border:0px;padding:0px;" class="noPadding">
+				{foreach $Permisions as $key => $Perm}
+					{if $Perm[0]!=""}<tr><td><b title="{$Perm[4]}"{if $Perm[2]!=""} style="color:#{$Perm[2]};"{/if}>{$Perm[0]}</b></td><td> - {$Perm[1]}</td></tr>{/if}
+				{/foreach}
+				<tr><td><b title="Smaže záznam z tabulky Access!" style="color:red;">D</b></td><td> - Odstranit z tabulky</td></tr>
+			</table>
+			<br>
+			{if $Description=="!"}
+				Pro přidání dalšího uživatele jej vyberte ze seznamu na posledním řádku tabulky a vedle něj nastavte, co smí v tématu dělat. Změny se projeví až po odeslání tlačítkem "Upravit přístupová práva". Potom můžete přidat další uživatele.
+			{/if}
+			{if $Description!="!"}{$Description}{/if}
+		</div>
+	</div>
+	<div style="clear:both;"></div>
