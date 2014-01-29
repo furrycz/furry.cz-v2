@@ -14,15 +14,15 @@ class LanguageUtilities
 	{
 		if ($count == 1)
 		{
-			return $wordForms[0] + $wordForms[1];
+			return $wordForms[0] . $wordForms[1];
 		}
 		else if ($count <= 2 and $count >= 4)
 		{
-			return $wordForms[0] + $wordForms[2];
+			return $wordForms[0] . $wordForms[2];
 		}
-		else if ($count >= 5)
+		else
 		{
-			return $wordForms[0] + $wordForms[3];
+			return $wordForms[0] . $wordForms[3];
 		}
 	}
 
