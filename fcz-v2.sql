@@ -1,8 +1,8 @@
--- Adminer 3.3.3 MySQL dump
+-- Adminer 4.0.2 MySQL dump
 
 SET NAMES utf8;
 SET foreign_key_checks = 0;
-SET time_zone = 'SYSTEM';
+SET time_zone = '+01:00';
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
 DROP TABLE IF EXISTS `Access`;
@@ -70,15 +70,6 @@ CREATE TABLE `CmsPages` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
-DROP TABLE IF EXISTS `ContactTypes`;
-CREATE TABLE `ContactTypes` (
-  `Id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'PK',
-  `Name` varchar(25) COLLATE utf8_czech_ci NOT NULL,
-  `Url` varchar(50) COLLATE utf8_czech_ci DEFAULT NULL,
-  PRIMARY KEY (`Id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
-
-
 DROP TABLE IF EXISTS `Contacts`;
 CREATE TABLE `Contacts` (
   `Id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'PK',
@@ -91,6 +82,15 @@ CREATE TABLE `Contacts` (
   KEY `TypeId` (`TypeId`),
   CONSTRAINT `Contacts_ibfk_1` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `Contacts_ibfk_2` FOREIGN KEY (`TypeId`) REFERENCES `ContactTypes` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+
+
+DROP TABLE IF EXISTS `ContactTypes`;
+CREATE TABLE `ContactTypes` (
+  `Id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `Name` varchar(25) COLLATE utf8_czech_ci NOT NULL,
+  `Url` varchar(50) COLLATE utf8_czech_ci DEFAULT NULL,
+  PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -149,6 +149,9 @@ CREATE TABLE `Events` (
   `EndTime` datetime DEFAULT NULL,
   `CalendarLabel` varchar(10) COLLATE utf8_czech_ci NOT NULL,
   `Header` int(10) unsigned DEFAULT NULL COMMENT 'FK - CMS page id',
+  `Capacity` int(20) NOT NULL,
+  `Place` varchar(500) COLLATE utf8_czech_ci NOT NULL,
+  `GPS` varchar(100) COLLATE utf8_czech_ci NOT NULL,
   PRIMARY KEY (`Id`),
   KEY `ContentId` (`ContentId`),
   KEY `Header` (`Header`),
@@ -278,6 +281,21 @@ CREATE TABLE `PollAnswers` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
+DROP TABLE IF EXISTS `Polls`;
+CREATE TABLE `Polls` (
+  `Id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `ContentId` int(11) unsigned NOT NULL COMMENT 'FK',
+  `Name` varchar(100) COLLATE utf8_czech_ci NOT NULL,
+  `Description` tinytext COLLATE utf8_czech_ci NOT NULL,
+  `MaxVotesPerUser` int(11) DEFAULT NULL,
+  `SaveIndividualVotes` tinyint(1) unsigned NOT NULL,
+  `DisplayVotersTo` enum('Nobody,','OtherVoters,','Everybody') COLLATE utf8_czech_ci NOT NULL COMMENT 'Controls who can see voter names',
+  PRIMARY KEY (`Id`),
+  KEY `ContentId` (`ContentId`),
+  CONSTRAINT `Polls_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `Content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+
+
 DROP TABLE IF EXISTS `PollVotes`;
 CREATE TABLE `PollVotes` (
   `Id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'PK',
@@ -291,21 +309,6 @@ CREATE TABLE `PollVotes` (
   CONSTRAINT `PollVotes_ibfk_1` FOREIGN KEY (`PollId`) REFERENCES `Polls` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `PollVotes_ibfk_2` FOREIGN KEY (`AnswerId`) REFERENCES `PollAnswers` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `PollVotes_ibfk_3` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
-
-
-DROP TABLE IF EXISTS `Polls`;
-CREATE TABLE `Polls` (
-  `Id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'PK',
-  `ContentId` int(11) unsigned NOT NULL COMMENT 'FK',
-  `Name` varchar(100) COLLATE utf8_czech_ci NOT NULL,
-  `Description` tinytext COLLATE utf8_czech_ci NOT NULL,
-  `MaxVotesPerUser` int(11) DEFAULT NULL,
-  `SaveIndividualVotes` tinyint(1) unsigned NOT NULL,
-  `DisplayVotersTo` enum('Nobody,','OtherVoters,','Everybody') COLLATE utf8_czech_ci NOT NULL COMMENT 'Controls who can see voter names',
-  PRIMARY KEY (`Id`),
-  KEY `ContentId` (`ContentId`),
-  CONSTRAINT `Polls_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `Content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -446,6 +449,9 @@ CREATE TABLE `Users` (
   CONSTRAINT `Users_ibfk_9` FOREIGN KEY (`ImageGalleryPresentation`) REFERENCES `CmsPages` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
+INSERT INTO `Users` (`Id`, `Username`, `Nickname`, `Password`, `Salt`, `OtherNicknames`, `Species`, `FurrySex`, `ShortDescriptionForMembers`, `ShortDescriptionForGuests`, `ProfileForMembers`, `ProfileForGuests`, `ImageGalleryPresentation`, `WritingsPresentation`, `AvatarFilename`, `FullName`, `Address`, `RealSex`, `DateOfBirth`, `FavouriteWebsites`, `ProfilePhotoFilename`, `Hobbies`, `GoogleMapsLink`, `DistanceFromPrague`, `WillingnessToTravel`, `Email`, `LastLogin`, `LastVisitedPage`, `LastActivityTime`, `SendIntercomToMail`, `PostsOrdering`, `PostsPerPage`, `IsAdmin`, `IsApproved`, `IsBanned`, `IsFrozen`, `Deleted`) VALUES
+(1,	'natsu',	'Natsu',	'$2y$07$a7t95tlr4ccti80wlfsjueJ2FbANexRtwljY6LNkgqB/uZMD6kXc2',	'$2y$07$a7t95tlr4ccti80wlfsjui',	'',	'',	'',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	'',	'',	'',	'1996-08-13',	'',	NULL,	'',	NULL,	NULL,	NULL,	'kubat130@gmail.com',	NULL,	NULL,	NULL,	0,	'NewestOnTop',	25,	1,	1,	0,	0,	0),
+(2,	'furryuser1',	'Furry User 1',	'$2y$07$juhdmualbu501e7sxc6lee5Y8CLav46XSyZvrAbOYLm7D9L9m6T6W',	'$2y$07$juhdmualbu501e7sxc6lej',	'fu1',	'yiffy puppy',	'',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	'',	'',	'',	'2001-01-20',	'',	NULL,	'',	NULL,	NULL,	NULL,	'sterlyn@email.cz',	'2014-01-30 19:04:17',	NULL,	NULL,	0,	'NewestOnTop',	25,	0,	1,	0,	0,	0);
 
 DROP TABLE IF EXISTS `WritingCategories`;
 CREATE TABLE `WritingCategories` (
@@ -473,4 +479,4 @@ CREATE TABLE `Writings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
--- 2014-01-14 12:36:01
+-- 2014-01-30 19:42:19
