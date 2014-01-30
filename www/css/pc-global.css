@@ -118,6 +118,24 @@ div.DiscussionPosts div.HiddenPosts div.AvatarBox { height: 25px; }
 
 #frmnewPostForm-save { float: right; margin: 0 5px 0; }
 
+/*******************************/
+/* GalleryThumbnails component */
+/*******************************/
+
+ul.GalleryThumbnails { margin: 0 10px 10px; padding: 0; text-align: center; }
+
+ul.GalleryThumbnails li { list-style-type: none; display: inline-block; margin: 5px; min-width: 170px; }
+
+ul.GalleryThumbnails a:hover { background-color: #006aeb; }
+
+ul.GalleryThumbnails a { display: block; padding: 3px; background-color: #3C3732; border-radius: 5px; }
+
+ul.GalleryThumbnails li img { max-width: 200px; max-height: 200px; border-radius: 5px; }
+
+ul.GalleryThumbnails li span { display: block; text-align: center; }
+
+p.ThisExpoIsEmpty {  }
+
 /****************************************************************************/
 /*                           @Layout template                               */
 /****************************************************************************/
@@ -318,6 +336,10 @@ div#Content-Ignorelist-edit img.Avatar { max-height: 35px; vertical-align: middl
 
 #Content-Gallery-default .BottomClear { clear: both; }
 
+/* Exposition */
+
+#ExpositionThumbnails { min-height: 10px; margin: 0 10px; }
+
 /* User */
 
 #Content-Gallery-user div.Header { padding: 0 10px; background-color: #63973d; color: #2b2725; border-radius: 10px 10px 0 0; line-height: 50px; }
@@ -339,30 +361,47 @@ div#Content-Ignorelist-edit img.Avatar { max-height: 35px; vertical-align: middl
 
 #MyExpoTools a { padding: 0 5px; line-height: 40px; margin: 5px 0 0; display: block; float: right; }
 
+    /* >>> Expositions */
 
-    /* calendar */
-	h1 .pu {position: absolute;background: #568136;text-decoration: none;border-radius: 5px;top:2px;}
-	h1 .pu:hover {background:#77D333;}
-	
-    table.calendar { border-left:1px solid #63973D;margin:0px auto;margin-top:10px;}
-    tr.calendar-row { -background-color:#63973D; }
-    td.calendar-day { min-height:80px; font-size:11px; position:relative;position:relative; } * html div.calendar-day { height:80px; }
-    td.calendar-day-np { background:#444343; min-height:80px; } * html div.calendar-day-np { height:80px; }
-    td.calendar-day-head { font-weight:bold; text-align:center; width:120px; padding:5px; border:1px solid #63973D;border-left:0px; }
-    div.day-number { cursor:pointer;z-index:10;background:#63973D; padding:5px; color:#fff; font-weight:bold; float:right; margin:-5px -5px 0 0; width:20px; text-align:center;border-bottom-left-radius: 6px;position:absolute;top:5px;right:5px; }
-	div.day-number.svatek {background:#D36E00;}
-	div.day-number.actual {background:#008FFF;}
-	div.day-number:hover {background:#97933D;}
-	div.day-number a {color:white;text-decoration:none;}
-    /* shared */
-    td.calendar-day, td.calendar-day-np { width:120px; padding:5px; border-bottom:1px solid #63973D; border-right:1px solid #63973D; }
-	td.calendar-day .evenName {height: 18px;overflow: hidden;position:relative;}
-	td.calendar-day .evenName:hover {background-color:rgba(0, 112, 255, 0.21);}
-	td.calendar-day .evenName:hover a {color:white;}
-	td.calendar-day .evenName a{z-index:5;text-decoration:none;position: absolute;left: 0px;padding-left: 14px;top: -3px;width: 100px;}
+#UserPortolioExpositions { margin: 0 10px 10px; padding: 0; overflow-x: scroll; margin-top: 10px; height: 140px; }
 
-/* Events */
+#UserPortolioExpositions li { list-style-type: none; display: inline-block; margin: 2px; min-width: 100px; text-align: center; }
 
+#UserPortolioExpositions a:hover { background-color: #006aeb; }
+
+#UserPortolioExpositions a { display: block; padding: 3px; background-color: #3C3732; border-radius: 5px; }
+
+#UserPortolioExpositions li img { max-width: 100px; max-height: 80px; border-radius: 5px; }
+
+#UserPortolioExpositions span { display: block; }
+
+/****************************************************************************/
+/*                                 Events                                   */
+/****************************************************************************/
+
+/* Calendar */
+
+h1 .pu {position: absolute;background: #568136;text-decoration: none;border-radius: 5px;top:2px;}
+h1 .pu:hover {background:#77D333;}
+
+table.calendar { border-left:1px solid #63973D;margin:0px auto;margin-top:10px;}
+tr.calendar-row { -background-color:#63973D; }
+td.calendar-day { min-height:80px; font-size:11px; position:relative;position:relative; } * html div.calendar-day { height:80px; }
+td.calendar-day-np { background:#444343; min-height:80px; } * html div.calendar-day-np { height:80px; }
+td.calendar-day-head { font-weight:bold; text-align:center; width:120px; padding:5px; border:1px solid #63973D;border-left:0px; }
+div.day-number { cursor:pointer;z-index:10;background:#63973D; padding:5px; color:#fff; font-weight:bold; float:right; margin:-5px -5px 0 0; width:20px; text-align:center;border-bottom-left-radius: 6px;position:absolute;top:5px;right:5px; }
+div.day-number.svatek {background:#D36E00;}
+div.day-number.actual {background:#008FFF;}
+div.day-number:hover {background:#97933D;}
+div.day-number a {color:white;text-decoration:none;}
+/* shared */
+td.calendar-day, td.calendar-day-np { width:120px; padding:5px; border-bottom:1px solid #63973D; border-right:1px solid #63973D; }
+td.calendar-day .evenName {height: 18px;overflow: hidden;position:relative;}
+td.calendar-day .evenName:hover {background-color:rgba(0, 112, 255, 0.21);}
+td.calendar-day .evenName:hover a {color:white;}
+td.calendar-day .evenName a{z-index:5;text-decoration:none;position: absolute;left: 0px;padding-left: 14px;top: -3px;width: 100px;}
+
+/* Event */
 .Event .popis {padding:10px;}
 .Event .box {border: 1px solid black;padding: 10px;margin: 5px 10px;background-color: rgb(54, 54, 54);}
 .EventVisible {border: 1px solid #63973D;margin: 5px 0px;padding: 7px;}

@@ -28,5 +28,6 @@ __Written in PHP + Nette FW__
 * __PHP Version__: 5.4+
 * __PHP Extensions__:
 	* FileInfo
+	* JSON
 * __SQL Servers__: MySQL only
 

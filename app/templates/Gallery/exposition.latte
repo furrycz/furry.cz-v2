@@ -24,7 +24,7 @@
 		</a>
 		{if $my}
 			<span id="MyExpoTools">
-				<a n:href="Gallery:removeExposition $exposition['Id']">Odstranit</a>
+				<a n:href="Gallery:deleteExposition $exposition['Id']">Odstranit</a>
 				<a n:href="Gallery:editExposition $exposition['Id']">Upravit</a>
 			</span>
 		{/if}
@@ -39,6 +39,10 @@
 			{!$cms["Text"]}
 		</div>
 	{/if}
+	
+	<section id="ExpositionThumbnails">
+		{control expositionThumbnails}
+	</section>
 
 	<div class="Footer">
 		<ul id="Expositions">
@@ -53,4 +57,6 @@
 			{/if}
 		</ul>
 	</div>
+	
+	
 {/block}

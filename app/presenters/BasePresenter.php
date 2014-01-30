@@ -8,6 +8,42 @@ use Nette\Application\UI;
 abstract class BasePresenter extends UI\Presenter
 {
 
+	private $uploadHandler = null;
+	
+	private $contentManager = null;
+	
+	
+	
+	/**
+	* Create and fetch FileUploadHandler
+	* @return Fcz\FileUploadHandler
+	*/
+	public function getUploadHandler()
+	{
+		if ($this->uploadHandler == null)
+		{
+			$this->uploadHandler = new Fcz\FileUploadHandler($this);
+		}
+		return $this->uploadHandler;
+	}
+	
+	
+	
+	/**
+	* Create and fetch ContentManager
+	* @return Fcz\ContentManager
+	*/
+	public function getContentManager()
+	{
+		if ($this->contentManager == null)
+		{
+			$this->contentManager = new Fcz\ContentManager($this);
+		}
+		return $this->contentManager;
+	}
+	
+	
+
 	/**
 	* Creates login form, which is part of the basic layout and thus part of any page.
 	*/
