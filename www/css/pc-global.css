@@ -22,7 +22,7 @@ img { border: none; }
 
 a { color: #4a66ec; padding: 3px 1px; } /* Adjusted for dark background */
 
-a:hover, a:active, a:focus { background-color: #006aeb; text-decoration: none; color: white; border-radius: 5px; }
+a:hover, a:active, a:focus { background-color: #006aeb; text-decoration: none; color: white; -border-radius: 5px; }
 
 a.Position:hover { background-color: transparent; }
 
@@ -214,7 +214,7 @@ div#UserList { margin: 5px 0 0 0.53%; }
 
 div#UserList div.User { width: 32.8%; height: 70px; margin: 5px 0.53% 0 0; background-color: #3c3732; float: left; padding: 0; border-radius: 5px; }
 
-div#UserList div.User img.Avatar { max-width: 100px; max-height: 70px; border: none; margin: 0 5px 0 0; float: left; border-radius: 5px 0 0 5px; }
+div#UserList div.User img.Avatar { width: 70px; height: 70px; border: none; margin: 0 5px 0 0; float: left; border-radius: 5px 0 0 5px; }
 
 /****************/
 /* User profile */
@@ -222,7 +222,7 @@ div#UserList div.User img.Avatar { max-width: 100px; max-height: 70px; border: n
 
 div#ProfileHeader { padding: 0 10px; background-color: #63973d; color: #2b2725; border-radius: 10px 10px 0 0; line-height: 50px; }
 
-div#ProfileHeader img.Avatar { float: left; position: relative; top: 10px; margin: 0 10px 0 0; max-width: 200px; max-height: 200px; border-radius: 10px; }
+div#ProfileHeader img.Avatar { float: left; position: relative; top: 10px; margin: 0 10px 0 0; max-width: 200px; max-height: 200px; border-radius: 10px; width:150px;height:150px; }
 
 div#ProfileHeader h1 { display: inline; background: transparent; margin: 0; padding: 0; }
 
@@ -242,7 +242,7 @@ div#ProfileCms { padding: 5px 10px 10px; }
 
 div#ProfileReal { border-top: 2px solid #63973d; padding: 10px; }
 
-div#ProfileReal img.Photo { float: left; margin: 0 10px 0 0; border-radius: 10px; }
+div#ProfileReal img.Photo { float: left; margin: 0 10px 0 0; border-radius: 10px; width:150px;height:150px; }
 
 div#ProfileReal dl { margin: 0; }
 
@@ -338,7 +338,7 @@ div#Content-Ignorelist-edit img.Avatar { max-height: 35px; vertical-align: middl
 
 /* Exposition */
 
-section#ExpositionThumbnails { min-height: 10px; margin: 0 10px; }
+#ExpositionThumbnails { min-height: 10px; margin: 0 10px; }
 
 /* User */
 
@@ -374,3 +374,84 @@ section#ExpositionThumbnails { min-height: 10px; margin: 0 10px; }
 #UserPortolioExpositions li img { max-width: 100px; max-height: 80px; border-radius: 5px; }
 
 #UserPortolioExpositions span { display: block; }
+
+/****************************************************************************/
+/*                                 Events                                   */
+/****************************************************************************/
+
+/* Calendar */
+
+h1 .pu {position: absolute;background: #568136;text-decoration: none;border-radius: 5px;top:2px;}
+h1 .pu:hover {background:#77D333;}
+
+table.calendar { border-left:1px solid #63973D;margin:0px auto;margin-top:10px;}
+tr.calendar-row { -background-color:#63973D; }
+td.calendar-day { min-height:80px; font-size:11px; position:relative;position:relative; } * html div.calendar-day { height:80px; }
+td.calendar-day-np { background:#444343; min-height:80px; } * html div.calendar-day-np { height:80px; }
+td.calendar-day-head { font-weight:bold; text-align:center; width:120px; padding:5px; border:1px solid #63973D;border-left:0px; }
+div.day-number { cursor:pointer;z-index:10;background:#63973D; padding:5px; color:#fff; font-weight:bold; float:right; margin:-5px -5px 0 0; width:20px; text-align:center;border-bottom-left-radius: 6px;position:absolute;top:5px;right:5px; }
+div.day-number.svatek {background:#D36E00;}
+div.day-number.actual {background:#008FFF;}
+div.day-number:hover {background:#97933D;}
+div.day-number a {color:white;text-decoration:none;}
+/* shared */
+td.calendar-day, td.calendar-day-np { width:120px; padding:5px; border-bottom:1px solid #63973D; border-right:1px solid #63973D; }
+td.calendar-day .evenName {height: 18px;overflow: hidden;position:relative;}
+td.calendar-day .evenName:hover {background-color:rgba(0, 112, 255, 0.21);}
+td.calendar-day .evenName:hover a {color:white;}
+td.calendar-day .evenName a{z-index:5;text-decoration:none;position: absolute;left: 0px;padding-left: 14px;top: -3px;width: 100px;}
+
+/* Event */
+.Event .popis {padding:10px;}
+.Event .box {border: 1px solid black;padding: 10px;margin: 5px 10px;background-color: rgb(54, 54, 54);}
+.EventVisible {border: 1px solid #63973D;margin: 5px 0px;padding: 7px;}
+
+.permisionTable {border:1px solid #63973D;border-collapse: collapse;margin: 5px 0px;}
+.permisionTable  tr th {padding:3px 3px;background-color:#63973D;}
+.permisionTable  tr td {padding:3px 3px;}
+
+.noPadding {padding:0px;margin:0px;}
+.noPadding tr {padding:0px;margin:0px;}
+.noPadding tr td {padding:0px;margin:0px;}
+
+.DayName {
+	padding: 3px 10px;
+	margin: 3px 10px;
+	background-color: #63973D;
+	font-size: 17px;
+}
+.DayInfo {padding: 3px 10px;}
+.DayInfo .Name {font-weight: bold;border-left: 4px solid #63973D;padding-left: 6px;}
+.DayInfo .Info {float: right;font-weight: initial;background-color: #63973D;color: #1A501F;padding: 0px 9px;}
+.DayInfo .Name a {text-decoration:none;display:block;padding: 0px;border-radius: 0px;}
+
+.ui-autocomplete-loading {background-image: url(/fcz/www/images/spinner.gif);
+background-repeat: no-repeat;
+background-position: right 5px top 4px;}
+
+.mesasageLeft {
+    padding: 10px;
+    border-bottom: 1px solid #777777;
+    height: 63px;
+    text-align: center;
+	overflow: hidden;
+	cursor:pointer;
+}
+.mesasageLeft img {border-radius:5px;}
+
+.messageText {padding:7px;background-color: #4E4E4E;border-bottom: 1px solid #777;}
+.messageText.type_1 {background-color: #414141;}
+.messageText .image {float:left;width:70px;height:70px;border-radius:5px;border: 1px solid #000;box-shadow: 1px 1px 8px #000;}
+.messageText .body {float:right;width:505px;}
+.messageText .body .name {font-weight: bold;color: #A5A5A5;}
+.messageText.type_1.read_0 .body .name {text-shadow: 0px 0px 9px #00FD00;color: #00FD00;}
+.messageText.type_0.read_0 .body .state {text-shadow: 0px 0px 9px #FD0000;color: #FD0000;}
+.messageText.type_1 .body .name {font-weight: bold;color: #73C7FF;}
+.messageText .body .date {font-style: italic;color: #3DA2FF;text-shadow: 1px 1px 5px #3DA2FF;}
+.messageText .body .text {color: white;}
+.messageText .body .text img {max-width:100%;}
+
+p {margin:0px;padding:0px;}
+
+.mce-ico.mce-i-none {background-size: 100%;margin-top: 2px;}
+.mce-path {display: none !important;}

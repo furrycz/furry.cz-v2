@@ -68,7 +68,8 @@ class Authorizator
 				'CanDeletePosts' => true,
 				'CanWritePosts' => true,
 				'CanEditPermissions' => true,
-				'CanEditPolls' => true
+				'CanEditPolls' => true,
+				'Owner' => true
 			);
 		}
 
@@ -81,17 +82,17 @@ class Authorizator
 
 		if ($access !== false)
 		{
-			$perms = $access->ref('Permissions')->toArray();
+			$perms = $access->ref('PermissionId')->toArray();
 
 		}
 		else // No specific permissions => defaults are in effect
 		{
-			$perms = $content->ref('Permissions')->toArray();
+			$perms = $content->ref('DefaultPermissions')->toArray();
 		}
 		unset($perms['Id']);
 
 		// CHECK CONTENT FLAGS
-
+	
 		if (!$content['IsDiscussionAllowed'])
 		{
 			$this->cascadeDeny($perms, 'CanReadPosts');
@@ -105,7 +106,9 @@ class Authorizator
 		if ($content['IsForAdultsOnly'] && !$user->isInRole('adult'))
 		{
 			$this->cascadeDeny($perms, 'CanViewContent');
-		}
+		}	
+		
+		$perms["Owner"] = false;
 
 		return $perms;
 	}

@@ -14,16 +14,89 @@
 	<meta n:ifset="$robots" name="robots" content="{$robots}">
 
 	<title>{block title|striptags}Furry.cz{/block}</title>
-
+	
 	<link rel="shortcut icon" href="{$basePath}/favicon.ico">
 
+	<link rel="stylesheet" href="{$basePath}/css/jquery-ui-1.10.4.custom.css">
 	<link rel="stylesheet" href="{$basePath}/css/pc-global.css">
+	<link rel="stylesheet" href="{$basePath}/css/autocomplete.css">
+	<link rel="stylesheet" href="{$basePath}/css/rte-content.css">
 
 	{block head}{/block}
 </head>
 
 <body>
-	<script> document.body.className+=' js' </script>
+	{block scripts}
+		<script src="{$basePath}/js/jquery.js"></script>
+		<script src="{$basePath}/js/netteForms.js"></script>
+		<script src="{$basePath}/js/main.js"></script>
+		<script src="{$basePath}/js/jquery-ui.js"></script>
+		<script src="{$basePath}/js/jquery-nette.js"></script>
+		<script src="{$basePath}/tinymce/tinymce.min.js"></script>
+		<script type="text/javascript">
+		var openWindow;
+		tinymce.init({
+			setup: function(editor) {
+				editor.addButton('furrafinityLinker', {
+					text: false,
+					tooltip: "Furraffinity linker",
+					image: '{!$basePath}\/images\/fur-affinity_icon_sm_zps6825a89d.png',
+					onclick: function() {
+						//editor.insertContent('Main button');
+						openWindow = editor.windowManager.open({
+							title: "Furrafinity linker",
+							url: {link Ajax:furrafinity},
+							width: 600,
+							height: 150,
+							buttons: [{
+										text: 'Vložit',
+										onclick: function(){ 
+												$.ajax({
+													url: "{!$presenter->link('Ajax:furrafinityget')}",
+													data: {
+														url: jQuery(jQuery("#"+openWindow._id+"-body").find('iframe').contents()).contents().find('#urlFurrafinity')[0].value
+													},
+													success: function( data ) {
+														if(data.Error!=0)
+															tinyMCE.activeEditor.windowManager.alert(data.Error);
+														else{
+															editor.insertContent('<a href="'+data.urlDefault+'" target="_blank"><img src="'+data.urlImage+'" border=3></a>');	
+															top.tinymce.activeEditor.windowManager.close();
+														}	
+													}
+												});
+										}
+									}]
+						});
+					}
+				});
+			},
+			selector: "textarea.tinimce",
+			plugins: [
+				"advlist autolink lists link image charmap print preview anchor spellchecker",
+				"searchreplace visualblocks code fullscreen preview",
+				"insertdatetime media table contextmenu paste textcolor mention link"
+			],
+			toolbar: "insertfile undo redo | styleselect | furrafinityLinker | removeformat | bold italic | forecolor backcolor | bullist numlist outdent indent | link image charmap | preview fullscreen ",
+			menubar: false,
+			toolbar_items_size: 'small',
+			//statusbar: false,
+			convert_urls: false,
+			mentions: {
+				delimiter: "#",
+				source: function(query, process) {					
+					$.getJSON('{!$presenter->link('Ajax:autocomplete')}', function(data) {
+						process(data);
+					});
+				},
+				insert: function(item) {
+					return '<a href="http://{!$_SERVER['HTTP_HOST']}{!$presenter->link('User:profile')}/' + item.id + '">' + item.name.trim() + '</a>';
+				}	
+			}
+		});
+		</script>
+		<script> document.body.className+=' js' </script>
+	{/block}	
 
 	<div n:foreach="$flashes as $flash" class="flash {$flash->type}">{$flash->message}</div>
 
@@ -35,6 +108,10 @@
 						<img src="{$baseUrl}/images/avatars/{$presenter->user->identity->data['avatarFilename']}">
 						{$presenter->user->identity->nickname}</a> {* No space after text! *}
 					|
+					<a n:href="Intercom:default">Intercom</a> 
+					{? $countDBM = $presenter->context->database->table('PrivateMessages')->where("AddresseeId = ? AND ReadByAddressee = 0",$presenter->user->identity->id)->count()}
+					{if $countDBM>0}<span style="background-color:red;border-radius:5px;padding: 3px 6px;color: white;font-weight: bold;text-decoration: none;">{$countDBM}</span>{/if}
+					| 
 					<a n:href="logout!">Odhlásit</a>
 				</div>
 			{else}
@@ -50,7 +127,7 @@
 				<ul>
 					<li><a n:href="Homepage:default">Hlavní</a></li>
 					<li><a n:href="Forum:default">Fórum</a></li>
-					<li>Kalendář</li>
+					<li><a n:href="Events:default, month=>0, year=>0">Kalendář</a></li>
 					<li><a n:href="Gallery:default">Galerie</a></li>
 					<li>Texty</li>
 					<li><a n:href="User:default">Členové</a></li>
@@ -58,16 +135,10 @@
 			</nav>
 		</div>
 	</div>
-
+	
 	<div id="Content-{$presenter->request->presenterName}-{$presenter->action}"
 		class="ContentWrapper {block contentWrapperDivClasses}{/block}">
 		{include #content}
 	</div>
-
-	{block scripts}
-		<script src="{$basePath}/js/jquery.js"></script>
-		<script src="{$basePath}/js/netteForms.js"></script>
-		<script src="{$basePath}/js/main.js"></script>
-	{/block}
 </body>
 </html>

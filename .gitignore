@@ -12,10 +12,6 @@ upload/*
 www/images/avatars/*
 www/images/portraits/*
 
-# LOGS
-
-log/*
-
 # TEMPORARIES
 
 temp/cache/*

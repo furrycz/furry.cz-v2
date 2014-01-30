@@ -1,0 +1,109 @@
+{block title}
+	{if $selUser!=""}{$selUser} - {/if}Intercom - Furry.cz
+{/block}
+
+{block content}
+<div style="background-color:#858585;">
+	<div style="float:left;width:300px;">
+		<div style="padding:5px;border: 1px solid #494949;border-right: 0px;">
+			<b>Intercom</b>
+			{form changeForForm}
+				<select name="userFor" id="userFor" style="width:80%;display:inline;">
+					<option value>Vyber tvora</option>
+					{foreach $allUsers as $user}
+						<option value="{$user[1]}" {if $user[1]==$selUser}select{/if}>{$user[1]}</option>
+					{/foreach}
+				</select> {input go}
+				<input type=text name=forName id="selector" value="{$selUser}" onClick="this.select();" style="display:none;width:97%;padding:3px;border:1px solid black;border-radius:0px;">
+			{/form}
+		</div>
+		<div style="min-height:662px;border-right: 1px solid #494949;background:#636363;overflow:auto;">
+			{if $selUser!=""}
+			<div class="mesasageLeft" style="background-color:#4E4E4E;cursor:default;height: 31px;">
+				<img src="{$selAvatar}" style="width:30px;height:30px;float:left;">
+				<div style="float:left;text-align:left;margin-left: 10px;margin-top: -7px;">
+					<div style="font-weight:bold;">{$selUser}</div>
+					<div style="margin-top: -5px;color: #3DA2FF;">Celkem zpráv: {$messageCount[$SelectSID]}</div>
+					<div></div>
+				</div>
+			</div>
+			{/if}
+			<a n:foreach="$allMessages as $mess" href="{!$presenter->link('default',$mess[1])}" style="padding:0px;color:#F6EDD3;text-decoration:none;"><div class="mesasageLeft">
+				{if $mess[0]==0}
+					<div style="color:silver;">{!$mess[1]}</div>
+				{/if}
+				{if $mess[0]==1}
+					<div style="width:60px;height:60px;float:left;">
+						{if $notReaded[$mess[5]]>0}<div style="float:right;width: 0px;height: 0px;"><div style="padding: 2px 5px;font-weight:bold;background-color:red;width: 12px;height: 22px;position: relative;right: 22px;border-radius: 5px;">{$notReaded[$mess[5]]}</div></div>{/if}
+						<img src="{$mess[4]}" style="width:60px;height:60px;">
+					</div>
+					<div style="float:left;text-align:left;margin-left: 10px;margin-top: -3px;">
+						<div style="font-weight:bold;">{$mess[1]}</div>
+						<div style="margin-top: -5px;color: #3DA2FF;text-shadow: 1px 1px 5px #3DA2FF;">{$mess[2]}</div>
+						<div style="width: 209px;line-height: 18px;">{!$mess[3]|striptags}</div>
+					</div>
+				{/if}
+			</div></a>
+		</div>
+	</div>
+	<div style="float: right;width: 639px;border: 1px solid #494949;border-left: 0px;min-height: 724px;border-bottom: 0px;">
+		{if $selUser==""}
+			<h2>Intercom V2</h2>
+			<div style="padding:10px;">Vítej v novem intercomu v2... nový... přehlednejší.. rychlejší.. podivuhodnější.. kousavější..</div>
+		{/if}
+		{if $selUser!=""}
+			<div style="margin:10px;border:1px solid #646464;background-color:#CFCFCF;min-height:158px;">
+				{form sendMessageForm}
+				<input type="hidden" name=idAdresser value="{$idAdresser}">
+				<textarea style="width:100%;padding:0px;border:0px;resize: none;outline: 0px;height:100px;" name="textSend" class=tinimce></textarea>
+				<div style="float:right;">{input send}</div>
+				<div style="float:left;padding-left: 5px;color: #888888;">#jmeno_tvora - vloží jeho jmeno a odkaz na profil</div>
+				{/form}
+				<div style="clear:both;"></div>
+			</div>
+			<div style="margin:10px;border:1px solid #646464;background-color:#727272;height:530px;overflow-y: scroll;overflow-x: hidden;">
+				<div n:foreach="$messageActualShow as $mess" class="messageText type_{$mess["typ"]} read_{$mess["read"]}">
+					<img src="{$mess["senderAvatar"]}" class="image">
+					<div class="body">
+						<span class="name">{$mess["senderName"]}</span> [ <span class="date">{$mess["date"]}</span> <a n:href="delete!, $selUser, $mess['id']">Odstranit</a>{if $mess["read"]==0 and $mess["typ"]==1} <span class="name">Nové</span>{/if}{if $mess["read"]==0 and $mess["typ"]==0} <span class="state">Nepřečteno</span>{/if} ]
+						<div class=text>{!$mess["text"]}</div>
+					</div>
+					<div style="clear:both;"></div>
+				</div>
+			</div>
+		{/if}
+	</div>
+	<div style="clear:both;"></div>
+</div>
+<script>
+$("select[name=userFor]").hide();
+$("#frmchangeForForm-go").hide();
+$("input[name=forName]").show();
+$(function() {
+	$("input[name=forName]").autocomplete({
+		source: function( request, response ) {
+			$.ajax({
+				url: "{!$presenter->link('Ajax:autocompleteInput')}",
+				data: {
+					whichData: "forName",
+					typedText: request.term
+				},
+				success: function( data ) {
+					response( $.map( data, function( item ) {
+						return { label: item, value: item }
+					}));
+				}
+			});
+		},
+		minLength: 1,
+		select: function( event, ui ) { setTimeout("$('#frm-changeForForm').submit()",100); },
+		open: function() {
+			$(this).removeClass("ui-corner-all").addClass("ui-corner-top");
+		},
+		close: function() {
+			$(this).removeClass("ui-corner-top").addClass("ui-corner-all");
+		}
+	});
+});
+</script>
+{/block}
