@@ -109,7 +109,7 @@
 						{$presenter->user->identity->nickname}</a> {* No space after text! *}
 					|
 					<a n:href="Intercom:default">Intercom</a> 
-					{? $countDBM = $presenter->context->database->table('Privatemessages')->where("AddresseeId = ? AND Read = 0",$presenter->user->identity->id)->count()}
+					{? $countDBM = $presenter->context->database->table('PrivateMessages')->where("AddresseeId = ? AND ReadByAddressee = 0",$presenter->user->identity->id)->count()}
 					{if $countDBM>0}<span style="background-color:red;border-radius:5px;padding: 3px 6px;color: white;font-weight: bold;text-decoration: none;">{$countDBM}</span>{/if}
 					| 
 					<a n:href="logout!">Odhlásit</a>

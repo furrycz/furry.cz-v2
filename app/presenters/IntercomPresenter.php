@@ -35,7 +35,7 @@ class IntercomPresenter extends BasePresenter
 		
 		$allMessages = NULL;$msgFrom = NULL;$messageActualShow = NULL;$messageCount = NULL;$notReaded = NULL;
 		
-		$messages = $database->table('Privatemessages')->where("SenderId = ? OR AddresseeId = ?",$this->user->identity->id, $this->user->identity->id)->order('TimeSent DESC');
+		$messages = $database->table('PrivateMessages')->where("SenderId = ? OR AddresseeId = ?",$this->user->identity->id, $this->user->identity->id)->order('TimeSent DESC');
 		foreach($messages as $message){
 			if($message["SenderId"] == $this->user->identity->id){$name=$allUserId[$message["AddresseeId"]];$id=$message["AddresseeId"];$SID = $message["AddresseeId"].$message["SenderId"];}
 			else{$name=$allUserId[$message["SenderId"]];$id=$message["SenderId"];$SID = $message["SenderId"].$message["AddresseeId"];}
@@ -51,7 +51,7 @@ class IntercomPresenter extends BasePresenter
 			if($message["SenderId"]!=$this->user->identity->id){
 				if($message["Read"]=="0"){
 					$notReaded[$SID]++;
-					$database->table('Privatemessages')->where('Id', $message["Id"])->update(array("Read" => 1));		
+					$database->table('PrivateMessages')->where('Id', $message["Id"])->update(array("Read" => 1));		
 				}				
 			}
 			$messageCount[$SID]++;
@@ -79,9 +79,9 @@ class IntercomPresenter extends BasePresenter
 	
 	public function handleDelete($name, $id){
 		$database = $this->presenter->context->database;
-		$message = $database->table('Privatemessages')->where("id",$id)->fetch();
+		$message = $database->table('PrivateMessages')->where("id",$id)->fetch();
 		if($message["SenderId"] == $this->user->identity->id or $message["AddresseeId"] == $this->user->identity->id){
-			$database->table('Privatemessages')->where("id",$id)->delete();
+			$database->table('PrivateMessages')->where("id",$id)->delete();
 		}else{
 			$this->flashMessage('Tato zpráva nepatří tobě! Nebyla napsána tebou a ani nebyla určena tobě!', 'error');
 		}
@@ -118,7 +118,7 @@ class IntercomPresenter extends BasePresenter
 			$database = $this->presenter->context->database;
 			$text = $_POST["textSend"];
 			
-			$database->table('Privatemessages')->insert(array(
+			$database->table('PrivateMessages')->insert(array(
 				'SenderId' => $this->user->identity->id,
 				'AddresseeId' => $_POST['idAdresser'],
 				'Text' => $_POST['textSend'],

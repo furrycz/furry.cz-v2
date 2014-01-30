@@ -51,7 +51,7 @@ class EventsPresenter extends BasePresenter
 			$template->events[(int)date('Y', $date)][(int)date('m', $date)][(int)date('d', $date)][7][] = $event["Place"];
 			
 			$ucasti = "";
-			$ucastnici = $database->table('Eventattendances')->where('EventId', $event["Id"]);
+			$ucastnici = $database->table('EventAttendances')->where('EventId', $event["Id"]);
 			foreach($ucastnici as $ucastnik){
 				if($ucastnik["Attending"]=="Yes"){$u=1;}elseif($ucastnik["Attending"]=="No"){$u=2;}else{$u=3;}
 				$user = $database->table("Users")->where(array("Id"=> $ucastnik["UserId"]))->fetch();
@@ -279,14 +279,14 @@ class EventsPresenter extends BasePresenter
 			$this->template->EventId = $event["Id"];
 			$this->template->Kapacita = $event["Capacity"];
 			
-			$uca = $database->table('Eventattendances')->where('EventId', $event["Id"])->where('UserId', $this->user->id)->fetch();
+			$uca = $database->table('EventAttendances')->where('EventId', $event["Id"])->where('UserId', $this->user->id)->fetch();
 			if($uca == false){$ucast=0;}
 			else{if($uca["Attending"]=="Yes"){$ucast=1;}elseif($uca["Attending"]=="No"){$ucast=2;}else{$ucast=3;}}
 			$this->template->Ucast = $ucast;
 			$this['eventAttendForm']->setDefaults(array("Attend"=>$uca["Attending"], "EventId"=>$event["Id"]));
 			
 			$ucasti = "";
-			$ucastnici = $database->table('Eventattendances')->where('EventId', $event["Id"]);
+			$ucastnici = $database->table('EventAttendances')->where('EventId', $event["Id"]);
 			foreach($ucastnici as $ucastnik){
 				if($ucastnik["Attending"]=="Yes"){$u=1;}elseif($ucastnik["Attending"]=="No"){$u=2;}else{$u=3;}
 				$user = $database->table("Users")->where(array("Id"=> $ucastnik["UserId"]))->fetch();
@@ -312,7 +312,7 @@ class EventsPresenter extends BasePresenter
 		if ($access['Owner'] == true)
 		{
 			$content = $database->table('Content')->where('Id', $event["ContentId"])->fetch();
-			$database->table('Eventattendances')->where('EventId', $eventId)->delete();
+			$database->table('EventAttendances')->where('EventId', $eventId)->delete();
 			$database->table('Events')->where('Id', $eventId)->delete();
 			$database->table('Ownership')->where('ContentId', $event["ContentId"])->delete();												
 			//Smazat access
@@ -344,15 +344,15 @@ class EventsPresenter extends BasePresenter
 		$database = $this->context->database;
 		$eventId = $values["EventId"];
 		$event = $database->table('Events')->where('Id', $eventId)->fetch();
-		$uca = $database->table('Eventattendances')->where('EventId', $eventId)->where('UserId', $this->user->id)->fetch();
+		$uca = $database->table('EventAttendances')->where('EventId', $eventId)->where('UserId', $this->user->id)->fetch();
 		if($uca == false){
-			$database->table('Eventattendances')->insert(array(
+			$database->table('EventAttendances')->insert(array(
 				'EventId' => $eventId,
 				'UserId' => $this->user->id,
 				"Attending" => $values["Attend"]
 			));			
 		}else{
-			$database->table('Eventattendances')->where('EventId', $eventId)->where('UserId', $this->user->id)->update(array(
+			$database->table('EventAttendances')->where('EventId', $eventId)->where('UserId', $this->user->id)->update(array(
 				"Attending" => $values["Attend"]
 			));
 		}
