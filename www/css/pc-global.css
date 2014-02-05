@@ -87,26 +87,35 @@ div.DiscussionPaginator .Nav { text-align: center; padding: 0 90px; }
 /*****************************/
 
 div.DiscussionPosts div.Post,
-div.DiscussionPosts div.NewPostForm { background-color: #3c3732; min-height: 70px; border-radius: 10px 10px 10px 0; margin: 0 0 10px; }
+div.DiscussionPosts div.NewPostForm { background-color: #3c3732; }
 
-div.DiscussionPosts div.NewPostForm { min-height: 150px; padding-bottom: 5px; }
+div.DiscussionPosts div.Post:last-child {  }
 
-div.DiscussionPosts div.Post:last-child { margin: 0; }
+div.DiscussionPosts span.HeaderBar { display: block;padding: 3px;background-color: #63973D;color: #000; }
 
-div.DiscussionPosts span.HeaderBar { display: block; }
+div.DiscussionPosts div.Post span.HeaderBar a.Nick.Admin {color: red;}
+div.DiscussionPosts div.Post span.HeaderBar a.Nick.Banned {color: purple;}
+div.DiscussionPosts div.Post span.HeaderBar a.Nick.Delete {color: black;}
+div.DiscussionPosts div.Post span.HeaderBar a.Nick.Frozen {color: blue;}
 
 div.DiscussionPosts div.Post div.AvatarBox,
-div.DiscussionPosts div.NewPostForm div.AvatarBox { background-color: #453f3a; height: 70px; width: 70px; float: left; margin: 0 5px 0 0;
-	border-radius: 10px 0 0; position: relative; text-align: center; line-height: 69px; }
+div.DiscussionPosts div.NewPostForm div.AvatarBox { background-color: #453f3a; height: 70px; width: 70px; float: left; margin: 0 5px 0 0; position: relative; text-align: center; line-height: 69px;top: -1px; }
 
 div.DiscussionPosts div.NewPostForm div.AvatarBox { margin:0; } /* Override */
 
 div.DiscussionPosts div.NewPostForm div.AvatarBox .Clear { clear: both; }
 
 div.DiscussionPosts div.Post div.AvatarBox img,
-div.DiscussionPosts div.NewPostForm div.AvatarBox img { max-height: 70px; max-width: 70px; padding: 0; border-radius: 10px 0 0; vertical-align: middle; }
+div.DiscussionPosts div.NewPostForm div.AvatarBox img { max-height: 70px; max-width: 70px; padding: 0;  vertical-align: middle; }
 
-div.DiscussionPosts div.Post span.Time { color: #b6ad93; }
+div.DiscussionPosts div.Post {border: 1px solid #5A5A5A;margin: 10px 5px;}
+
+div.DiscussionPosts div.Post span.Time { color: #C9C9C9;float:right;box-shadow: 3px 3px 5px #496D2F inset;background-color: #527C33;padding: 0px 6px;border-radius: 3px;margin-left: 7px; }
+div.DiscussionPosts div.Post span.Time:hover {color:white;}
+div.DiscussionPosts div.Post a.Referent {float:right;background-color: #00538A;padding: 0px 5px;margin-left: 7px;border-radius: 3px;text-decoration:none;text-shadow: 1px 1px #000;color: #FFF;}
+div.DiscussionPosts div.Post a.Autor {float:right;background-color: #00538A;padding: 0px 5px;margin-left: 7px;border-radius: 3px;text-decoration:none;text-shadow: 1px 1px #000;color: #FFF;}
+
+
 
 div.DiscussionPosts div.HiddenPosts { min-height: 25px; line-height: 25px; color: #b6ad93; }
 
@@ -116,7 +125,7 @@ div.DiscussionPosts div.HiddenPosts div.AvatarBox { height: 25px; }
 
 #frmnewPostForm-preview { margin: 0 0 0 75px; }
 
-#frmnewPostForm-save { float: right; margin: 0 5px 0; }
+#frmnewPostForm-save { float: right; margin: 0 0px 0;padding:5px; }
 
 /*******************************/
 /* GalleryThumbnails component */
@@ -286,9 +295,15 @@ div#ForumListingHeader { background-color: #63973d; padding: 5px 10px; border-ra
 
 div#ForumToolsPanel { padding: 5px 0 0; display: none; }
 
-table#ForumListing { width: 100% }
+table#ForumListing { width: 100%;table-layout: fixed; border-collapse: collapse; }
 
-table#ForumListing td.Category { font-size: 0.8em; color: #b6ad93; text-align: center; }
+table#ForumListing th {padding:5px;text-align:left;border-right: 1px solid #000;}
+
+table#ForumListing tr:hover {background-color: #3F3D3D;}
+table#ForumListing tr td {padding:5px;}
+
+table#ForumListing td a {text-decoration:none;}
+table#ForumListing td.Category { font-size: 0.8em; color: #b6ad93; }
 
 th#ForumListingCategory { width: 10%; }
 
@@ -302,7 +317,7 @@ div#TopicHeaderPanel span.TitleInfo { font-weight: bold; font-size: 1.2em; color
 
 div#TopicHeaderPanel { padding-bottom: 10px; }
 
-div#TopicHeader { border-radius: 10px; background-color: #264411; padding: 10px; color: #f6edd3; }
+div#TopicHeader { padding-top: 10px; color: #f6edd3; }
 
 div#TopicHeader .Light { background-color: #325f10; }
 
@@ -469,7 +484,7 @@ background-position: right 5px top 4px;}
 .messageText {padding:7px;background-color: #4E4E4E;border-bottom: 1px solid #777;}
 .messageText.type_1 {background-color: #414141;}
 .messageText .image {float:left;width:70px;height:70px;border-radius:5px;border: 1px solid #000;box-shadow: 1px 1px 8px #000;}
-.messageText .body {float:right;width:505px;}
+.messageText .body {float:right;width:86%;}
 .messageText .body .name {font-weight: bold;color: #A5A5A5;}
 .messageText.type_1.read_0 .body .name {text-shadow: 0px 0px 9px #00FD00;color: #00FD00;}
 .messageText.type_0.read_0 .body .state {text-shadow: 0px 0px 9px #FD0000;color: #FD0000;}
@@ -482,3 +497,32 @@ p {margin:0px;padding:0px;}
 
 .mce-ico.mce-i-none {background-size: 100%;margin-top: 2px;}
 .mce-path {display: none !important;}
+
+a.button {
+    border: 1px solid #0022C2;
+    padding: 3px 5px;
+    text-decoration: none;
+    background-color: #4A66EC;
+    color: white;
+	background: -webkit-linear-gradient(top, #4A66EC 5%, #0223BD 95%);
+	background: -moz-linear-gradient(top, #4A66EC 5%, #0223BD 95%);
+	background: -ms-linear-gradient(top, #4A66EC 5%, #0223BD 95%);  
+	background: -o-linear-gradient(top, #4A66EC 5%, #0223BD 95%);
+	cursor:pointer;
+}
+a.button:active {
+	background-color: #0223BD;
+	background: -webkit-linear-gradient(top, #0223BD 5%, #4A66EC 95%);
+	background: -moz-linear-gradient(top, #0223BD 5%, #4A66EC 95%);
+	background: -ms-linear-gradient(top, #0223BD 5%, #4A66EC 95%);  
+	background: -o-linear-gradient(top, #0223BD 5%, #4A66EC 95%);
+}
+
+.notifAlert {
+background-color: #90CEFF;width: 280px;color: #000;padding: 1px 6px;border: 1px solid #008FFF;border-radius: 5px;cursor:pointer;text-decoration:none;display:block;margin-bottom:10px;
+}
+.notifAlert:hover {background-color:#C5E5FF;color: #000;}
+.notifAlert .text{font-size: 12px;}
+.notifAlert .info{font-size: 12px;color: #8F8F8F;}
+
+.yelow {background-color: #CCCC4B;border-bottom: 1px solid #81812B;padding: 2px;}

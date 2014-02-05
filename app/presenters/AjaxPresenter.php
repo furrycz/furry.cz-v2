@@ -82,4 +82,65 @@ class AjaxPresenter extends BasePresenter
 		$this->sendResponse(new JsonResponse($data));
 	}
 	
+	public function renderNotificationcount(){
+		$database = $this->context->database;		
+		$data = array("Notif" => 0, "Count" => 0);
+		
+		$users = $database->table('Users')->order('Nickname');
+		foreach($users as $user){
+			if($this->user->identity->nickname!=$user["Nickname"])
+			$allUsers[] = array($user["Id"],$user["Username"]);
+			$allUserId[$user["Id"]] = $user["Username"];
+			$allUserName[$user["Username"]] = $user["Id"];
+			$allUserWithInfo[$user["Id"]] = array($user["Nickname"], $user["AvatarFilename"]);
+		}
+		
+		$messages = $database->table('Privatemessages')->where("AddresseeId = ? AND Read = 0",$this->user->identity->id);
+		foreach($messages as $message){
+			if($message["SenderId"] == $this->user->identity->id){$name_=$allUserId[$message["AddresseeId"]];$id=$message["AddresseeId"];$SID = $message["AddresseeId"].$message["SenderId"];}
+			else{$name_=$allUserId[$message["SenderId"]];$id=$message["SenderId"];$SID = $message["SenderId"].$message["AddresseeId"];}
+			if(!isset($msgFrom[$SID])){
+				$msgFrom[$SID]=1;
+				$data["Count"]++;
+			}
+		}
+		$nottifications = $database->table('Notifications')->where("UserId = ? AND IsNotifed = 0",$this->user->identity->id);
+		foreach($nottifications as $nottification){
+			$data["Notif"]++;
+		}
+		
+		$this->sendResponse(new JsonResponse($data));
+	}
+	
+	public function renderNotificationnotif($time){
+		$database = $this->context->database;
+		$data = array("0" => array("time" => time()));
+		
+		$users = $database->table('Users')->order('Nickname');
+		foreach($users as $user){
+			if($this->user->identity->nickname!=$user["Nickname"])
+			$allUsers[] = array($user["Id"],$user["Username"]);
+			$allUserId[$user["Id"]] = $user["Username"];
+			$allUserName[$user["Username"]] = $user["Id"];
+			$allUserWithInfo[$user["Id"]] = array($user["Nickname"], $user["AvatarFilename"]);
+		}
+		
+		$messages = $database->table('Privatemessages')->where("AddresseeId = ? AND Read = 0",$this->user->identity->id);
+		foreach($messages as $message){
+			$notif = $database->table('Notifications')->where("Parent = ?","chat_".$message["Id"]);
+			if(count($notif)==0){
+				$text = strip_tags($message["Text"]);
+				$pext = substr($text,0,57);if($pext != $text){$text = $pext."...";}
+				$data[] = array(
+					"Text" => "<b>".$allUserId[$message["SenderId"]]."</b> ti posílá zprávu:<br>".$text,
+					"Info" => Fcz\CmsUtilities::getTimeElapsedString(strtotime($message["TimeSent"])),
+					"Href" => $this->link("Intercom:default",$allUserId[$message["SenderId"]]),
+					"Image" => $allUserWithInfo[$message["SenderId"]][1],
+				);
+				$database->table('Notifications')->insert(array("Parent"=>"chat_".$message["Id"], "Time" => date("Y-m-d H:i:s",time()), "IsNotifed" => 1, "IsView" => 1, "UserId" => $this->user->identity->id));
+			}
+		}	
+			
+		$this->sendResponse(new JsonResponse($data));
+	}
 }	
