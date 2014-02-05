@@ -54,12 +54,25 @@ class DiscussionPosts extends \Nette\Application\UI\Control
 				->order('Id ASC')
 				->limit($this->paginator->getLength(), $this->paginator->getCountdownOffset());
 		}
+		
+		$userData = null;
+		
+		$users = $database->table('Users');
+		foreach($users as $user){
+			$hodnost = "";$image = ""; $color="";
+			if($user["IsAdmin"]){$hodnost="Administrátor";$color="Admin";$image="star.png";}
+			if($user["IsFrozen"]){$hodnost="Kostka ledu";$color="Frozen";}
+			if($user["IsBanned"]){$hodnost="Zavřen v krabici";$color="Banned";$image="banana.png";}
+			if($user["Deleted"]){$hodnost="Vymazán";$color="Delete";}			
+			$userData[$user["Id"]] = array("Hodnost" => $hodnost, "Color" => $color, "Image" => $image);
+		}
 
 		// Setup template
 		$template = $this->presenter->template;
 		$template->setFile(__DIR__ . '/../templates/components/discussionPosts.latte');
 		$template->setParameters(array(
 			'posts' => $posts,
+			'users' => $userData,
 			'access' => $this->access,
 			'presenter' => $this->presenter
 		));
@@ -102,12 +115,18 @@ class DiscussionPosts extends \Nette\Application\UI\Control
 			$values = $form->getValues();
 			$database = $this->presenter->context->database;
 			
+			if(trim($values["text"])==""){
+				$this->presenter->flashMessage('Prosím zadej text!', 'ok');
+			}else{
+			
 			$database->table('Posts')->insert(array(
 				'ContentId' => $values['DiscussionID'],
 				"Author" => $this->presenter->user->id,
 				"Text" => $values["text"],
 				"TimeCreated" => date("Y-m-d H:i:s",time())
 			));
+			
+			}
 			
 			$this->presenter->redirect("Forum:topic",$values['DiscussionID']);
 	}
