@@ -46,7 +46,7 @@
 				{var $numIgnoredPosts = 0}
 				{var $numDeletedPosts = 0}
 			{/if}
-			{var $userData = $presenter->getAuthorData($post["Author"])}
+			{var $userData = $users[$post["Author"]]}
 			<div class="Post">
 				<div class="AvatarBox"><img src="{$post->ref('Author')->AvatarFilename}"></div>
 				<div class="Text">
