@@ -44,5 +44,37 @@ class CmsUtilities extends \Nette\Object
 		// Return the HTML
 		return $cmsPage['Text'];
 	}
+	
+	/**
+	 * @param time $ptime
+	 * @return time as text 'před 7 hodinami'
+	 */
+	public static function getTimeElapsedString($ptime)
+	{
+		$etime = time() - $ptime;
+
+		if ($etime < 1)
+		{
+			return 'právě teď';
+		}
+
+		$a = array( 12 * 30 * 24 * 60 * 60  =>  array('rokem','roky'),
+					30 * 24 * 60 * 60       =>  array('měsícem','měsíci'),
+					24 * 60 * 60            =>  array('dnem','dny'),
+					60 * 60                 =>  array('hodinou','hodinami'),
+					60                      =>  array('minutou','minutami'),
+					1                       =>  array('sekundou','sekundami')
+					);
+
+		foreach ($a as $secs => $str)
+		{
+			$d = $etime / $secs;
+			if ($d >= 1)
+			{
+				$r = round($d);
+				return "před ".$r . ' ' . ($r > 1 ? $str[1] : $str[0]) . '';
+			}
+		}
+	}
 
 }

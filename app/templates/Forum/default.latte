@@ -51,11 +51,11 @@
 		</div>
 	</div>
 	<table id="ForumListing">
-		<tr>
+		<tr style="background-color: #222;border-bottom: 1px solid #000;">
 			<th id="ForumListingCategory">Sekce</th>
 			<th>Téma</th>
-			<th>Zpráv</th>
-			<th>Poslední</th>
+			<th width=80>Zpráv</th>
+			<th style="border-right:0px;">Poslední</th>
 		</tr>
 		<tr n:foreach="$topics as $topic">
 			{if ($topic['CategoryId'] != null)}
@@ -65,7 +65,10 @@
 			{/if}
 			{var $content = $topic->ref('Content')}
 			<td class="Category">{$category['Name']}</td>
-			<td><a n:href="Forum:topic topicId => $topic['Id']">{$topic['Name']}</a></td>
+			<td><a n:href="Forum:topic topicId => $topic['Id']">
+				{if $topic["Type"]==1}<img src="{$basePath}/images/error.png" align=absmiddle title="Duležité téma!">{/if}
+				{$topic['Name']}
+			</a></td>
 			<td></td>
 			<td></td>
 		</tr>

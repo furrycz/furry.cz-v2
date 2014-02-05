@@ -9,10 +9,10 @@
 	{if $access['CanWritePosts'] == true}
 		{form discussionPosts-newPostForm} {* Nette sub-component *}
 			<div class="NewPostForm">
-				<div class="AvatarBox"><img src="{$baseUrl}/images/avatars/{$presenter->user->identity->data['avatarFilename']}"></div>
-				{input text}
+				<div>{input text}</div>				
+				{input save}
+				<div style="float:left;padding-left: 5px;color: #888888;padding-top: 3px;">#jmeno_tvora - vloží jeho jmeno a odkaz na profil</div>
 				<div class="Clear"></div>
-				{input preview} {input save}
 			</div>
 		{/form}
 	{/if}
@@ -46,16 +46,23 @@
 				{var $numIgnoredPosts = 0}
 				{var $numDeletedPosts = 0}
 			{/if}
+			{var $userData = $presenter->getAuthorData($post["Author"])}
 			<div class="Post">
-				<div class="AvatarBox"><img src="{$baseUrl}/images/avatars/{$post->ref('Author')->AvatarFilename}"></div>
+				<div class="AvatarBox"><img src="{$post->ref('Author')->AvatarFilename}"></div>
 				<div class="Text">
 					<span class="HeaderBar">
 						<a name="post-{$post['Id']}"></a>
-						<a class="Nick" n:href="User:profile $post['Author']">{$post->ref("Author")->Nickname}</a>
-						<span class="Time">{$post['TimeCreated']->format("d.m.Y h:i")}</span>
+						<a class="Nick {$userData["Color"]}" n:href="User:profile $post['Author']" title="{$userData["Hodnost"]}">{if $userData["Image"]!=""}<img align="absmiddle" style="position: relative;top: -2px;padding-right: 3px;" src="{$basePath}/images/{$userData["Image"]}">{/if}{$post->ref("Author")->Nickname}</a>
+						<a class="Referent" href="#{$post['Id']}">#{$post['Id']}</a>
+						<span class="Time">{$post['TimeCreated']->format("d.m.Y h:i")}</span>		
+						{if $post["Author"]==$presenter->user->id}
+							<a href="" class="Autor">Upravit</a> 
+							<a n:href="Forum:topic, $presenter->getParameter('topicId'),  $presenter->getParameter('page'), 'delete'.-$post['Id']" style="background-color: #F00;" class="Autor">Smazat</a>
+						{/if}
 					</span>
-					{$post['Text']}
+					{!$post['Text']}
 				</div>
+				<div style="clear:both;"></div>
 			</div>
 		{/if}
 	{/foreach}

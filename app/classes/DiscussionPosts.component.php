@@ -63,6 +63,9 @@ class DiscussionPosts extends \Nette\Application\UI\Control
 			'access' => $this->access,
 			'presenter' => $this->presenter
 		));
+		
+		$this['newPostForm']->setDefaults(array("DiscussionID"=>$this->content['Id']));
+		
 		$template->render();
 	}
 
@@ -75,13 +78,15 @@ class DiscussionPosts extends \Nette\Application\UI\Control
 		$form = new \Nette\Application\UI\Form;
 
 		$form->addTextArea('text', 'Text', 1, 1) // Small rows/cols to allow css scaling
-			->setRequired('Nelze uložit prázdný příspěvek')
-			->addRule(\Nette\Application\UI\Form::PATTERN, "Nelze uložit prázdný příspěvek", "\S+") // Deny whitespace-only posts
-			->setAttribute('placeholder', 'Tvůj příspěvek ...');
-
-		$form->addSubmit('preview', 'Náhled');
+			//->setRequired('Nelze uložit prázdný příspěvek')
+			//->addRule(\Nette\Application\UI\Form::PATTERN, "Nelze uložit prázdný příspěvek", "\S+") // Deny whitespace-only posts
+			->setAttribute('placeholder', 'Tvůj příspěvek ...')
+			->setAttribute('class', 'tinimce')
+			->setAttribute('style', 'height:100px;');
 
 		$form->addSubmit('save', 'Připsat');
+		
+		$form->addHidden('DiscussionID');
 
 		$form->onSuccess[] = $this->handleValidatedNewPostForm;
 
@@ -94,14 +99,17 @@ class DiscussionPosts extends \Nette\Application\UI\Control
 	*/
 	public function handleValidatedNewPostForm(\Nette\Application\UI\Form $form)
 	{
-		if ($form->getComponent('preview')->isSubmittedBy())
-		{
-			// Display preview
-		}
-		else
-		{
-			// Save post
-		}
+			$values = $form->getValues();
+			$database = $this->presenter->context->database;
+			
+			$database->table('Posts')->insert(array(
+				'ContentId' => $values['DiscussionID'],
+				"Author" => $this->presenter->user->id,
+				"Text" => $values["text"],
+				"TimeCreated" => date("Y-m-d H:i:s",time())
+			));
+			
+			$this->presenter->redirect("Forum:topic",$values['DiscussionID']);
 	}
 
 }

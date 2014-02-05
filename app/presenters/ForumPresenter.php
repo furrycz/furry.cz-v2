@@ -114,7 +114,8 @@ class ForumPresenter extends DiscussionPresenter
 				'CanDeletePosts' => $values['CanDeletePosts'],
 				'CanWritePosts' => $values['CanWritePosts'],
 				'CanEditPermissions' => $values['CanEditPermissions'],
-				'CanEditPolls' => $values['CanEditPolls']
+				'CanEditPolls' => $values['CanEditPolls'],
+				'CanReadPosts' => $values['CanViewContent']
 			));
 
 			// Create content
@@ -178,7 +179,7 @@ class ForumPresenter extends DiscussionPresenter
 
 
 
-	public function renderTopic($topicId, $page, $findPost)
+	public function renderTopic($topicId, $page, $subAction, $findPost)
 	{
 		$database = $this->context->database;
 
@@ -192,9 +193,9 @@ class ForumPresenter extends DiscussionPresenter
 
 		$authorizator = new Authorizator($database);
 		$access = $authorizator->authorize($content, $this->user);
-
+		
 		if ($access['CanReadPosts'] == true)
-		{
+		{			
 			$this->setupDiscussion($access, $content, $topic['Id'], $page, $findPost);
 
 			// Setup template
@@ -211,5 +212,9 @@ class ForumPresenter extends DiscussionPresenter
 				'access' => $access
 			));
 		}
+	}
+	
+	public function renderDelete($topicId, $postId){
+		$database = $this->context->database;
 	}
 }
