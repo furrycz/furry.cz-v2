@@ -9,13 +9,7 @@
  * @param int                           $jumpToPostId Id of post to jump to after page loads. 0 = no jump.
  *}
 
-{block title}
-	{$topic['Name']}
-	{if isset($paginator)}
-		({$paginator->getPage()}/{$paginator->getItemCount()})
-	{/if}
-	- Fórum - Furry.cz
-{/block}
+{var $pageTitle = $topic['Name'].' - Fórum'}
 
 {block content}
 	<div class="Header" id="TopicHeaderPanel">

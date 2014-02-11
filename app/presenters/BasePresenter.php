@@ -12,8 +12,12 @@ abstract class BasePresenter extends UI\Presenter
 	
 	private $contentManager = null;
 	
-	
-	
+	protected function beforeRender()
+	{
+		$this->template->robots = 'index,follow';
+		$this->template->title = $this->context->parameters['title'];
+	}
+
 	/**
 	* Create and fetch FileUploadHandler
 	* @return Fcz\FileUploadHandler

@@ -5,9 +5,7 @@
  * @param Nette\Database\Table\Selection $user
  *}
 
-{block title}
-	Expozice {$user['Nickname']} - Furry.cz
-{/block}
+{var $pageTitle = 'Expozice '. $user['Nickname']}
 
 {block scripts}
 	<script src="{$basePath}/js/jquery.js"></script>

@@ -4,9 +4,7 @@
  * @param array $profile
  *}
 
-{block title}
-	Změna profilu: {$profile['Nickname']} - Furry.cz
-{/block}
+{var $pageTitle = 'Změna profilu: '.$profile['Nickname']}
 
 {block content}
 	{form editProfileForm}

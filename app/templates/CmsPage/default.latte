@@ -4,9 +4,7 @@
  * @param Nette\Database\ActiveRow $cmsPage
  *}
 
-{block title}
-	{$cmsPage['Name']} - Furry.cz
-{/block}
+{var $pageTitle = $cmsPage['Name']}
 
 {block content}
 	<h1>{$cmsPage['Name']}</h1>

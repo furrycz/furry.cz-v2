@@ -6,9 +6,7 @@
  * @param Nette\Database\Table\Selection $expositions
  *}
 
-{block title}
-	Portfolio uzivatele {$user['Nickname']} - Furry.cz
-{/block}
+{var $pageTitle = 'Portfolio uživatele '. $user['Nickname']}
 
 {block scripts}
 	<script src="{$basePath}/js/jquery.js"></script>

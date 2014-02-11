@@ -12,8 +12,7 @@
 	<meta charset="UTF-8">
 	<meta name="description" content="">
 	<meta n:ifset="$robots" name="robots" content="{$robots}">
-
-	<title>{block title|striptags}Furry.cz{/block}</title>
+	<title>{ifset $pageTitle}{$pageTitle} - {/ifset}{$title}</title>
 	
 	<link rel="shortcut icon" href="{$basePath}/favicon.ico">
 
