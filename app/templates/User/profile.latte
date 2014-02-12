@@ -4,9 +4,7 @@
  * @param array $profile
  *}
 
-{block title}
-	Profil uživatele: {$profile['Nickname']} - Furry.cz
-{/block}
+{var $pageTitle = 'Profil uživatele: '.$profile['Nickname']}
 
 {block content}
 	<div id="ProfileHeader" class="LightBackground">

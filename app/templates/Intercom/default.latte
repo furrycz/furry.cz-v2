@@ -1,6 +1,8 @@
-{block title}
-	{if $selUser!=""}{$selUser} - {/if}Intercom - Furry.cz
-{/block}
+{if $selUser!=""}
+    {var $pageTitle = $selUser . ' - Intercom'}
+{else}
+    {var $pageTitle = 'Intercom'}
+{/if}
 
 {block content}
 <div style="background-color:#858585;">
