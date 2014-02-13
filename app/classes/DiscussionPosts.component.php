@@ -42,6 +42,7 @@ class DiscussionPosts extends \Nette\Application\UI\Control
 					->table('Posts')
 					->select('Id')
 					->where("ContentId", $this->content['Id'])
+					->where("Deleted",0)
 					->order('Id ASC')
 					->limit($this->paginator->getLength(), $this->paginator->getCountdownOffset()))
 				->order('Id DESC');
@@ -51,12 +52,12 @@ class DiscussionPosts extends \Nette\Application\UI\Control
 			$posts = $database
 				->table('Posts')
 				->where("ContentId", $this->content['Id'])
+				->where("Deleted",0)
 				->order('Id ASC')
 				->limit($this->paginator->getLength(), $this->paginator->getCountdownOffset());
 		}
 		
 		$userData = null;
-		
 		$users = $database->table('Users');
 		foreach($users as $user){
 			$hodnost = "";$image = ""; $color="";
@@ -65,16 +66,40 @@ class DiscussionPosts extends \Nette\Application\UI\Control
 			if($user["IsBanned"]){$hodnost="Zavřen v krabici";$color="Banned";$image="banana.png";}
 			if($user["Deleted"]){$hodnost="Vymazán";$color="Delete";}			
 			$userData[$user["Id"]] = array("Hodnost" => $hodnost, "Color" => $color, "Image" => $image);
+			$allUserId[$user["Id"]] = $user["Username"];
+			$allUserName[$user["Username"]] = $user["Id"];
+			$allUserWithInfo[$user["Id"]] = array($user["Nickname"], $user["AvatarFilename"]);
+		}
+		
+		$ratingsData = null;
+		foreach($posts as $post){ $ratingsData[$post["Id"]] = array(0,""); }
+		$ratings = $database->table('RatingsPost')->Where("ContentId",$this->content['Id']);
+		foreach($ratings as $rating){
+			if(isset($ratingsData[$rating["PostId"]])){
+				$ratingsData[$rating["PostId"]][0] += $rating["Rating"];
+			}else{
+				$ratingsData[$rating["PostId"]] = array($rating["Rating"],"");
+				$ratingsData[$rating["PostId"]][2] = "";
+				$ratingsData[$rating["PostId"]][3] = "";
+			}
+			if($ratingsData[$rating["PostId"]][0]<0){$c="Red";}elseif($ratingsData[$rating["PostId"]][0]>0){$c="Green";}else{$c="Orange";}
+			$ratingsData[$rating["PostId"]][1] = $c;
+			if($rating["Rating"]!=0){
+				$ratingsData[$rating["PostId"]][2] = $allUserWithInfo[$rating["UserId"]][0]." [".$rating["Rating"]."], ";
+				$ratingsData[$rating["PostId"]][3] = $allUserId[$rating["UserId"]].",".$allUserWithInfo[$rating["UserId"]][0].",".$rating["Rating"].",".$allUserWithInfo[$rating["UserId"]][1]."!";
+			}
 		}
 
 		// Setup template
 		$template = $this->presenter->template;
 		$template->setFile(__DIR__ . '/../templates/components/discussionPosts.latte');
 		$template->setParameters(array(
-			'posts' => $posts,
+			'posts' => $posts,			
 			'users' => $userData,
 			'access' => $this->access,
-			'presenter' => $this->presenter
+			'ratings' => $ratingsData,
+			'presenter' => $this->presenter,
+			'contentId' => $this->content['Id']
 		));
 		
 		$this['newPostForm']->setDefaults(array("DiscussionID"=>$this->content['Id']));

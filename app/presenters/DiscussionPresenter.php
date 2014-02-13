@@ -16,7 +16,7 @@ abstract class DiscussionPresenter extends BasePresenter
 	{
 		$database = $this->context->database;
 
-		$numPosts = $database->table('Posts')->where('ContentId', $content['Id'])->count();
+		$numPosts = $database->table('Posts')->where('ContentId', $content['Id'])->where("Deleted",0)->count();
 		$paginator = new Nette\Utils\Paginator;
 		$paginator->setItemCount($numPosts);
 		$paginator->setItemsPerPage($this->user->identity->data['postsPerPage']);

@@ -4,7 +4,7 @@
  * @param Nette\Database\Table\Selection $topics
  * @param Nette\Database\Table\Selection $categories
  *}
-
+ 
 {var $pageTitle = 'Fórum'}
 
 {block scripts}
@@ -54,7 +54,7 @@
 		<tr style="background-color: #222;border-bottom: 1px solid #000;">
 			<th id="ForumListingCategory">Sekce</th>
 			<th>Téma</th>
-			<th width=80>Zpráv</th>
+			<th width=80 class="right">Zpráv</th>
 			<th style="border-right:0px;">Poslední</th>
 		</tr>
 		<tr n:foreach="$topics as $topic">
@@ -63,14 +63,17 @@
 			{else}
 				{var $category = array('Name' => 'Nezařazeno', 'Id' => 0)}
 			{/if}
+			{var $count = count($presenter->context->database->table('Posts')->where("ContentId",$topic['ContentId'])->where("Deleted",0))}
+			{var $lastPost = $presenter->context->database->table('Posts')->where("ContentId",$topic['ContentId'])->where("Deleted",0)->order("TimeCreated DESC")->fetch();}
+			{var $time = Fcz\CmsUtilities::getTimeElapsedString(strtotime($lastPost["TimeCreated"]))}
 			{var $content = $topic->ref('Content')}
 			<td class="Category">{$category['Name']}</td>
-			<td><a n:href="Forum:topic topicId => $topic['Id']">
+			<td><a class="postUrl" n:href="Forum:topic topicId => $topic['Id']">
 				{if $topic["Type"]==1}<img src="{$basePath}/images/error.png" align=absmiddle title="Duležité téma!">{/if}
 				{$topic['Name']}
 			</a></td>
-			<td></td>
-			<td></td>
+			<td class="right">{$count}</td>
+			<td><div class="inAvatar"><img src="{$allUserWithInfo[$lastPost["Author"]][1]}" class="avatar"></div><span class="autor">{$allUserWithInfo[$lastPost["Author"]][0]}</span> <span class="time">{$time}</span></td>
 		</tr>
 	</table>
 {/block}

@@ -17,7 +17,10 @@
 		<h1>{$topic['Name']}</h1>
 		<span n:if="isset($paginator)" class="TitleInfo">
 			({$paginator->getItemCount()} příspěvků, strana {$paginator->getPage()}/{$paginator->getPageCount()})
-		</span>
+		</span>		
+		{if $access["CanEditPermissions"]}<div style="float:right;margin-left:10px;"><a n:href="Forum:Permision $topic['Id']">Upravit práva</a></div>{/if}
+		{if $access["CanEditContentAndAttributes"]}<div style="float:right;margin-left:10px;"><a n:href="Forum:Edit $topic['Id']">Upravit</a></div>{/if}
+		{if $access["CanEditHeader"]}<div style="float:right;margin-left:10px;"><a n:href="Forum:Header $topic['Id']">Upravit Hlavičku</a></div>{/if}
 		</div>
 
 		{if $access['CanViewContent'] == true}

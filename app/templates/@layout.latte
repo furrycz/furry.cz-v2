@@ -12,6 +12,7 @@
 	<meta charset="UTF-8">
 	<meta name="description" content="">
 	<meta n:ifset="$robots" name="robots" content="{$robots}">
+
 	<title>{ifset $pageTitle}{$pageTitle} - {/ifset}{$title}</title>
 	
 	<link rel="shortcut icon" href="{$basePath}/favicon.ico">
@@ -111,14 +112,9 @@
 						{$presenter->user->identity->nickname}</a> {* No space after text! *}
 					|
 					<a n:href="Intercom:default">Intercom</a> 
-<<<<<<< HEAD
-					{? $countDBM = $presenter->context->database->table('PrivateMessages')->where("AddresseeId = ? AND ReadByAddressee = 0",$presenter->user->identity->id)->count()}
-					{if $countDBM>0}<span style="background-color:red;border-radius:5px;padding: 3px 6px;color: white;font-weight: bold;text-decoration: none;">{$countDBM}</span>{/if}
-=======
 					{? $countDBM = $presenter->context->database->table('Privatemessages')->where("AddresseeId = ? AND Read = 0",$presenter->user->identity->id)->count()}
 					<span title="Notifikace" style="display:none;background-color:green;border-radius:5px;padding: 3px 6px;color: white;font-weight: bold;text-decoration: none;border:1px solid red;position:relative;cursor:pointer;" id="buttonNotificationOther">0</span>
 					<span title="Zprávy" style="background-color:{if $countDBM>0}red{/if};border-radius:5px;padding: 3px 6px;color: white;font-weight: bold;text-decoration: none;border:1px solid red;position:relative;cursor:pointer;" id="buttonNotification">{$countDBM}</span>					
->>>>>>> 089e22d... [EDIT] Forum, Intercom, Ajax
 					| 
 					<a n:href="logout!">Odhlásit</a>					
 				</div>
@@ -139,6 +135,7 @@
 					<li><a n:href="Gallery:default">Galerie</a></li>
 					<li>Texty</li>
 					<li><a n:href="User:default">Členové</a></li>
+					<li>Chat</li>
 				</ul>
 			</nav>
 		</div>
@@ -158,6 +155,7 @@
 		</div>
 	</div>
 	<div style="float: right; width: 0px; height: 0px; position: absolute; top: 56px; display: block;margin-left: 1px;" id="notificatonsAlert"></div>
+	<div id="dialog-rating" title="Hodnocení" style="display:none;">Error!</div>
 	<script>
 	var jak=0,prevJak=-1;
 	$("#buttonNotification").click( function(){ jak=0;NotifView(0);$("#messageShow").css("color","black");$("#notifShow").css("color",""); });
@@ -262,6 +260,42 @@
 	}
 	NotificationControl();
 	//$("select").selectbox();
+	//Funkce která nám class s názvem "ratingBox" převede na klikatelné odkazy které nám vyhodí okno s daty z atributu "ajax-user-rating-data"
+	$("#dialog-rating").dialog({
+      autoOpen: false,
+      show: {
+        effect: "fade",
+        duration: 500
+      },
+      hide: {
+        effect: "fade",
+        duration: 500
+      },
+	  draggable: false,
+	  create: function(event, ui) {
+        $(event.target).parent().css('position', 'fixed');
+	  },
+	  width: "auto"
+    });
+	$(".ratingBox").click(function(){
+		var data = $(this).attr("ajax-user-rating-data");
+		if(data.substr(0,1)==":"){
+			//Zde se budou data načítat přes ajax.. ale zatím to není třeba
+		}else{
+			var html = "";
+			ota = data.split("!");
+			for(var i=0;i<ota.length-1;i++){
+				lota = ota[i].split(",");
+				if(lota[2]>0){ back = "background:green;"; }else{ back = "background:red;"; }
+				html+="<div class='ratingBoxis'><img src='"+lota[3]+"' class='ratingAvatar'><div style='float:left;'><b>"+lota[1]+"</b><br><a href='{!$presenter->link('Intercom:default')}/"+lota[0]+"/'>Poslat zprávu</a></div><div class='ratingNumber' style='"+(back)+"'>"+lota[2]+"</div><div style='clear:both;'></div></div>";
+			}
+			$("#dialog-rating").html("<div style='height:500px;width:447px;overflow:auto;padding:5px;'>"+html+"</div>");
+			$("#dialog-rating").dialog("open");
+		}
+	}); 
+	$(window).resize(function() {
+		$("#dialog-rating").dialog("option", "position", "center");
+	});
 	</script>
 </body>
 </html>

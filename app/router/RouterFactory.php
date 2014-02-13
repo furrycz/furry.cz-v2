@@ -51,9 +51,11 @@ class RouterFactory
 		//Ajax
 		$router[] = new Route('ajax/', 'Ajax:default');
 		
-		// File download
-		$router[] = new Route('file/<key>', 'Files:default');
-
+		//Post
+		$router[] = new Route('post/delete[/<postId>]', 'Post:delete');
+		$router[] = new Route('post/edit[/<postId>]', 'Post:edit');
+		$router[] = new Route('post/', 'Post:default');
+		
 		// Default route
 		$router[] = new Route('<presenter>/<action>[/<id>]', 'Homepage:default');
 
