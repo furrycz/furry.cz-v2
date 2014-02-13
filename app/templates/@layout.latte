@@ -287,7 +287,7 @@
 			for(var i=0;i<ota.length-1;i++){
 				lota = ota[i].split(",");
 				if(lota[2]>0){ back = "background:green;"; }else{ back = "background:red;"; }
-				html+="<div class='ratingBoxis'><img src='"+lota[3]+"' class='ratingAvatar'><div style='float:left;'><b>"+lota[1]+"</b><br><a href='{!$presenter->link('Intercom:default')}/"+lota[0]+"/'>Poslat zprávu</a></div><div class='ratingNumber' style='"+(back)+"'>"+lota[2]+"</div><div style='clear:both;'></div></div>";
+				html+="<div class='ratingBoxis'><img src='{!$baseUrl}/images/avatars/"+lota[3]+"' class='ratingAvatar'><div style='float:left;'><b>"+lota[1]+"</b><br><a href='{!$presenter->link('Intercom:default')}/"+lota[0]+"/'>Poslat zprávu</a></div><div class='ratingNumber' style='"+(back)+"'>"+lota[2]+"</div><div style='clear:both;'></div></div>";
 			}
 			$("#dialog-rating").html("<div style='height:500px;width:447px;overflow:auto;padding:5px;'>"+html+"</div>");
 			$("#dialog-rating").dialog("open");
