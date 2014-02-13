@@ -9,9 +9,9 @@ abstract class BasePresenter extends UI\Presenter
 {
 
 	private $uploadHandler = null;
-	
+
 	private $contentManager = null;
-	
+
 	protected function beforeRender()
 	{
 		$this->template->robots = 'index,follow';
@@ -30,9 +30,9 @@ abstract class BasePresenter extends UI\Presenter
 		}
 		return $this->uploadHandler;
 	}
-	
-	
-	
+
+
+
 	/**
 	* Create and fetch ContentManager
 	* @return Fcz\ContentManager
@@ -45,8 +45,8 @@ abstract class BasePresenter extends UI\Presenter
 		}
 		return $this->contentManager;
 	}
-	
-	
+
+
 
 	/**
 	* Creates login form, which is part of the basic layout and thus part of any page.

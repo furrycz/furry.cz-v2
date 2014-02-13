@@ -76,7 +76,7 @@
 		<div style="font-size:10px;">
 			<table style="border:0px;padding:0px;" class="noPadding">
 				{foreach $Permisions as $key => $Perm}
-					{if $Perm[0]!=""}<tr><td><b title="{$Perm[4]}"{if $Perm[2]!=""} style="color:#{$Perm[2]};"{/if}>{$Perm[0]}</b></td><td> - {$Perm[1]}</td></tr>{/if}
+					{if $Perm[0]!=""}<tr><td valign=top><b title="{$Perm[4]}"{if $Perm[2]!=""} style="color:#{$Perm[2]};"{/if}>{$Perm[0]}</b></td><td> - {$Perm[1]}</td></tr>{/if}
 				{/foreach}
 				<tr><td><b title="Smaže záznam z tabulky Access!" style="color:red;">D</b></td><td> - Odstranit z tabulky</td></tr>
 			</table>
