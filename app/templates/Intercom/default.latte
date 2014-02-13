@@ -27,7 +27,7 @@
 				{if $mess[0]==1}
 					<div style="width:60px;height:60px;float:left;">
 						{if $notReaded[$mess[5]]>0}<div style="float:right;width: 0px;height: 0px;"><div style="padding: 2px 5px;font-weight:bold;background-color:red;width: 12px;height: 22px;position: relative;right: 22px;border-radius: 5px;">{$notReaded[$mess[5]]}</div></div>{/if}
-						<img src="{$mess[4]}" style="width:60px;height:60px;">
+						<img src="{$baseUrl}/images/avatars/{$mess[4]}" style="width:60px;height:60px;">
 					</div>
 					<div style="float:left;text-align:left;margin-left: 10px;margin-top: -3px;">
 						<div style="font-weight:bold;">{$mess[1]}</div>
@@ -78,7 +78,7 @@
 				{/if}
 				{if $messageActualShow!=NULL}
 					<div n:foreach="$messageActualShow as $mess" class="messageText type_{$mess["typ"]} read_{$mess["read"]}">
-						<img src="{$mess["senderAvatar"]}" class="image">
+						<img src="{$baseUrl}/images/avatars/{$mess["senderAvatar"]}" class="image">
 						<div class="body">
 							<span class="name">{$mess["senderName"]}</span> [ <span class="date">{$mess["date"]}</span> <a n:href="delete!, $selUserNick, $mess['id']">Odstranit</a>{if $mess["read"]==0 and $mess["typ"]==1} <span class="name">Nové</span>{/if}{if $mess["read"]==0 and $mess["typ"]==0} <span class="state">Nepřečteno</span>{/if} ]
 							<div class=text>{!$mess["text"]}</div>
