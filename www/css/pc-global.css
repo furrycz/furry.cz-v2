@@ -222,7 +222,7 @@ div#UserList div.User img.Avatar { width: 70px; height: 70px; border: none; marg
 
 div#ProfileHeader { padding: 0 10px; background-color: #63973d; color: #2b2725; border-radius: 10px 10px 0 0; line-height: 50px; }
 
-div#ProfileHeader img.Avatar { float: left; position: relative; top: 10px; margin: 0 10px 0 0; max-width: 200px; max-height: 200px; border-radius: 10px; width:150px;height:150px; }
+div#ProfileHeader img.Avatar { float: left; position: relative; top: 10px; margin: 0 10px 0 0; max-width: 200px; max-height: 200px; border-radius: 10px; }
 
 div#ProfileHeader h1 { display: inline; background: transparent; margin: 0; padding: 0; }
 
@@ -242,7 +242,7 @@ div#ProfileCms { padding: 5px 10px 10px; }
 
 div#ProfileReal { border-top: 2px solid #63973d; padding: 10px; }
 
-div#ProfileReal img.Photo { float: left; margin: 0 10px 0 0; border-radius: 10px; width:150px;height:150px; }
+div#ProfileReal img.Photo { float: left; margin: 0 10px 0 0; border-radius: 10px; max-width: 200px; max-height: 200px; }
 
 div#ProfileReal dl { margin: 0; }
 
