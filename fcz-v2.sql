@@ -13,9 +13,9 @@ CREATE TABLE `Access` (
   PRIMARY KEY (`ContentId`,`UserId`),
   KEY `UserId` (`UserId`),
   KEY `PermissionId` (`PermissionId`),
-  CONSTRAINT `Access_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `Content` (`Id`) ON DELETE NO ACTION,
-  CONSTRAINT `Access_ibfk_2` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION,
-  CONSTRAINT `Access_ibfk_3` FOREIGN KEY (`PermissionId`) REFERENCES `Permissions` (`Id`) ON DELETE NO ACTION
+  CONSTRAINT `Access_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `content` (`Id`) ON DELETE NO ACTION,
+  CONSTRAINT `Access_ibfk_2` FOREIGN KEY (`UserId`) REFERENCES `users` (`Id`) ON DELETE NO ACTION,
+  CONSTRAINT `Access_ibfk_3` FOREIGN KEY (`PermissionId`) REFERENCES `permissions` (`Id`) ON DELETE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -26,7 +26,7 @@ CREATE TABLE `BookmarkCategories` (
   `Name` varchar(100) COLLATE utf8_czech_ci NOT NULL,
   PRIMARY KEY (`Id`),
   KEY `UserId` (`UserId`),
-  CONSTRAINT `BookmarkCategories_ibfk_1` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `BookmarkCategories_ibfk_1` FOREIGN KEY (`UserId`) REFERENCES `users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -37,7 +37,7 @@ CREATE TABLE `Bookmarks` (
   `CategoryId` int(11) unsigned DEFAULT NULL COMMENT 'FK',
   PRIMARY KEY (`UserId`,`TopicId`),
   KEY `CategoryId` (`CategoryId`),
-  CONSTRAINT `Bookmarks_ibfk_1` FOREIGN KEY (`CategoryId`) REFERENCES `BookmarkCategories` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `Bookmarks_ibfk_1` FOREIGN KEY (`CategoryId`) REFERENCES `bookmarkcategories` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -51,7 +51,7 @@ CREATE TABLE `CalendarReminders` (
   `CalendarLabel` varchar(10) COLLATE utf8_czech_ci NOT NULL,
   PRIMARY KEY (`Id`),
   KEY `UserId` (`UserId`),
-  CONSTRAINT `CalendarReminders_ibfk_1` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `CalendarReminders_ibfk_1` FOREIGN KEY (`UserId`) REFERENCES `users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -66,7 +66,7 @@ CREATE TABLE `CmsPages` (
   PRIMARY KEY (`Id`),
   KEY `Alias` (`Alias`),
   KEY `ContentId` (`ContentId`),
-  CONSTRAINT `CmsPages_ibfk_3` FOREIGN KEY (`ContentId`) REFERENCES `Content` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION
+  CONSTRAINT `CmsPages_ibfk_3` FOREIGN KEY (`ContentId`) REFERENCES `content` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -80,8 +80,8 @@ CREATE TABLE `Contacts` (
   PRIMARY KEY (`Id`),
   KEY `UserId` (`UserId`),
   KEY `TypeId` (`TypeId`),
-  CONSTRAINT `Contacts_ibfk_1` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `Contacts_ibfk_2` FOREIGN KEY (`TypeId`) REFERENCES `ContactTypes` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `Contacts_ibfk_1` FOREIGN KEY (`UserId`) REFERENCES `users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `Contacts_ibfk_2` FOREIGN KEY (`TypeId`) REFERENCES `contacttypes` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -110,8 +110,8 @@ CREATE TABLE `Content` (
   PRIMARY KEY (`Id`),
   KEY `LastModifiedByUser` (`LastModifiedByUser`),
   KEY `DefaultPermissions` (`DefaultPermissions`),
-  CONSTRAINT `Content_ibfk_1` FOREIGN KEY (`LastModifiedByUser`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `Content_ibfk_3` FOREIGN KEY (`DefaultPermissions`) REFERENCES `Permissions` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `Content_ibfk_1` FOREIGN KEY (`LastModifiedByUser`) REFERENCES `users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `Content_ibfk_3` FOREIGN KEY (`DefaultPermissions`) REFERENCES `permissions` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -123,7 +123,7 @@ CREATE TABLE `EditedPostHistory` (
   `TimeEdited` datetime NOT NULL,
   PRIMARY KEY (`Id`),
   KEY `EditedPostId` (`EditedPostId`),
-  CONSTRAINT `EditedPostHistory_ibfk_1` FOREIGN KEY (`EditedPostId`) REFERENCES `EditedPostHistory` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `EditedPostHistory_ibfk_1` FOREIGN KEY (`EditedPostId`) REFERENCES `editedposthistory` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -134,8 +134,8 @@ CREATE TABLE `EventAttendances` (
   `Attending` enum('Yes','No','Maybe') COLLATE utf8_czech_ci NOT NULL,
   PRIMARY KEY (`EventId`,`UserId`),
   KEY `UserId` (`UserId`),
-  CONSTRAINT `EventAttendances_ibfk_1` FOREIGN KEY (`EventId`) REFERENCES `Events` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `EventAttendances_ibfk_2` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `EventAttendances_ibfk_1` FOREIGN KEY (`EventId`) REFERENCES `events` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `EventAttendances_ibfk_2` FOREIGN KEY (`UserId`) REFERENCES `users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -155,8 +155,8 @@ CREATE TABLE `Events` (
   PRIMARY KEY (`Id`),
   KEY `ContentId` (`ContentId`),
   KEY `Header` (`Header`),
-  CONSTRAINT `Events_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `Content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `Events_ibfk_2` FOREIGN KEY (`Header`) REFERENCES `CmsPages` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `Events_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `Events_ibfk_2` FOREIGN KEY (`Header`) REFERENCES `cmspages` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -167,8 +167,8 @@ CREATE TABLE `ForumCategoryPresets` (
   `Hidden` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT 'Toggles visibility of forum category',
   PRIMARY KEY (`TopicCategoryId`,`UserId`),
   KEY `UserId` (`UserId`),
-  CONSTRAINT `ForumCategoryPresets_ibfk_1` FOREIGN KEY (`TopicCategoryId`) REFERENCES `TopicCategories` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `ForumCategoryPresets_ibfk_2` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `ForumCategoryPresets_ibfk_1` FOREIGN KEY (`TopicCategoryId`) REFERENCES `topiccategories` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `ForumCategoryPresets_ibfk_2` FOREIGN KEY (`UserId`) REFERENCES `users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -179,8 +179,8 @@ CREATE TABLE `ForumTopicPresets` (
   `Uninteresting` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT 'Marks topic as uninteresting',
   PRIMARY KEY (`TopicId`,`UserId`),
   KEY `UserId` (`UserId`),
-  CONSTRAINT `ForumTopicPresets_ibfk_1` FOREIGN KEY (`TopicId`) REFERENCES `Topics` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `ForumTopicPresets_ibfk_2` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `ForumTopicPresets_ibfk_1` FOREIGN KEY (`TopicId`) REFERENCES `topics` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `ForumTopicPresets_ibfk_2` FOREIGN KEY (`UserId`) REFERENCES `users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -188,10 +188,11 @@ DROP TABLE IF EXISTS `Ignorelist`;
 CREATE TABLE `Ignorelist` (
   `IgnoringUserId` int(10) unsigned NOT NULL COMMENT 'FK, compound PK',
   `IgnoredUserId` int(10) unsigned NOT NULL COMMENT 'FK, compound PK',
+  `IgnoreType` int(10) unsigned NOT NULL,
   PRIMARY KEY (`IgnoringUserId`,`IgnoredUserId`),
   KEY `IgnoredUserId` (`IgnoredUserId`),
-  CONSTRAINT `Ignorelist_ibfk_1` FOREIGN KEY (`IgnoringUserId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `Ignorelist_ibfk_2` FOREIGN KEY (`IgnoredUserId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `Ignorelist_ibfk_1` FOREIGN KEY (`IgnoringUserId`) REFERENCES `users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `Ignorelist_ibfk_2` FOREIGN KEY (`IgnoredUserId`) REFERENCES `users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -207,9 +208,9 @@ CREATE TABLE `ImageExpositions` (
   KEY `Thumbnail` (`Thumbnail`),
   KEY `Presentation` (`Presentation`),
   KEY `Owner` (`Owner`),
-  CONSTRAINT `ImageExpositions_ibfk_1` FOREIGN KEY (`Thumbnail`) REFERENCES `UploadedFiles` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `ImageExpositions_ibfk_2` FOREIGN KEY (`Presentation`) REFERENCES `CmsPages` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `ImageExpositions_ibfk_3` FOREIGN KEY (`Owner`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `ImageExpositions_ibfk_1` FOREIGN KEY (`Thumbnail`) REFERENCES `uploadedfiles` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `ImageExpositions_ibfk_2` FOREIGN KEY (`Presentation`) REFERENCES `cmspages` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `ImageExpositions_ibfk_3` FOREIGN KEY (`Owner`) REFERENCES `users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -224,8 +225,8 @@ CREATE TABLE `Images` (
   PRIMARY KEY (`Id`),
   KEY `ContentId` (`ContentId`),
   KEY `UploadedFileId` (`UploadedFileId`),
-  CONSTRAINT `Images_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `Content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `Images_ibfk_2` FOREIGN KEY (`UploadedFileId`) REFERENCES `UploadedFiles` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `Images_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `Images_ibfk_2` FOREIGN KEY (`UploadedFileId`) REFERENCES `uploadedfiles` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -236,9 +237,24 @@ CREATE TABLE `LastVisits` (
   `Time` datetime NOT NULL,
   PRIMARY KEY (`ContentId`,`UserId`),
   KEY `UserId` (`UserId`),
-  CONSTRAINT `LastVisits_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `Content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `LastVisits_ibfk_2` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `LastVisits_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `LastVisits_ibfk_2` FOREIGN KEY (`UserId`) REFERENCES `users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+
+
+DROP TABLE IF EXISTS `Notifications`;
+CREATE TABLE `Notifications` (
+  `Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Parent` varchar(100) COLLATE utf8_bin NOT NULL,
+  `Text` varchar(150) COLLATE utf8_bin NOT NULL,
+  `Time` datetime NOT NULL,
+  `Href` varchar(100) COLLATE utf8_bin NOT NULL,
+  `Image` varchar(200) COLLATE utf8_bin NOT NULL,
+  `IsNotifed` tinyint(1) NOT NULL,
+  `IsView` tinyint(1) NOT NULL,
+  `UserId` int(11) NOT NULL,
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
 DROP TABLE IF EXISTS `Ownership`;
@@ -247,8 +263,8 @@ CREATE TABLE `Ownership` (
   `UserId` int(11) unsigned NOT NULL COMMENT 'FK, compound PK',
   PRIMARY KEY (`ContentId`,`UserId`),
   KEY `UserId` (`UserId`),
-  CONSTRAINT `Ownership_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `Content` (`Id`) ON DELETE NO ACTION,
-  CONSTRAINT `Ownership_ibfk_2` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION
+  CONSTRAINT `Ownership_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `content` (`Id`) ON DELETE NO ACTION,
+  CONSTRAINT `Ownership_ibfk_2` FOREIGN KEY (`UserId`) REFERENCES `users` (`Id`) ON DELETE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -277,7 +293,7 @@ CREATE TABLE `PollAnswers` (
   `Text` tinytext COLLATE utf8_czech_ci NOT NULL,
   PRIMARY KEY (`Id`),
   KEY `PollId` (`PollId`),
-  CONSTRAINT `PollAnswers_ibfk_1` FOREIGN KEY (`PollId`) REFERENCES `Polls` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `PollAnswers_ibfk_1` FOREIGN KEY (`PollId`) REFERENCES `polls` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -292,7 +308,7 @@ CREATE TABLE `Polls` (
   `DisplayVotersTo` enum('Nobody,','OtherVoters,','Everybody') COLLATE utf8_czech_ci NOT NULL COMMENT 'Controls who can see voter names',
   PRIMARY KEY (`Id`),
   KEY `ContentId` (`ContentId`),
-  CONSTRAINT `Polls_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `Content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `Polls_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -306,9 +322,9 @@ CREATE TABLE `PollVotes` (
   KEY `PollId` (`PollId`),
   KEY `AnswerId` (`AnswerId`),
   KEY `UserId` (`UserId`),
-  CONSTRAINT `PollVotes_ibfk_1` FOREIGN KEY (`PollId`) REFERENCES `Polls` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `PollVotes_ibfk_2` FOREIGN KEY (`AnswerId`) REFERENCES `PollAnswers` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `PollVotes_ibfk_3` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `PollVotes_ibfk_1` FOREIGN KEY (`PollId`) REFERENCES `polls` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `PollVotes_ibfk_2` FOREIGN KEY (`AnswerId`) REFERENCES `pollanswers` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `PollVotes_ibfk_3` FOREIGN KEY (`UserId`) REFERENCES `users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -320,11 +336,12 @@ CREATE TABLE `Posts` (
   `Text` text COLLATE utf8_czech_ci NOT NULL,
   `TimeCreated` datetime NOT NULL,
   `Deleted` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `Edited` varchar(200) COLLATE utf8_czech_ci NOT NULL,
   PRIMARY KEY (`Id`),
   KEY `ContentId` (`ContentId`),
   KEY `Author` (`Author`),
-  CONSTRAINT `Posts_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `Content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `Posts_ibfk_2` FOREIGN KEY (`Author`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `Posts_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `Posts_ibfk_2` FOREIGN KEY (`Author`) REFERENCES `users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -335,13 +352,15 @@ CREATE TABLE `PrivateMessages` (
   `AddresseeId` int(11) unsigned NOT NULL COMMENT 'FK - user Id',
   `Text` text COLLATE utf8_czech_ci NOT NULL,
   `TimeSent` datetime NOT NULL,
-  `ReadByAddressee` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `Deleted` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `Read` tinyint(1) unsigned NOT NULL,
+  `ReadTime` datetime NOT NULL,
+  `File` varchar(500) COLLATE utf8_czech_ci NOT NULL,
   PRIMARY KEY (`Id`),
   KEY `SenderId` (`SenderId`),
   KEY `AddresseeId` (`AddresseeId`),
-  CONSTRAINT `PrivateMessages_ibfk_1` FOREIGN KEY (`SenderId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `PrivateMessages_ibfk_2` FOREIGN KEY (`AddresseeId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `PrivateMessages_ibfk_1` FOREIGN KEY (`SenderId`) REFERENCES `users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `PrivateMessages_ibfk_2` FOREIGN KEY (`AddresseeId`) REFERENCES `users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -352,9 +371,24 @@ CREATE TABLE `Ratings` (
   `Rating` int(11) NOT NULL,
   PRIMARY KEY (`ContentId`,`UserId`),
   KEY `UserId` (`UserId`),
-  CONSTRAINT `Ratings_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `Content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `Ratings_ibfk_2` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `Ratings_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `Ratings_ibfk_2` FOREIGN KEY (`UserId`) REFERENCES `users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+
+
+DROP TABLE IF EXISTS `RatingsPost`;
+CREATE TABLE `RatingsPost` (
+  `ContentId` int(10) unsigned NOT NULL,
+  `PostId` int(10) unsigned NOT NULL,
+  `UserId` int(11) unsigned NOT NULL,
+  `Rating` int(11) NOT NULL,
+  KEY `PostId` (`PostId`),
+  KEY `UserId` (`UserId`),
+  KEY `ContentId` (`ContentId`),
+  CONSTRAINT `ratingspost_ibfk_1` FOREIGN KEY (`PostId`) REFERENCES `posts` (`Id`),
+  CONSTRAINT `ratingspost_ibfk_2` FOREIGN KEY (`UserId`) REFERENCES `users` (`Id`),
+  CONSTRAINT `ratingspost_ibfk_3` FOREIGN KEY (`ContentId`) REFERENCES `content` (`Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
 DROP TABLE IF EXISTS `TopicCategories`;
@@ -375,15 +409,16 @@ CREATE TABLE `Topics` (
   `Header` int(11) unsigned NOT NULL COMMENT 'FK - CMS page Id',
   `HeaderForDisallowedUsers` int(11) unsigned DEFAULT NULL COMMENT 'FK - CMS page Id',
   `IsFlame` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT 'Marks topic as flamewar',
+  `Type` int(10) unsigned NOT NULL,
   PRIMARY KEY (`Id`),
   KEY `ContentId` (`ContentId`),
   KEY `CategoryId` (`CategoryId`),
   KEY `Header` (`Header`),
   KEY `HeaderForDisallowedUsers` (`HeaderForDisallowedUsers`),
-  CONSTRAINT `Topics_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `Content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `Topics_ibfk_2` FOREIGN KEY (`CategoryId`) REFERENCES `TopicCategories` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `Topics_ibfk_3` FOREIGN KEY (`Header`) REFERENCES `CmsPages` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `Topics_ibfk_4` FOREIGN KEY (`HeaderForDisallowedUsers`) REFERENCES `CmsPages` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `Topics_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `Topics_ibfk_2` FOREIGN KEY (`CategoryId`) REFERENCES `topiccategories` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `Topics_ibfk_3` FOREIGN KEY (`Header`) REFERENCES `cmspages` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `Topics_ibfk_4` FOREIGN KEY (`HeaderForDisallowedUsers`) REFERENCES `cmspages` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
@@ -443,15 +478,12 @@ CREATE TABLE `Users` (
   KEY `ProfileForGuests` (`ProfileForGuests`),
   KEY `WritingsPresentation` (`WritingsPresentation`),
   KEY `ProfileForMembers` (`ProfileForMembers`),
-  CONSTRAINT `Users_ibfk_10` FOREIGN KEY (`ProfileForGuests`) REFERENCES `CmsPages` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION,
-  CONSTRAINT `Users_ibfk_11` FOREIGN KEY (`WritingsPresentation`) REFERENCES `CmsPages` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION,
-  CONSTRAINT `Users_ibfk_13` FOREIGN KEY (`ProfileForMembers`) REFERENCES `CmsPages` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION,
-  CONSTRAINT `Users_ibfk_9` FOREIGN KEY (`ImageGalleryPresentation`) REFERENCES `CmsPages` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION
+  CONSTRAINT `Users_ibfk_10` FOREIGN KEY (`ProfileForGuests`) REFERENCES `cmspages` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION,
+  CONSTRAINT `Users_ibfk_11` FOREIGN KEY (`WritingsPresentation`) REFERENCES `cmspages` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION,
+  CONSTRAINT `Users_ibfk_13` FOREIGN KEY (`ProfileForMembers`) REFERENCES `cmspages` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION,
+  CONSTRAINT `Users_ibfk_9` FOREIGN KEY (`ImageGalleryPresentation`) REFERENCES `cmspages` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
-INSERT INTO `Users` (`Id`, `Username`, `Nickname`, `Password`, `Salt`, `OtherNicknames`, `Species`, `FurrySex`, `ShortDescriptionForMembers`, `ShortDescriptionForGuests`, `ProfileForMembers`, `ProfileForGuests`, `ImageGalleryPresentation`, `WritingsPresentation`, `AvatarFilename`, `FullName`, `Address`, `RealSex`, `DateOfBirth`, `FavouriteWebsites`, `ProfilePhotoFilename`, `Hobbies`, `GoogleMapsLink`, `DistanceFromPrague`, `WillingnessToTravel`, `Email`, `LastLogin`, `LastVisitedPage`, `LastActivityTime`, `SendIntercomToMail`, `PostsOrdering`, `PostsPerPage`, `IsAdmin`, `IsApproved`, `IsBanned`, `IsFrozen`, `Deleted`) VALUES
-(1,	'natsu',	'Natsu',	'$2y$07$a7t95tlr4ccti80wlfsjueJ2FbANexRtwljY6LNkgqB/uZMD6kXc2',	'$2y$07$a7t95tlr4ccti80wlfsjui',	'',	'',	'',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	'',	'',	'',	'1996-08-13',	'',	NULL,	'',	NULL,	NULL,	NULL,	'kubat130@gmail.com',	NULL,	NULL,	NULL,	0,	'NewestOnTop',	25,	1,	1,	0,	0,	0),
-(2,	'furryuser1',	'Furry User 1',	'$2y$07$juhdmualbu501e7sxc6lee5Y8CLav46XSyZvrAbOYLm7D9L9m6T6W',	'$2y$07$juhdmualbu501e7sxc6lej',	'fu1',	'yiffy puppy',	'',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	'',	'',	'',	'2001-01-20',	'',	NULL,	'',	NULL,	NULL,	NULL,	'sterlyn@email.cz',	'2014-01-30 19:04:17',	NULL,	NULL,	0,	'NewestOnTop',	25,	0,	1,	0,	0,	0);
 
 DROP TABLE IF EXISTS `WritingCategories`;
 CREATE TABLE `WritingCategories` (
@@ -474,9 +506,9 @@ CREATE TABLE `Writings` (
   PRIMARY KEY (`Id`),
   KEY `ContentId` (`ContentId`),
   KEY `CategoryId` (`CategoryId`),
-  CONSTRAINT `Writings_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `Content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `Writings_ibfk_2` FOREIGN KEY (`CategoryId`) REFERENCES `WritingCategories` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `Writings_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `Writings_ibfk_2` FOREIGN KEY (`CategoryId`) REFERENCES `writingcategories` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 
--- 2014-01-30 19:42:19
+-- 2014-02-13 15:49:31

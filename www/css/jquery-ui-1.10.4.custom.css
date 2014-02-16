@@ -467,11 +467,12 @@ button.ui-button::-moz-focus-inner {
 	position: absolute;
 	top: 0;
 	left: 0;
-	padding: .2em;
+	padding: 0;
 	outline: 0;
 }
 .ui-dialog .ui-dialog-titlebar {
-	padding: .4em 1em;
+	-padding: .4em 1em;
+	padding:0px 13px;
 	position: relative;
 }
 .ui-dialog .ui-dialog-title {
@@ -494,7 +495,8 @@ button.ui-button::-moz-focus-inner {
 .ui-dialog .ui-dialog-content {
 	position: relative;
 	border: 0;
-	padding: .5em 1em;
+	-padding: .5em 1em;
+	padding:0px;
 	background: none;
 	overflow: auto;
 }
@@ -797,8 +799,11 @@ body .ui-tooltip {
 	font-size: 1em;
 }
 .ui-widget-content {
-	border: 1px solid #a6c9e2;
+	-border: 1px solid #a6c9e2;
+	border:0px;
 	background: #fcfdfd url(images/ui-bg_inset-hard_100_fcfdfd_1x100.png) 50% bottom repeat-x;
+	background: white;
+	box-shadow:6px 6px 14px rgba(0, 0, 0, 0.83);
 	color: #222222;
 }
 .ui-widget-content a {
@@ -1141,25 +1146,25 @@ body .ui-tooltip {
 .ui-corner-top,
 .ui-corner-left,
 .ui-corner-tl {
-	border-top-left-radius: 0px;
+	-border-top-left-radius: 0px;
 }
 .ui-corner-all,
 .ui-corner-top,
 .ui-corner-right,
 .ui-corner-tr {
-	border-top-right-radius: 0px;
+	-border-top-right-radius: 0px;
 }
 .ui-corner-all,
 .ui-corner-bottom,
 .ui-corner-left,
 .ui-corner-bl {
-	border-bottom-left-radius: 0px;
+	-border-bottom-left-radius: 0px;
 }
 .ui-corner-all,
 .ui-corner-bottom,
 .ui-corner-right,
 .ui-corner-br {
-	border-bottom-right-radius: 0px;
+	-border-bottom-right-radius: 0px;
 }
 
 /* Overlays */

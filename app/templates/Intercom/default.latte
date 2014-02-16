@@ -19,25 +19,15 @@
 				<input type=text name=forName id="selector" value="{$selUser}" onClick="this.select();" style="display:none;width:97%;padding:3px;border:1px solid black;border-radius:0px;">
 			{/form}
 		</div>
-		<div style="min-height:662px;border-right: 1px solid #494949;background:#636363;overflow:auto;">
-			{if $selUser!=""}
-			<div class="mesasageLeft" style="background-color:#4E4E4E;cursor:default;height: 31px;">
-				<img src="{$selAvatar}" style="width:30px;height:30px;float:left;">
-				<div style="float:left;text-align:left;margin-left: 10px;margin-top: -7px;">
-					<div style="font-weight:bold;">{$selUser}</div>
-					<div style="margin-top: -5px;color: #3DA2FF;">Celkem zpráv: {$messageCount[$SelectSID]}</div>
-					<div></div>
-				</div>
-			</div>
-			{/if}
-			<a n:foreach="$allMessages as $mess" href="{!$presenter->link('default',$mess[1])}" style="padding:0px;color:#F6EDD3;text-decoration:none;"><div class="mesasageLeft">
+		<div style="min-height:683px;border-right: 1px solid #494949;background:#636363;overflow:auto;">
+			<a n:foreach="$allMessages as $mess" href="{!$presenter->link('default',$mess[6])}" style="padding:0px;color:#F6EDD3;text-decoration:none;"><div class="mesasageLeft">
 				{if $mess[0]==0}
 					<div style="color:silver;">{!$mess[1]}</div>
 				{/if}
 				{if $mess[0]==1}
 					<div style="width:60px;height:60px;float:left;">
 						{if $notReaded[$mess[5]]>0}<div style="float:right;width: 0px;height: 0px;"><div style="padding: 2px 5px;font-weight:bold;background-color:red;width: 12px;height: 22px;position: relative;right: 22px;border-radius: 5px;">{$notReaded[$mess[5]]}</div></div>{/if}
-						<img src="{$mess[4]}" style="width:60px;height:60px;">
+						<img src="{$baseUrl}/images/avatars/{$mess[4]}" style="width:60px;height:60px;">
 					</div>
 					<div style="float:left;text-align:left;margin-left: 10px;margin-top: -3px;">
 						<div style="font-weight:bold;">{$mess[1]}</div>
@@ -53,25 +43,49 @@
 			<h2>Intercom V2</h2>
 			<div style="padding:10px;">Vítej v novem intercomu v2... nový... přehlednejší.. rychlejší.. podivuhodnější.. kousavější..</div>
 		{/if}
-		{if $selUser!=""}
+		{if $selUser!=""}			
+			<div style="position: relative;top: 5px;left: 11px;width: 97%;">
+				<div style="float:left;">
+					<b>{$selUser}</b>
+				</div>	
+				<div style="float:right;">
+					<a class="button" style="color:red;border:1px solid red;" {if $ignore!=2}n:href="block!, $selUserNick"{/if}>{if $ignore==1}Odblokovat{/if}{if $ignore==2}Zablokován{/if}{if $ignore==0}Blokovat{/if}</a>
+					<a class="button" n:href="export!, $selUserNick">Exportovat</a>
+					<a class="button">Více</a>
+				</div>
+				<div style="clear:both;"></div>	
+			</div>
 			<div style="margin:10px;border:1px solid #646464;background-color:#CFCFCF;min-height:158px;">
-				{form sendMessageForm}
-				<input type="hidden" name=idAdresser value="{$idAdresser}">
-				<textarea style="width:100%;padding:0px;border:0px;resize: none;outline: 0px;height:100px;" name="textSend" class=tinimce></textarea>
-				<div style="float:right;">{input send}</div>
-				<div style="float:left;padding-left: 5px;color: #888888;">#jmeno_tvora - vloží jeho jmeno a odkaz na profil</div>
-				{/form}
+				{if $ignore==1}
+					<div style="padding: 58px;text-align:center;background-image:url(\/furry\.cz-v2\/www/images/error_big.png);background-repeat:no-repeat;height: 42px;background-position: -26px -21px;color: black;font-weight: bold;">Tohoto uživatele jsi zablokoval!</div>
+				{/if}
+				{if $ignore==2}
+					<div style="padding: 58px;text-align:center;background-image:url(\/furry\.cz-v2\/www/images/error_big.png);background-repeat:no-repeat;height: 42px;background-position: -26px -21px;color: black;font-weight: bold;">Byl jsi zablokován! Nemužeš psát zprávy!</div>
+				{/if}
+				{if $ignore==0}
+					{form sendMessageForm}
+					<input type="hidden" name=idAdresser value="{$idAdresser}">
+					<textarea style="width:100%;padding:0px;border:0px;resize: none;outline: 0px;height:100px;" name="textSend" class=tinimce></textarea>
+					<div style="float:right;">{input send}</div>
+					<div style="float:left;padding-left: 5px;color: #888888;">#jmeno_tvora - vloží jeho jmeno a odkaz na profil</div>
+					{/form}
+				{/if}	
 				<div style="clear:both;"></div>
 			</div>
-			<div style="margin:10px;border:1px solid #646464;background-color:#727272;height:530px;overflow-y: scroll;overflow-x: hidden;">
-				<div n:foreach="$messageActualShow as $mess" class="messageText type_{$mess["typ"]} read_{$mess["read"]}">
-					<img src="{$mess["senderAvatar"]}" class="image">
-					<div class="body">
-						<span class="name">{$mess["senderName"]}</span> [ <span class="date">{$mess["date"]}</span> <a n:href="delete!, $selUser, $mess['id']">Odstranit</a>{if $mess["read"]==0 and $mess["typ"]==1} <span class="name">Nové</span>{/if}{if $mess["read"]==0 and $mess["typ"]==0} <span class="state">Nepřečteno</span>{/if} ]
-						<div class=text>{!$mess["text"]}</div>
+			<div style="margin:10px;border:1px solid #646464;background-color:#727272;height:530px;overflow-y: auto;overflow-x: hidden;">
+				{if $messageActualShow==NULL}
+					<div style="text-align:center;padding:15px;">Žádná zpráva nebyl nalezena!</div>
+				{/if}
+				{if $messageActualShow!=NULL}
+					<div n:foreach="$messageActualShow as $mess" class="messageText type_{$mess["typ"]} read_{$mess["read"]}">
+						<img src="{$baseUrl}/images/avatars/{$mess["senderAvatar"]}" class="image">
+						<div class="body">
+							<span class="name">{$mess["senderName"]}</span> [ <span class="date">{$mess["date"]}</span> <a n:href="delete!, $selUserNick, $mess['id']">Odstranit</a>{if $mess["read"]==0 and $mess["typ"]==1} <span class="name">Nové</span>{/if}{if $mess["read"]==0 and $mess["typ"]==0} <span class="state">Nepřečteno</span>{/if} ]
+							<div class=text>{!$mess["text"]}</div>
+						</div>
+						<div style="clear:both;"></div>
 					</div>
-					<div style="clear:both;"></div>
-				</div>
+				{/if}
 			</div>
 		{/if}
 	</div>

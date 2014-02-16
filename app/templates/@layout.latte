@@ -12,6 +12,7 @@
 	<meta charset="UTF-8">
 	<meta name="description" content="">
 	<meta n:ifset="$robots" name="robots" content="{$robots}">
+
 	<title>{ifset $pageTitle}{$pageTitle} - {/ifset}{$title}</title>
 	
 	<link rel="shortcut icon" href="{$basePath}/favicon.ico">
@@ -20,11 +21,13 @@
 	<link rel="stylesheet" href="{$basePath}/css/pc-global.css">
 	<link rel="stylesheet" href="{$basePath}/css/autocomplete.css">
 	<link rel="stylesheet" href="{$basePath}/css/rte-content.css">
+	<link rel="stylesheet" href="{$basePath}/css/jquery.selectbox.css">
 
 	{block head}{/block}
 </head>
 
 <body>
+	{?$time=time()}
 	{block scripts}
 		<script src="{$basePath}/js/jquery.js"></script>
 		<script src="{$basePath}/js/netteForms.js"></script>
@@ -32,6 +35,7 @@
 		<script src="{$basePath}/js/jquery-ui.js"></script>
 		<script src="{$basePath}/js/jquery-nette.js"></script>
 		<script src="{$basePath}/tinymce/tinymce.min.js"></script>
+		<script src="{$basePath}/js/jquery.selectbox-0.2.js"></script>
 		<script type="text/javascript">
 		var openWindow;
 		tinymce.init({
@@ -108,10 +112,11 @@
 						{$presenter->user->identity->nickname}</a> {* No space after text! *}
 					|
 					<a n:href="Intercom:default">Intercom</a> 
-					{? $countDBM = $presenter->context->database->table('PrivateMessages')->where("AddresseeId = ? AND ReadByAddressee = 0",$presenter->user->identity->id)->count()}
-					{if $countDBM>0}<span style="background-color:red;border-radius:5px;padding: 3px 6px;color: white;font-weight: bold;text-decoration: none;">{$countDBM}</span>{/if}
+					{? $countDBM = $presenter->context->database->table('Privatemessages')->where("AddresseeId = ? AND Read = 0",$presenter->user->identity->id)->count()}
+					<span title="Notifikace" style="display:none;background-color:green;border-radius:5px;padding: 3px 6px;color: white;font-weight: bold;text-decoration: none;border:1px solid red;position:relative;cursor:pointer;" id="buttonNotificationOther">0</span>
+					<span title="Zprávy" style="background-color:{if $countDBM>0}red{/if};border-radius:5px;padding: 3px 6px;color: white;font-weight: bold;text-decoration: none;border:1px solid red;position:relative;cursor:pointer;" id="buttonNotification">{$countDBM}</span>					
 					| 
-					<a n:href="logout!">Odhlásit</a>
+					<a n:href="logout!">Odhlásit</a>					
 				</div>
 			{else}
 				{form loginForm} {* Component generated in BasePresenter.php *}
@@ -130,6 +135,7 @@
 					<li><a n:href="Gallery:default">Galerie</a></li>
 					<li>Texty</li>
 					<li><a n:href="User:default">Členové</a></li>
+					<li>Chat</li>
 				</ul>
 			</nav>
 		</div>
@@ -139,5 +145,157 @@
 		class="ContentWrapper {block contentWrapperDivClasses}{/block}">
 		{include #content}
 	</div>
+	
+	<div style="float:right;width:0px;height:0px;position:absolute;top: 32px;left: -271px;display:none;" id="notificatons">
+		<div style="background-color:white;width: 300px;color: black;box-shadow: 0 3px 8px rgba(0, 0, 0, 0.8);border-radius: 3px;border: 1px solid rgba(100, 100, 100, 0.4);">
+			<div style="float:right;padding-top: 5px;padding-right: 7px;display:none;" id="nottifSpin"><img src="{$basePath}/images/spinner.gif"></div>
+			<div style="padding:5px;font-size:12px;"><a href="#" style="text-decoration:none;color:black;font-weight:bold;" id="messageShow">Zprávy</a> · <a href="#" style="text-decoration:none;font-weight:bold;" id="notifShow">Notifikace</a></div>
+			<div style="border-top: 1px solid rgba(100, 100, 100, 0.4);"></div>
+			<div id="notificationsText" style="max-height:250px;overflow-y: auto;overflow-x: hidden;"></div>
+		</div>
+	</div>
+	<div style="float: right; width: 0px; height: 0px; position: absolute; top: 56px; display: block;margin-left: 1px;" id="notificatonsAlert"></div>
+	<div id="dialog-rating" title="Hodnocení" style="display:none;">Error!</div>
+	<script>
+	var jak=0,prevJak=-1;
+	$("#buttonNotification").click( function(){ jak=0;NotifView(0);$("#messageShow").css("color","black");$("#notifShow").css("color",""); });
+	$("#buttonNotificationOther").click( function(){ jak=1;NotifView(0);$("#messageShow").css("color","");$("#notifShow").css("color","black"); });
+	
+	$("#messageShow").click( function(){ jak=0;NotifView(5);$("#messageShow").css("color","black");$("#notifShow").css("color","");return false; });
+	$("#notifShow").click( function(){ jak=1;NotifView(5);$("#messageShow").css("color","");$("#notifShow").css("color","black");return false; });
+	function NotifView(op){
+		if(op!=5){ $("#notificatons").toggle(); }
+		$("#nottifSpin").css('display',"inline")
+		if($("#notificatons").css('display')=="block"){
+			if($("#buttonNotification").css('display')=="none"){ $("#buttonNotification").css('display',"inline");posbut = $("#buttonNotification").offset();$("#buttonNotification").css('display',"none");}
+			else{ posbut = $("#buttonNotification").offset();}
+			$("#notificatons").offset({ top: (posbut.top+24), left: (posbut.left-300+24)});
+			if($("#notificationsText").html()==""){ $("#notificationsText").html("<div style='text-align:center;padding:7px;'>Načítám....</div>"); }
+			$.ajax({
+				url: "{!$presenter->link('Ajax:notifications')}",
+				data: { "jak":jak },
+				success: function( data ) {	
+					$("#nottifSpin").css('display',"none")
+					$("#notificationsText").html("");
+					for(i=0;i<data.length;i++){
+						if(data[i].Url!=""){ divN="a";style=""; }else{ divN="div";style="cursor:default;"; }
+						$("<"+divN+" style='"+style+"' class='notifList "+data[i].Class+"' href='"+data[i].Url+"'><img src='"+data[i].Image+"' class='img'><div class=body><div class='text'>"+data[i].Text+"</div><div class='info'>"+data[i].Info+"</div></div><div style='clear:both;'></div><div style='clear:both;'></div></"+divN+">").appendTo("#notificationsText");
+					}		
+					if(data.length==0){ $("<div style='text-align:center;padding:7px;'>Žádná notifikace k zobrazení!</div>").appendTo("#notificationsText"); }					
+				}
+			});
+		}
+	}
+	/*Notification create*/
+	notifID = 0;
+	function NotificationCreate(text,desc,href,image){
+		if(typeof image!="undefined" && image!="")
+		{ $("<a class='notifAlert' id='notification_"+notifID+"' style='display:none;' href='"+href+"'><img src='"+image+"' style='float:left;width:50px;height:50px;padding-top: 4px;padding-bottom:4px;padding-right: 6px;'><div class=text>"+text+"</div><div class=info style='padding-left: 50px;'>"+desc+"</div><div style='clear:both;'></div></a>").appendTo("#notificatonsAlert"); }
+		else
+		{ $("<a class='notifAlert' id='notification_"+notifID+"' style='display:none;' href='"+href+"'><div class=text>"+text+"</div><div class=info>"+desc+"</div></a>").appendTo("#notificatonsAlert"); }
+		$("#notification_"+notifID).fadeIn( "slow", function() {} );
+		setTimeout(function(bi) { $("#notification_"+bi).fadeOut( "slow", function() {} ); }, 30000, notifID);
+		notifID++;
+	}
+	/*Center Notification*/
+	posbut = $("#Header").offset();
+	$("#notificatonsAlert").offset({ top: (posbut.top+45), left: (posbut.left+5)});
+	$( window ).resize(function() {
+		posbut = $("#buttonNotification").offset();
+		$("#notificatons").offset({ top: (posbut.top+24), left: (posbut.left-300+24)});
+		posbut = $("#Header").offset();
+		$("#notificatonsAlert").offset({ top: (posbut.top+45), left: (posbut.left+5)});
+	});
+	
+	var WindowTitle = document.title;
+	var timeNot = {$time};
+	/*Notification count*/
+	setInterval(function() {
+      // Do something every 1 minute
+		NotificationControl();
+	}, 10000);
+	function NotificationControl(){
+		$.ajax({
+				url: "{!$presenter->link('Ajax:notificationcount')}",
+				data: {},
+				success: function( data ) {					
+					$("#buttonNotification").html(data.Count);
+					$("#buttonNotification").css("display","inline");
+					if(data.Count>0 || data.Notif>0){ $("#buttonNotification").css("background-color","red");document.title = "("+(data.Count+data.Notif)+") "+WindowTitle; }else{ $("#buttonNotification").css("background-color","");document.title = WindowTitle; }
+					if(data.Notif>0 && data.Count>0){
+						$("#buttonNotificationOther").html(data.Notif);
+						$("#buttonNotificationOther").css("display","inline");
+						$("#buttonNotificationOther").css("margin-right",-5);
+						$("#buttonNotificationOther").css("border-top-right-radius",0);
+						$("#buttonNotification").css("border-top-left-radius",0);
+						$("#buttonNotificationOther").css("border-bottom-right-radius",0);
+						$("#buttonNotification").css("border-bottom-left-radius",0);
+					}else if(data.Notif>0){
+						$("#buttonNotification").css("display","none");
+						$("#buttonNotificationOther").html(data.Notif);
+						$("#buttonNotificationOther").css("display","inline");
+						$("#buttonNotificationOther").css("margin-right",0);
+						$("#buttonNotificationOther").css("border-top-right-radius",5);
+						$("#buttonNotification").css("border-top-left-radius",5);
+						$("#buttonNotificationOther").css("border-bottom-right-radius",5);
+						$("#buttonNotification").css("border-bottom-left-radius",5);
+					}else if(data.Count>0){						
+						$("#buttonNotificationOther").html(data.Notif);
+						$("#buttonNotificationOther").css("display","none");
+						$("#buttonNotification").css("border-top-left-radius",5);
+						$("#buttonNotification").css("border-bottom-left-radius",5);
+					}else{ $("#buttonNotificationOther").css("display","none"); }
+				}
+			});					
+		$.ajax({				
+				url: "{!$presenter->link('Ajax:notificationnotif')}?time="+(timeNot-1000),
+				data: {},
+				success: function( data ) {		
+					for(i=1;i<data.length;i++){
+						NotificationCreate(data[i].Text,data[i].Info,data[i].Href,data[i].Image);
+					}
+					timeNot = data[0].time;
+				}
+			});	
+	}
+	NotificationControl();
+	//$("select").selectbox();
+	//Funkce která nám class s názvem "ratingBox" převede na klikatelné odkazy které nám vyhodí okno s daty z atributu "ajax-user-rating-data"
+	$("#dialog-rating").dialog({
+      autoOpen: false,
+      show: {
+        effect: "fade",
+        duration: 500
+      },
+      hide: {
+        effect: "fade",
+        duration: 500
+      },
+	  draggable: false,
+	  create: function(event, ui) {
+        $(event.target).parent().css('position', 'fixed');
+	  },
+	  width: "auto"
+    });
+	$(".ratingBox").click(function(){
+		var data = $(this).attr("ajax-user-rating-data");
+		if(data.substr(0,1)==":"){
+			//Zde se budou data načítat přes ajax.. ale zatím to není třeba
+		}else{
+			var html = "";
+			ota = data.split("!");
+			for(var i=0;i<ota.length-1;i++){
+				lota = ota[i].split(",");
+				if(lota[2]>0){ back = "background:green;"; }else{ back = "background:red;"; }
+				html+="<div class='ratingBoxis'><img src='{!$baseUrl}/images/avatars/"+lota[3]+"' class='ratingAvatar'><div style='float:left;'><b>"+lota[1]+"</b><br><a href='{!$presenter->link('Intercom:default')}/"+lota[0]+"/'>Poslat zprávu</a></div><div class='ratingNumber' style='"+(back)+"'>"+lota[2]+"</div><div style='clear:both;'></div></div>";
+			}
+			$("#dialog-rating").html("<div style='height:500px;width:447px;overflow:auto;padding:5px;'>"+html+"</div>");
+			$("#dialog-rating").dialog("open");
+		}
+	}); 
+	$(window).resize(function() {
+		$("#dialog-rating").dialog("option", "position", "center");
+	});
+	</script>
 </body>
 </html>

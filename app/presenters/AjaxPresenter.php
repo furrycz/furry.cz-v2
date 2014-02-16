@@ -82,4 +82,137 @@ class AjaxPresenter extends BasePresenter
 		$this->sendResponse(new JsonResponse($data));
 	}
 	
+	public function renderNotificationcount(){
+		$database = $this->context->database;		
+		$data = array("Notif" => 0, "Count" => 0);
+		
+		$users = $database->table('Users')->order('Nickname');
+		foreach($users as $user){
+			if($this->user->identity->nickname!=$user["Nickname"])
+			$allUsers[] = array($user["Id"],$user["Username"]);
+			$allUserId[$user["Id"]] = $user["Username"];
+			$allUserName[$user["Username"]] = $user["Id"];
+			$allUserWithInfo[$user["Id"]] = array($user["Nickname"], $user["AvatarFilename"]);
+		}
+		
+		$messages = $database->table('Privatemessages')->where("AddresseeId = ? AND Read = 0 AND Deleted=0",$this->user->identity->id);
+		foreach($messages as $message){
+			if($message["SenderId"] == $this->user->identity->id){$name_=$allUserId[$message["AddresseeId"]];$id=$message["AddresseeId"];$SID = $message["AddresseeId"].$message["SenderId"];}
+			else{$name_=$allUserId[$message["SenderId"]];$id=$message["SenderId"];$SID = $message["SenderId"].$message["AddresseeId"];}
+			if(!isset($msgFrom[$SID])){
+				$msgFrom[$SID]=1;
+				$data["Count"]++;
+			}
+		}
+		$nottifications = $database->table('Notifications')->where("UserId = ? AND IsNotifed = 0",$this->user->identity->id);
+		foreach($nottifications as $nottification){
+			$data["Notif"]++;
+		}
+		
+		$this->sendResponse(new JsonResponse($data));
+	}
+	
+	public function renderNotificationnotif($time){
+		$database = $this->context->database;
+		$data = array("0" => array("time" => time()));
+		
+		$users = $database->table('Users')->order('Nickname');
+		foreach($users as $user){
+			if($this->user->identity->nickname!=$user["Nickname"])
+			$allUsers[] = array($user["Id"],$user["Username"]);
+			$allUserId[$user["Id"]] = $user["Username"];
+			$allUserName[$user["Username"]] = $user["Id"];
+			$allUserWithInfo[$user["Id"]] = array($user["Nickname"], $user["AvatarFilename"]);
+		}
+		
+		$messages = $database->table('Privatemessages')->where("AddresseeId = ? AND Read = 0 AND Deleted=0",$this->user->identity->id);
+		foreach($messages as $message){
+			$notif = $database->table('Notifications')->where("Parent = ?","chat_".$message["Id"]);
+			if(count($notif)==0){
+				$text = strip_tags($message["Text"]);
+				$pext = substr($text,0,57);if($pext != $text){$text = $pext."...";}
+				$data[] = array(
+					"Text" => "<b>".$allUserId[$message["SenderId"]]."</b> ti posílá zprávu:<br>".$text,
+					"Info" => Fcz\CmsUtilities::getTimeElapsedString(strtotime($message["TimeSent"])),
+					"Href" => $this->link("Intercom:default",$allUserId[$message["SenderId"]]),
+					"Image" => $allUserWithInfo[$message["SenderId"]][1],
+				);
+				$database->table('Notifications')->insert(array("Parent"=>"chat_".$message["Id"], "Time" => date("Y-m-d H:i:s",time()), "IsNotifed" => 1, "IsView" => 1, "UserId" => $this->user->identity->id));
+			}
+		}	
+			
+		$this->sendResponse(new JsonResponse($data));
+	}
+	
+	public function renderNotifications($jak){
+		$database = $this->context->database;
+		$data = array("length" => 0);
+		
+		$users = $database->table('Users')->order('Nickname');
+		foreach($users as $user){
+			if($this->user->identity->nickname!=$user["Nickname"])
+			$allUsers[] = array($user["Id"],$user["Username"]);
+			$allUserId[$user["Id"]] = $user["Username"];
+			$allUserName[$user["Username"]] = $user["Id"];
+			if($user["AvatarFilename"]==""){$user["AvatarFilename"]=(\Nette\Environment::getHttpRequest()->getUrl()->getBasePath())."/images/f_nopix.gif";}
+			$allUserWithInfo[$user["Id"]] = array($user["Nickname"], $user["AvatarFilename"]);
+		}
+		
+		if($jak==0){
+			$count = 0;
+			$messages = $database->table('Privatemessages')->where("(SenderId = ? OR AddresseeId = ?) AND Deleted=0",$this->user->identity->id, $this->user->identity->id)->order('TimeSent DESC');
+			foreach($messages as $message){
+				if($message["SenderId"] == $this->user->identity->id){$name_=$allUserId[$message["AddresseeId"]];$id=$message["AddresseeId"];$SID = $message["AddresseeId"].$message["SenderId"];}
+				else{$name_=$allUserId[$message["SenderId"]];$id=$message["SenderId"];$SID = $message["SenderId"].$message["AddresseeId"];}
+			
+				if(!isset($msgFrom[$SID])){
+					$msgFrom[$SID]=1;
+					if($message["SenderId"] == $this->user->identity->id){$read = 1;}else{$read = $message["Read"];}
+					$text = strip_tags($message["Text"]);
+					$pext = substr($text,0,57);if($pext != $text){$text = $pext."...";}
+					$data[] = array(
+						"Url" => $this->link("Intercom:default",$allUserId[$id]), 
+						"Class" => "Read_".$read, 
+						"Id" => $id,
+						"Image" => $allUserWithInfo[$id][1], 
+						"Info" => Fcz\CmsUtilities::getTimeElapsedString(strtotime($message["TimeSent"]))."".($read==0?" <b style='color:red;'>NOVÉ!</b>":""),
+						"Text" => "<div style='font-weight:bold;'>".$allUserWithInfo[$id][0]."</div>".$text
+						);
+					$count++;
+				}
+			}	
+			$data["length"] = $count;
+		}
+		
+		$this->sendResponse(new JsonResponse($data));
+	}
+	
+	public function renderRatepost($PostId, $ContentId, $Rating){
+		$database = $this->context->database;
+		$data = array();
+		
+		if($Rating>1 or $Rating<-1){$Rating=0;}//Kontrola kdyby chtěl někdo podvádět ^^
+		
+		$ratTop = 0;$mam=0;
+		$rating = $database->table('RatingsPost')->Where("PostId = ?", $PostId);
+		foreach($rating as $rat){
+			if($rat["UserId"] == $this->user->identity->id){
+				if($rat["Rating"] == $Rating){$rat["Rating"]=0;}
+				else{$rat["Rating"] = $Rating;}		
+				$database->table('RatingsPost')->where("PostId = ? AND UserId = ?",$rat["PostId"],$this->user->identity->id)->update(array("Rating" => $rat["Rating"]));
+				$mam=1;
+			}			
+			$ratTop += $rat["Rating"];
+		}
+		if($mam==0){
+			$database->table('RatingsPost')->insert(array("ContentId" => $ContentId, "PostId" => $PostId, "UserId" => $this->user->identity->id, "Rating" => $Rating));
+			$ratTop += $Rating;
+		}
+		
+		if($ratTop<0){$c="Red";}elseif($ratTop>0){$c="Green";}else{$c="Orange";}
+		
+		$data = array("Class" => $c, "Rating" => $ratTop, "PostId" => $PostId);
+		
+		$this->sendResponse(new JsonResponse($data));
+	}
 }	

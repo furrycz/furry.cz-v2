@@ -71,7 +71,7 @@
 					<b style="float:left;">Účastní se: </b>
 					<div n:foreach="$show[$i][$a][4][1] as $Ucast" style="float:left;">
 						{if $Ucast[0]!=""}
-						<img src="{$Ucast[1]}"> <a n:href="User:Profile $Ucast[2]">{$Ucast[0]}</a>
+						<img src="{$baseUrl}/images/avatars/{$Ucast[1]}" style="width: 20px;height: 20px;" valign="bottom"> <a n:href="User:Profile $Ucast[2]">{$Ucast[0]}</a>
 						{/if}
 					</div>
 					<div style="clear:left;"></div>
@@ -80,7 +80,7 @@
 					<b style="float:left;">Možná se účastní: </b>
 					<div n:foreach="$show[$i][$a][4][3] as $Ucast" style="float:left;">
 						{if $Ucast[0]!=""}
-						<img src="{$Ucast[1]}"> <a n:href="User:Profile $Ucast[2]">{$Ucast[0]}</a>
+						<img src="{$baseUrl}/images/avatars/{$Ucast[1]}" style="width: 20px;height: 20px;" valign="bottom"> <a n:href="User:Profile $Ucast[2]">{$Ucast[0]}</a>
 						{/if}
 					</div>
 					<div style="clear:left;"></div>
@@ -89,7 +89,7 @@
 					<b style="float:left;">Neúčastní se: </b>
 					<div n:foreach="$show[$i][$a][4][2] as $Ucast" style="float:left;">
 						{if $Ucast[0]!=""}
-						<img src="{$Ucast[1]}"> <a n:href="User:Profile $Ucast[2]">{$Ucast[0]}</a>
+						<img src="{$baseUrl}/images/avatars/{$Ucast[1]}" style="width: 20px;height: 20px;" valign="bottom"> <a n:href="User:Profile $Ucast[2]">{$Ucast[0]}</a>
 						{/if}
 					</div>
 					<div style="clear:left;"></div>

@@ -16,7 +16,7 @@ abstract class DiscussionPresenter extends BasePresenter
 	{
 		$database = $this->context->database;
 
-		$numPosts = $database->table('Posts')->where('ContentId', $content['Id'])->count();
+		$numPosts = $database->table('Posts')->where('ContentId', $content['Id'])->where("Deleted",0)->count();
 		$paginator = new Nette\Utils\Paginator;
 		$paginator->setItemCount($numPosts);
 		$paginator->setItemsPerPage($this->user->identity->data['postsPerPage']);
@@ -87,14 +87,29 @@ abstract class DiscussionPresenter extends BasePresenter
 	*/
 	public function createComponentDiscussionPosts()
 	{
+		$database = $this->context->database;
+		$topic = $database->table('Topics')->where('Id', $this->getParameter('topicId'))->fetch();
+		$content = $topic->ref('Content');
+		$authorizator = new Authorizator($database);
+		$access = $authorizator->authorize($content, $this->user);
+		$this->setupDiscussion($access, $content, $topic['Id'], $this->getParameter('page'), "");
 		$data = $this->discussionComponentsData;
-		if ($data === null)
-		{
-			throw new Exception("Discussion component requested, input data not provided");
-		}
 		return new Fcz\DiscussionPosts($this, $data['content'], $data['access'], $data['paginator']);
 	}
 
+	
+	public function getAuthorData($authorId){
+		$database = $this->context->database;
+		$user = $database->table('Users')->where('Id', $authorId)->fetch();
+		if($user){
+			$hodnost = "";$image = ""; $color="";
+			if($user["IsAdmin"]){$hodnost="Administrátor";$color="Admin";$image="star.png";}
+			if($user["IsFrozen"]){$hodnost="Kostka ledu";$color="Frozen";}
+			if($user["IsBanned"]){$hodnost="Zavřen v krabici";$color="Banned";$image="banana.png";}
+			if($user["Deleted"]){$hodnost="Vymazán";$color="Delete";}			
+			return array("Hodnost" => $hodnost, "Color" => $color, "Image" => $image);
+		}
+	}
 
 
 
