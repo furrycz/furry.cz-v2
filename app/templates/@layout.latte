@@ -108,7 +108,11 @@
 			{if $presenter->user->isLoggedIn()}
 				<div id="UserBox">
 					<a n:href="User:profile" class="ProfileLink">
-						<img src="{$baseUrl}/images/avatars/{$presenter->user->identity->data['avatarFilename']}">
+						{if $presenter->user->identity->data['avatarFilename']}
+							<img src="{$baseUrl}/images/avatars/{$presenter->user->identity->data['avatarFilename']}">
+						{else}
+							<img src="{$baseUrl}/images/no_avatar.png">
+						{/if}
 						{$presenter->user->identity->nickname}</a> {* No space after text! *}
 					|
 					<a n:href="Intercom:default">Intercom</a> 
