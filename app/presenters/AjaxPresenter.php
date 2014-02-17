@@ -95,7 +95,7 @@ class AjaxPresenter extends BasePresenter
 			$allUserWithInfo[$user["Id"]] = array($user["Nickname"], $user["AvatarFilename"]);
 		}
 		
-		$messages = $database->table('Privatemessages')->where("AddresseeId = ? AND Read = 0 AND Deleted=0",$this->user->identity->id);
+		$messages = $database->table('PrivateMessages')->where("AddresseeId = ? AND Read = 0 AND Deleted=0",$this->user->identity->id);
 		foreach($messages as $message){
 			if($message["SenderId"] == $this->user->identity->id){$name_=$allUserId[$message["AddresseeId"]];$id=$message["AddresseeId"];$SID = $message["AddresseeId"].$message["SenderId"];}
 			else{$name_=$allUserId[$message["SenderId"]];$id=$message["SenderId"];$SID = $message["SenderId"].$message["AddresseeId"];}
@@ -125,7 +125,7 @@ class AjaxPresenter extends BasePresenter
 			$allUserWithInfo[$user["Id"]] = array($user["Nickname"], $user["AvatarFilename"]);
 		}
 		
-		$messages = $database->table('Privatemessages')->where("AddresseeId = ? AND Read = 0 AND Deleted=0",$this->user->identity->id);
+		$messages = $database->table('PrivateMessages')->where("AddresseeId = ? AND Read = 0 AND Deleted=0",$this->user->identity->id);
 		foreach($messages as $message){
 			$notif = $database->table('Notifications')->where("Parent = ?","chat_".$message["Id"]);
 			if(count($notif)==0){
@@ -160,7 +160,7 @@ class AjaxPresenter extends BasePresenter
 		
 		if($jak==0){
 			$count = 0;
-			$messages = $database->table('Privatemessages')->where("(SenderId = ? OR AddresseeId = ?) AND Deleted=0",$this->user->identity->id, $this->user->identity->id)->order('TimeSent DESC');
+			$messages = $database->table('PrivateMessages')->where("(SenderId = ? OR AddresseeId = ?) AND Deleted=0",$this->user->identity->id, $this->user->identity->id)->order('TimeSent DESC');
 			foreach($messages as $message){
 				if($message["SenderId"] == $this->user->identity->id){$name_=$allUserId[$message["AddresseeId"]];$id=$message["AddresseeId"];$SID = $message["AddresseeId"].$message["SenderId"];}
 				else{$name_=$allUserId[$message["SenderId"]];$id=$message["SenderId"];$SID = $message["SenderId"].$message["AddresseeId"];}
