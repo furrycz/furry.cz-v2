@@ -326,7 +326,9 @@ div#Content-Ignorelist-edit img.Avatar { max-height: 35px; vertical-align: middl
 /*                                 Gallery                                  */
 /****************************************************************************/
 
+/***********/
 /* Default */
+/***********/
 
 #GalleryAuthorList { display: block; float: right; border-left: 3px solid #3C3732; padding: 0 10px; }
 
@@ -336,20 +338,11 @@ div#Content-Ignorelist-edit img.Avatar { max-height: 35px; vertical-align: middl
 
 #Content-Gallery-default .BottomClear { clear: both; }
 
+/**************/
 /* Exposition */
+/**************/
 
 #ExpositionThumbnails { min-height: 10px; margin: 0 10px; }
-
-/* User */
-
-#Content-Gallery-user div.Header { padding: 0 10px; background-color: #63973d; color: #2b2725; border-radius: 10px 10px 0 0; line-height: 50px; }
-
-#Content-Gallery-user div.Header img.Avatar { float: left; position: relative; top: 10px; margin: 0 10px 0 0; max-width: 200px; max-height: 200px; border-radius: 10px; }
-#Content-Gallery-user div.Header h1 { display: inline; background: transparent; margin: 0; padding: 0; }
-
-#MyGallery { float: right; padding: 0 10px 0 10px; }
-
-#MyGalleryTools a { float: right; padding: 0 3px; line-height: 49px; margin: 3px 0 0; display: block; }
 
 #Content-Gallery-exposition div.Header { padding: 0; background-color: #63973d; color: #2b2725; border-radius: 10px 10px 0 0; line-height: 50px; }
 
@@ -360,6 +353,40 @@ div#Content-Ignorelist-edit img.Avatar { max-height: 35px; vertical-align: middl
 #MyExpoTools { float: right; margin: 0 10px 0 0; }
 
 #MyExpoTools a { padding: 0 5px; line-height: 40px; margin: 5px 0 0; display: block; float: right; }
+
+/*********/
+/* Image */
+/*********/
+
+#Content-Gallery-showImage div.Header { padding: 0; background-color: #63973d; color: #2b2725; border-radius: 10px 10px 0 0; line-height: 50px; }
+
+#Content-Gallery-showImage div.Header a.ArtistLink { background: transparent; }
+
+#Content-Gallery-showImage div.Header h1 { float: left; display: inline; }
+
+#Content-Gallery-showImage div.Header img.Avatar { float: left; margin: 0 10px 0 0; max-width: 50px; max-height: 50px; border-radius: 10px 0 0; }
+
+#Content-Gallery-showImage section.Image { text-align: center; padding: 10px; }
+
+#Content-Gallery-showImage section.Image a:hover { background: transparent; }
+
+#Content-Gallery-showImage section.Image img { max-height: 650px; margin: 0 0 0px 0; border-radius: 10px; }
+
+#Content-Gallery-showImage section.Image div.Description { background: #3C3732; border-radius: 10px; padding: 10px; margin: 0px 0 0; }
+
+/********/
+/* User */
+/********/
+
+#Content-Gallery-user div.Header { padding: 0 10px; background-color: #63973d; color: #2b2725; border-radius: 10px 10px 0 0; line-height: 50px; }
+
+#Content-Gallery-user div.Header img.Avatar { float: left; position: relative; top: 10px; margin: 0 10px 0 0; max-width: 200px; max-height: 200px; border-radius: 10px; }
+
+#Content-Gallery-user div.Header h1 { display: inline; background: transparent; margin: 0; padding: 0; }
+
+#MyGallery { float: right; padding: 0 10px 0 10px; }
+
+#MyGalleryTools a { float: right; padding: 0 3px; line-height: 49px; margin: 3px 0 0; display: block; }
 
     /* >>> Expositions */
 

@@ -126,6 +126,25 @@ class GalleryPresenter extends DiscussionPresenter
 
 
 
+	public function renderShowImage($imageId)
+	{
+		$database = $this->context->database;
+
+		$image = $database->table("Images")->where("Id", $imageId)->fetch();
+		if ($image === false)
+		{
+			throw new Nette\Application\BadRequestException("Obrázek nenalezen");
+		}
+		$author = $image->ref("ContentId")->related("Ownership", "ContentId")->fetch()->ref("UserId");
+
+		$this->template->setParameters(array(
+			'image' => $image,
+			'author' => $author
+		));
+	}
+
+
+
 	public function renderAddImage($expositionId)
 	{
 		// Check access

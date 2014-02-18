@@ -30,6 +30,7 @@ class RouterFactory
 		$router[] = new Route('gallery/exposition/delete/<expositionId>', 'Gallery:deleteExposition');
 		$router[] = new Route('gallery/exposition/<expositionId>', 'Gallery:exposition');
 		$router[] = new Route('gallery/add', 'Gallery:addImage');
+		$router[] = new Route('gallery/show/<imageId>', 'Gallery:showImage');
 		$router[] = new Route('gallery/user[/<userId>][/<page=1>]', 'Gallery:user');
 		$router[] = new Route('gallery/<action>[/<userId>][/<page=1>]', 'Gallery:default');
 
