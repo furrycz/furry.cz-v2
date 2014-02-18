@@ -13,6 +13,6 @@ CREATE TABLE `Content` (
   PRIMARY KEY (`Id`),
   KEY `LastModifiedByUser` (`LastModifiedByUser`),
   KEY `DefaultPermissions` (`DefaultPermissions`),
-  CONSTRAINT `Content_ibfk_1` FOREIGN KEY (`LastModifiedByUser`) REFERENCES `users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `Content_ibfk_3` FOREIGN KEY (`DefaultPermissions`) REFERENCES `permissions` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `Content_ibfk_5` FOREIGN KEY (`DefaultPermissions`) REFERENCES `Permissions` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `Content_ibfk_4` FOREIGN KEY (`LastModifiedByUser`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci

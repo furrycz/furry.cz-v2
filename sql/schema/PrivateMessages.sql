@@ -11,6 +11,6 @@ CREATE TABLE `PrivateMessages` (
   PRIMARY KEY (`Id`),
   KEY `SenderId` (`SenderId`),
   KEY `AddresseeId` (`AddresseeId`),
-  CONSTRAINT `PrivateMessages_ibfk_1` FOREIGN KEY (`SenderId`) REFERENCES `users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `PrivateMessages_ibfk_2` FOREIGN KEY (`AddresseeId`) REFERENCES `users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `PrivateMessages_ibfk_4` FOREIGN KEY (`AddresseeId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `PrivateMessages_ibfk_3` FOREIGN KEY (`SenderId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci

@@ -4,6 +4,6 @@ CREATE TABLE `EventAttendances` (
   `Attending` enum('Yes','No','Maybe') COLLATE utf8_czech_ci NOT NULL,
   PRIMARY KEY (`EventId`,`UserId`),
   KEY `UserId` (`UserId`),
-  CONSTRAINT `EventAttendances_ibfk_1` FOREIGN KEY (`EventId`) REFERENCES `events` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `EventAttendances_ibfk_2` FOREIGN KEY (`UserId`) REFERENCES `users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `EventAttendances_ibfk_4` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `EventAttendances_ibfk_3` FOREIGN KEY (`EventId`) REFERENCES `Events` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci

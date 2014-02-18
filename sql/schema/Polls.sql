@@ -8,5 +8,5 @@ CREATE TABLE `Polls` (
   `DisplayVotersTo` enum('Nobody,','OtherVoters,','Everybody') COLLATE utf8_czech_ci NOT NULL COMMENT 'Controls who can see voter names',
   PRIMARY KEY (`Id`),
   KEY `ContentId` (`ContentId`),
-  CONSTRAINT `Polls_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `Polls_ibfk_2` FOREIGN KEY (`ContentId`) REFERENCES `Content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci

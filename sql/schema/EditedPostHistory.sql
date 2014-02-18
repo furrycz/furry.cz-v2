@@ -5,5 +5,5 @@ CREATE TABLE `EditedPostHistory` (
   `TimeEdited` datetime NOT NULL,
   PRIMARY KEY (`Id`),
   KEY `EditedPostId` (`EditedPostId`),
-  CONSTRAINT `EditedPostHistory_ibfk_1` FOREIGN KEY (`EditedPostId`) REFERENCES `editedposthistory` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `EditedPostHistory_ibfk_2` FOREIGN KEY (`EditedPostId`) REFERENCES `EditedPostHistory` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci

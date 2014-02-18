@@ -8,6 +8,6 @@ CREATE TABLE `Images` (
   PRIMARY KEY (`Id`),
   KEY `ContentId` (`ContentId`),
   KEY `UploadedFileId` (`UploadedFileId`),
-  CONSTRAINT `Images_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `Images_ibfk_2` FOREIGN KEY (`UploadedFileId`) REFERENCES `uploadedfiles` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `Images_ibfk_4` FOREIGN KEY (`UploadedFileId`) REFERENCES `UploadedFiles` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `Images_ibfk_3` FOREIGN KEY (`ContentId`) REFERENCES `Content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci

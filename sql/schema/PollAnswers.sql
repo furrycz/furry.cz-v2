@@ -4,5 +4,5 @@ CREATE TABLE `PollAnswers` (
   `Text` tinytext COLLATE utf8_czech_ci NOT NULL,
   PRIMARY KEY (`Id`),
   KEY `PollId` (`PollId`),
-  CONSTRAINT `PollAnswers_ibfk_1` FOREIGN KEY (`PollId`) REFERENCES `polls` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `PollAnswers_ibfk_2` FOREIGN KEY (`PollId`) REFERENCES `Polls` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci

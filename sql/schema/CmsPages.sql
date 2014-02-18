@@ -8,5 +8,5 @@ CREATE TABLE `CmsPages` (
   PRIMARY KEY (`Id`),
   KEY `Alias` (`Alias`),
   KEY `ContentId` (`ContentId`),
-  CONSTRAINT `CmsPages_ibfk_3` FOREIGN KEY (`ContentId`) REFERENCES `content` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION
+  CONSTRAINT `CmsPages_ibfk_5` FOREIGN KEY (`ContentId`) REFERENCES `Content` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci

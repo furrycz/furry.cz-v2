@@ -41,8 +41,8 @@ CREATE TABLE `Users` (
   KEY `ProfileForGuests` (`ProfileForGuests`),
   KEY `WritingsPresentation` (`WritingsPresentation`),
   KEY `ProfileForMembers` (`ProfileForMembers`),
-  CONSTRAINT `Users_ibfk_10` FOREIGN KEY (`ProfileForGuests`) REFERENCES `cmspages` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION,
-  CONSTRAINT `Users_ibfk_11` FOREIGN KEY (`WritingsPresentation`) REFERENCES `cmspages` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION,
-  CONSTRAINT `Users_ibfk_13` FOREIGN KEY (`ProfileForMembers`) REFERENCES `cmspages` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION,
-  CONSTRAINT `Users_ibfk_9` FOREIGN KEY (`ImageGalleryPresentation`) REFERENCES `cmspages` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION
+  CONSTRAINT `Users_ibfk_17` FOREIGN KEY (`ImageGalleryPresentation`) REFERENCES `CmsPages` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION,
+  CONSTRAINT `Users_ibfk_14` FOREIGN KEY (`ProfileForGuests`) REFERENCES `CmsPages` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION,
+  CONSTRAINT `Users_ibfk_15` FOREIGN KEY (`WritingsPresentation`) REFERENCES `CmsPages` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION,
+  CONSTRAINT `Users_ibfk_16` FOREIGN KEY (`ProfileForMembers`) REFERENCES `CmsPages` (`Id`) ON DELETE SET NULL ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci

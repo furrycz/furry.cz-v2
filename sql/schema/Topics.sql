@@ -12,8 +12,8 @@ CREATE TABLE `Topics` (
   KEY `CategoryId` (`CategoryId`),
   KEY `Header` (`Header`),
   KEY `HeaderForDisallowedUsers` (`HeaderForDisallowedUsers`),
-  CONSTRAINT `Topics_ibfk_1` FOREIGN KEY (`ContentId`) REFERENCES `content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `Topics_ibfk_2` FOREIGN KEY (`CategoryId`) REFERENCES `topiccategories` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `Topics_ibfk_3` FOREIGN KEY (`Header`) REFERENCES `cmspages` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `Topics_ibfk_4` FOREIGN KEY (`HeaderForDisallowedUsers`) REFERENCES `cmspages` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `Topics_ibfk_8` FOREIGN KEY (`HeaderForDisallowedUsers`) REFERENCES `CmsPages` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `Topics_ibfk_5` FOREIGN KEY (`ContentId`) REFERENCES `Content` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `Topics_ibfk_6` FOREIGN KEY (`CategoryId`) REFERENCES `TopicCategories` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `Topics_ibfk_7` FOREIGN KEY (`Header`) REFERENCES `CmsPages` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci
