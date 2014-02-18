@@ -43,7 +43,7 @@ class IntercomPresenter extends BasePresenter
 		
 		$allMessages = NULL;$msgFrom = NULL;$messageActualShow = NULL;$messageCount = NULL;$notReaded = NULL;
 		
-		$messages = $database->table('Privatemessages')->where("(SenderId = ? OR AddresseeId = ?) AND Deleted=0",$this->user->identity->id, $this->user->identity->id)->order('TimeSent DESC');
+		$messages = $database->table('PrivateMessages')->where("(SenderId = ? OR AddresseeId = ?) AND Deleted=0",$this->user->identity->id, $this->user->identity->id)->order('TimeSent DESC');
 		foreach($messages as $message){
 			if($message["SenderId"] == $this->user->identity->id){$name_=$allUserId[$message["AddresseeId"]];$id=$message["AddresseeId"];$SID = $message["AddresseeId"].$message["SenderId"];}
 			else{$name_=$allUserId[$message["SenderId"]];$id=$message["SenderId"];$SID = $message["SenderId"].$message["AddresseeId"];}
@@ -65,7 +65,7 @@ class IntercomPresenter extends BasePresenter
 				if($message["SenderId"]!=$this->user->identity->id){
 					if($message["Read"]=="0"){
 						$notReaded[$SID]++;
-						if($name==$name_){$database->table('Privatemessages')->where('Id', $message["Id"])->update(array("Read" => 1));}
+						if($name==$name_){$database->table('PrivateMessages')->where('Id', $message["Id"])->update(array("Read" => 1));}
 					}				
 				}
 				
@@ -102,7 +102,7 @@ class IntercomPresenter extends BasePresenter
 		$database = $this->presenter->context->database;
 		$message = $database->table('PrivateMessages')->where("id",$id)->fetch();
 		if($message["SenderId"] == $this->user->identity->id or $message["AddresseeId"] == $this->user->identity->id){
-			$database->table('Privatemessages')->where("id",$id)->update("Deleted",1);
+			$database->table('PrivateMessages')->where("id",$id)->update("Deleted",1);
 		}else{
 			$this->flashMessage('Tato zpráva nepatří tobě! Nebyla napsána tebou a ani nebyla určena tobě!', 'error');
 		}
@@ -129,7 +129,7 @@ class IntercomPresenter extends BasePresenter
 		
 		$file = NULL;
 		
-		$messages = $database->table('Privatemessages')->where("(SenderId = ? OR AddresseeId = ?) AND (SenderId = ? OR AddresseeId = ?) AND Deleted=0",$this->user->identity->id, $this->user->identity->id,$user["Id"],$user["Id"])->order('TimeSent DESC');
+		$messages = $database->table('PrivateMessages')->where("(SenderId = ? OR AddresseeId = ?) AND (SenderId = ? OR AddresseeId = ?) AND Deleted=0",$this->user->identity->id, $this->user->identity->id,$user["Id"],$user["Id"])->order('TimeSent DESC');
 		foreach($messages as $message){
 			if($message["SenderId"] == $this->user->identity->id){$name_=$allUserId[$message["AddresseeId"]];$id=$message["AddresseeId"];$SID = $message["AddresseeId"].$message["SenderId"];}
 			else{$name_=$allUserId[$message["SenderId"]];$id=$message["SenderId"];$SID = $message["SenderId"].$message["AddresseeId"];}

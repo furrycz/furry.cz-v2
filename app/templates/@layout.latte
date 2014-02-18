@@ -108,11 +108,15 @@
 			{if $presenter->user->isLoggedIn()}
 				<div id="UserBox">
 					<a n:href="User:profile" class="ProfileLink">
-						<img src="{$baseUrl}/images/avatars/{$presenter->user->identity->data['avatarFilename']}">
+						{if $presenter->user->identity->data['avatarFilename']}
+							<img src="{$baseUrl}/images/avatars/{$presenter->user->identity->data['avatarFilename']}">
+						{else}
+							<img src="{$baseUrl}/images/no_avatar.png">
+						{/if}
 						{$presenter->user->identity->nickname}</a> {* No space after text! *}
 					|
 					<a n:href="Intercom:default">Intercom</a> 
-					{? $countDBM = $presenter->context->database->table('Privatemessages')->where("AddresseeId = ? AND Read = 0",$presenter->user->identity->id)->count()}
+					{? $countDBM = $presenter->context->database->table('PrivateMessages')->where("AddresseeId = ? AND Read = 0",$presenter->user->identity->id)->count()}
 					<span title="Notifikace" style="display:none;background-color:green;border-radius:5px;padding: 3px 6px;color: white;font-weight: bold;text-decoration: none;border:1px solid red;position:relative;cursor:pointer;" id="buttonNotificationOther">0</span>
 					<span title="Zprávy" style="background-color:{if $countDBM>0}red{/if};border-radius:5px;padding: 3px 6px;color: white;font-weight: bold;text-decoration: none;border:1px solid red;position:relative;cursor:pointer;" id="buttonNotification">{$countDBM}</span>					
 					| 
