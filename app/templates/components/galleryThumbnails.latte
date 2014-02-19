@@ -8,7 +8,7 @@
 	<ul class="GalleryThumbnails">
 		{foreach $images as $image}
 			<li>
-				<a n:href="Files:default $image->ref('UploadedFileId')['Key']">
+				<a n:href="Gallery:showImage $image['Id']">
 					<img src="{$baseUrl}/file/{$image->ref('UploadedFileId')['Key']}"><span class="Name">{$image["Name"]}</span></a></li> {* TODO: Implement thumbnails! *}
 					
 		{/foreach}

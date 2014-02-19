@@ -11,7 +11,6 @@ use Nette\Diagnostics\Debugger;
 class GalleryPresenter extends DiscussionPresenter
 {
 
-	private $newImageTargetExposition = null;
 
 	/**
 	 * Action: Shows a gallery main page.
@@ -21,11 +20,17 @@ class GalleryPresenter extends DiscussionPresenter
 	{
 		$database = $this->context->database;
 
-		// TODO: Filter!
-		$authors = $database->table("Users");
+		$authors = $database->table("Users")->select("Id, Nickname, AvatarFilename");
 
-		// TODO: Filter!
-		$recentPosts = null;
+		$since = new DateTime();
+		$since = $since->sub(new DateInterval('P10D')); // Today minus 10 days
+		$recentPosts = $database
+			->table("Content")
+			->where(array(
+				"Type" => "Image",
+				"TimeCreated > ?" => $since
+			))
+			->order("TimeCreated DESC");
 
 		$this->template->setParameters(array(
 			'authors' => $authors,
@@ -121,6 +126,25 @@ class GalleryPresenter extends DiscussionPresenter
 		$this->template->setParameters(array(
 			"imageCount" => $expo->related("Images", "Exposition")->count(),
 			"exposition" => $expo
+		));
+	}
+
+
+
+	public function renderShowImage($imageId)
+	{
+		$database = $this->context->database;
+
+		$image = $database->table("Images")->where("Id", $imageId)->fetch();
+		if ($image === false)
+		{
+			throw new Nette\Application\BadRequestException("Obrázek nenalezen");
+		}
+		$author = $image->ref("ContentId")->related("Ownership", "ContentId")->fetch()->ref("UserId");
+
+		$this->template->setParameters(array(
+			'image' => $image,
+			'author' => $author
 		));
 	}
 
@@ -238,8 +262,11 @@ class GalleryPresenter extends DiscussionPresenter
 
 			// Thumbnail
 			$thumbId = null;
-			$handler = new Fcz\FileUploadHandler($this);
-			list ($thumbId, $thumbKey) = $handler->handleUpload($form->getComponent("Thumbnail", true)->getValue(), "ExpositionThumbnail", null);
+			$uploadControl = $form->getComponent("Thumbnail", true);
+			if ($uploadControl->isFilled())
+			{
+				list ($thumbId, $thumbKey) = $this->getUploadHandler()->handleUpload($uploadControl->getValue(), "ExpositionThumbnail", null);
+			}
 
 			// Exposition
 			$exposition = $database->table("ImageExpositions")->insert(array(
@@ -457,9 +484,10 @@ class GalleryPresenter extends DiscussionPresenter
 
 		$expoSelect = $form->AddSelect("ExpositionId", "Expozice:", $this->composeExpositionSelectList());
 
-		if ($this->newImageTargetExposition != null)
+		$targetExpo = $this->getParameter("exposition");
+		if ($targetExpo != null)
 		{
-			$expoSelect->setValue($this->newImageTargetExposition);
+			$expoSelect->setValue($targetExpo);
 		}
 
 		// Flags
@@ -565,7 +593,7 @@ class GalleryPresenter extends DiscussionPresenter
 			Nette\Diagnostics\Debugger::log($exception);
 		}*/
 
-		$this->flashMessage('Obrazek byl nahran', 'ok');
+		$this->flashMessage('Obrázek byl nahrán', 'ok');
 		if ($values["ExpositionId"] != 0)
 		{
 			$this->redirect("Gallery:exposition", $values["ExpositionId"]);

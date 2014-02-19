@@ -23,22 +23,37 @@
 	</div>
 
 	<ul id="GalleryAuthorList">
-		Autori:
-		<li n:foreach="$authors as $author">
-			<a n:href="Gallery:user $author['Id']">
-				{$author['Nickname']} (6/9)
-			</a>
-		</li>
+		{foreach $authors as $author}
+			{var $totalImages = $author->related("Ownership")->where("Content.Type", "Image")->count()}
+			{if $totalImages > 0}
+				<li>
+					<span class="Total">({$totalImages})</span>
+					<a n:href="Gallery:user $author['Id']">{$author['Nickname']}</a>
+				</li>
+			{/if}
+		{/foreach}
 	</ul>
 
 	<div id="GalleryLatestPosts">
-		{if count($recentPosts) == 0}
-			Zadne nove obrazky
+		{if count($recentPosts) != 0}
+			<ul class="GalleryThumbnails">
+				{foreach $recentPosts as $content}
+					{var $image = $content->related("Images")->fetch()}
+					{var $when = Fcz\CmsUtilities::getTimeElapsedString(strtotime($content["TimeCreated"]))}
+					{var $author = $content->related("Ownership")->fetch()->ref("User")}
+					<li>
+						<a n:href="Gallery:showImage $image['Id']">
+							{* TODO: Implement thumbnails! *}
+							<img src="{$baseUrl}/file/{$image->ref('UploadedFileId')['Key']}">
+							<span class="Name">{$image["Name"]}</span>
+							<span class="Author">{$author["Nickname"]}</span>
+							<span class="Time">{$when}</span>
+						</a>
+					</li>
+				{/foreach}
+			</ul>
 		{else}
-			Nejnovejsi prispevky:
-			<li n:foreach="$recentPosts as $post">
-
-			</li>
+			<p class="ThisExpoIsEmpty">Žádné nové obrázky za posledních 10 dní</p>
 		{/if}
 	</div>
 

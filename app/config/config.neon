@@ -32,13 +32,19 @@ common:
 					maxWidth: 200
 					maxHeight: 200
 					maxFilesize: 1000000
-					directory: www/images/avatars # Override, local to application root
+					
+					# Local to application root
+					# IMPORTANT! Currently this path is hardcoded in templates, don't change!
+					directory: www/images/avatars 
 
 				userProfilePhoto:
 					isImage: true
 					maxWidth: 200
 					maxHeight: 200
 					maxFilesize: 1000000
+					
+					# Local to application root
+					# IMPORTANT! Currently this path is hardcoded in templates, don't change!
 					directory: www/images/portraits
 
 				expositionThumbnail:

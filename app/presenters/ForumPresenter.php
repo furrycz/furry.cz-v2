@@ -16,18 +16,12 @@ class ForumPresenter extends DiscussionPresenter
 	public function renderDefault()
 	{
 		$database = $this->context->database;
-		
-		$users = $database->table('Users');
-		foreach($users as $user){		
-			$allUserWithInfo[$user["Id"]] = array($user["Nickname"], $user["AvatarFilename"]);
-		}
-		
+
 		$categories = $database->table('TopicCategories')->select('Id, Name');
 		$topics = $database->table('Topics');
 		$this->template->setParameters(array(
 			'categories' => $categories,
 			'topics' => $topics,
-			'allUserWithInfo' => $allUserWithInfo
 		));
 	}
 

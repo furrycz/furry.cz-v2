@@ -8,7 +8,7 @@
 
 {block content}
 	<div id="ProfileHeader" class="LightBackground">
-		<img src="{$profile['AvatarFilename']}" class="Avatar">
+		<img src="{$baseUrl}/images/avatars/{$profile['AvatarFilename']}" class="Avatar">
 		{if $profile['CanBeEdited']}
 			<a id="EditProfile" n:href="User:edit $profile['Id']">Upravit</a>
 		{/if}
@@ -28,7 +28,7 @@
 		{/if}
 		<br>
 		<span class="SpeciesLabel">Naposled přihlášen:</span>
-		<span class="Species">{$profile['LastLogin']}</span>		
+		<span class="Species">{$profile['LastLogin']}</span>
 		{if $profile['ShortDescription'] != null}
 			<p class="ShortDescription">
 				<span class="Label">Popis:</span>
@@ -47,7 +47,7 @@
 
 	{if $presenter->user->isLoggedIn() && $profile['HasAnyPersonalInfo']}
 		<div id="ProfileReal">
-			<img src="{$profile['ProfilePhotoFilename']}" class="Photo">
+			<img src="{$baseUrl}/images/portraits/{$profile['ProfilePhotoFilename']}" class="Photo">
 			<dl>
 				{if $profile['FullName'] != null}
 					<dt>Jméno:</dt>

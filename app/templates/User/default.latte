@@ -53,7 +53,7 @@
 				<div class="{implode($classes, ' ')}" id="User_{$user['Id']}">
 					<a n:href="User:profile $user['Id']">
 						{if $user['AvatarFilename']}
-							<img src="{$user['AvatarFilename']}" class="Avatar">
+							<img src="{$baseUrl}/images/avatars/{$user['AvatarFilename']}" class="Avatar">
 						{/if}
 						<span class="Nickname">{$user['Nickname']}</span></a> {* There must be no whitespace before </a> *}
 					{if $user['IsAdmin']}
