@@ -37,7 +37,7 @@ class RouterFactory
 		// Forum
 		$router[] = new Route('forum/<action>[/<topicId>][/<page=1>][/<subAction>]', 'Forum:default');
 		
-		// Calendar		
+		// Calendar
 		$router[] = new Route('events/new[/<year>][/<month>]', 'Events:new');
 		$router[] = new Route('events/view[/<eventId>]', 'Events:view');
 		$router[] = new Route('events/visible[/<eventId>]', 'Events:visible');
@@ -45,18 +45,21 @@ class RouterFactory
 		$router[] = new Route('events/day/[<year>/][<month>/][<day>]', 'Events:day');
 		$router[] = new Route('events/[<year>/][<month>]', 'Events:default');
 
-		// Intercom		
+		// Intercom
 		$router[] = new Route('intercom/autocomplete', 'Intercom:autocomplete');
 		$router[] = new Route('intercom[/<name>]', 'Intercom:default');
 		
-		//Ajax
+		// Ajax
 		$router[] = new Route('ajax/', 'Ajax:default');
+
+		// Files
+		$router[] = new Route('file/<key>', 'Files:default');
 		
-		//Post
+		// Post
 		$router[] = new Route('post/delete[/<postId>]', 'Post:delete');
 		$router[] = new Route('post/edit[/<postId>]', 'Post:edit');
 		$router[] = new Route('post/', 'Post:default');
-		
+
 		// Default route
 		$router[] = new Route('<presenter>/<action>[/<id>]', 'Homepage:default');
 
