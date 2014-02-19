@@ -6,6 +6,9 @@
 /*
  * Background-brown: #2B2725
  * Lighter brown: #3C3732
+ *
+ * Light brown (hint text): color: #b6ad93;
+ * Default text (yellow-ish) color: #f6edd3;
  */
 
 /****************************************************************************/
@@ -143,15 +146,15 @@ div.DiscussionPosts div.HiddenPosts div.AvatarBox { height: 25px; }
 /* GalleryThumbnails component */
 /*******************************/
 
-ul.GalleryThumbnails { margin: 0 10px 10px; padding: 0; text-align: center; }
+ul.GalleryThumbnails { margin: 0 10px 10px; padding: 0; text-align: left; }
 
-ul.GalleryThumbnails li { list-style-type: none; display: inline-block; margin: 5px; min-width: 170px; }
+ul.GalleryThumbnails li { list-style-type: none; display: inline-block; margin: 5px; width: 170px; }
 
 ul.GalleryThumbnails a:hover { background-color: #006aeb; }
 
 ul.GalleryThumbnails a { display: block; padding: 3px; background-color: #3C3732; border-radius: 5px; }
 
-ul.GalleryThumbnails li img { max-width: 200px; max-height: 200px; border-radius: 5px; }
+ul.GalleryThumbnails li img { max-width: 164px; max-height: 170px; border-radius: 5px; }
 
 ul.GalleryThumbnails li span { display: block; text-align: center; }
 
@@ -364,11 +367,29 @@ div#Content-Ignorelist-edit img.Avatar { max-height: 35px; vertical-align: middl
 /* Default */
 /***********/
 
-#GalleryAuthorList { display: block; float: right; border-left: 3px solid #3C3732; padding: 0 10px; }
+#GalleryAuthorList { display: block; float: right; border-left: 3px solid #3C3732; padding: 0 10px; width: 125px; }
 
 #GalleryAuthorList li { list-style: none }
 
-#GalleryLatestPosts { padding: 10px; }
+#GalleryAuthorList a { max-width: 100px; display: inline-block;  }
+
+#GalleryAuthorList span.Total { color: #b6ad93; font-size: 0.8em; overflow: hidden; }
+
+#GalleryLatestPosts { padding: 10px 0; width: 795px; }
+
+#GalleryLatestPosts ul { text-align: left; }
+
+#GalleryLatestPosts li { width: 180px; }
+
+#GalleryLatestPosts img { max-width: 174px; max-height: 174px; }
+
+#GalleryLatestPosts a { text-decoration: none; text-align: center; }
+
+#GalleryLatestPosts span.Name { text-decoration: underline; overflow: hidden; }
+
+#GalleryLatestPosts span.Author { color: #f6edd3; overflow: hidden; }
+
+#GalleryLatestPosts span.Time { text-decoration: none; color: #b6ad93; font-size: 0.8em; overflow: hidden; }
 
 #Content-Gallery-default .BottomClear { clear: both; }
 
@@ -376,13 +397,15 @@ div#Content-Ignorelist-edit img.Avatar { max-height: 35px; vertical-align: middl
 /* Exposition */
 /**************/
 
-#ExpositionThumbnails { min-height: 10px; margin: 0 10px; }
+#ExpositionThumbnails { min-height: 10px; margin: 10px 0; }
 
 #Content-Gallery-exposition div.Header { padding: 0; background-color: #63973d; color: #2b2725; border-radius: 10px 10px 0 0; line-height: 50px; }
 
 #Content-Gallery-exposition div.Header h1 { float: left; display: inline; }
 
 #Content-Gallery-exposition div.Header img.Avatar { float: left; margin: 0 10px 0 0; max-width: 50px; max-height: 50px; border-radius: 10px 0 0; }
+
+#ExpoAvatarLink { background: transparent; }
 
 #MyExpoTools { float: right; margin: 0 10px 0 0; }
 
