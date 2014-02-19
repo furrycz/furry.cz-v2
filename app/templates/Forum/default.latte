@@ -50,6 +50,7 @@
 			{/if}
 		</div>
 	</div>
+	{var $database = $presenter->context->database}
 	<table id="ForumListing">
 		<tr style="background-color: #222;border-bottom: 1px solid #000;">
 			<th id="ForumListingCategory">Sekce</th>
@@ -58,22 +59,39 @@
 			<th style="border-right:0px;">Poslední</th>
 		</tr>
 		<tr n:foreach="$topics as $topic">
+
 			{if ($topic['CategoryId'] != null)}
 				{var $category = $topic->ref('TopicCategories')->select('Name')}
 			{else}
 				{var $category = array('Name' => 'Nezařazeno', 'Id' => 0)}
 			{/if}
-			{var $count = count($presenter->context->database->table('Posts')->where("ContentId",$topic['ContentId'])->where("Deleted",0))}
-			{var $lastPost = $presenter->context->database->table('Posts')->where("ContentId",$topic['ContentId'])->where("Deleted",0)->order("TimeCreated DESC")->fetch();}
-			{var $time = Fcz\CmsUtilities::getTimeElapsedString(strtotime($lastPost["TimeCreated"]))}
-			{var $content = $topic->ref('Content')}
 			<td class="Category">{$category['Name']}</td>
-			<td><a class="postUrl" n:href="Forum:topic topicId => $topic['Id']">
-				{if $topic["Type"]==1}<img src="{$basePath}/images/error.png" align=absmiddle title="Duležité téma!">{/if}
-				{$topic['Name']}
-			</a></td>
+			<td>
+				<a class="postUrl" n:href="Forum:topic topicId => $topic['Id']">
+					{if $topic["Type"]==1}
+						<img src="{$basePath}/images/error.png" align=absmiddle title="Duležité téma!">
+					{/if}
+					{$topic['Name']}
+				</a>
+			</td>
+
+			{var $content = $topic->ref("Content", "ContentId")}
+			{var $count = $content->related("Posts")->where("Deleted", 0)->count()}
 			<td class="right">{$count}</td>
-			<td><div class="inAvatar"><img src="{$baseUrl}/images/avatars/{$allUserWithInfo[$lastPost["Author"]][1]}" class="avatar"></div><span class="autor">{$allUserWithInfo[$lastPost["Author"]][0]}</span> <span class="time">{$time}</span></td>
+			<td>
+				{if $count > 0}
+					{var $lastPost = $content->related("Posts")->order("TimeCreated DESC")->limit(1)->fetch();}
+					{var $time = Fcz\CmsUtilities::getTimeElapsedString(strtotime($lastPost["TimeCreated"]))}
+					{var $author = $lastPost->ref("Users", "Author");}
+					<div class="inAvatar">
+						<img src="{$baseUrl}/images/avatars/{$author['AvatarFilename']}" class="avatar">
+					</div>
+					<span class="autor">{$author["Nickname"]}</span>
+					<span class="time">{$time}</span>
+				{else}
+					<span class="NoPosts">Žádné příspěvky</span>
+				{/if}
+			</td>
 		</tr>
 	</table>
 {/block}
