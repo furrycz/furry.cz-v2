@@ -72,6 +72,7 @@ class CmsUtilities extends \Nette\Object
 			if ($d >= 1)
 			{
 				$r = round($d);
+				if($secs >= 86400 and $r>2) return Date("j.m.Y H:i", $ptime);
 				return "před ".$r . ' ' . ($r > 1 ? $str[1] : $str[0]) . '';
 			}
 		}

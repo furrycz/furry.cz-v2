@@ -10,11 +10,9 @@
 	<script>
 	function filter(text){
 		for(i=0;i<UserIDFilter.length;i++){
-			//alert(" "+UserIDFilter[i][1].toLowerCase().indexOf(text));
 			if(" "+UserIDFilter[i][1].toLowerCase().indexOf(text.toLowerCase())!=-1){
 				$("#User_"+UserIDFilter[i][0]).fadeIn( "slow", function() {} );
 			}else{
-				//$("#User_"+UserIDFilter[i][2]).hide();
 				$("#User_"+UserIDFilter[i][0]).fadeOut( "slow", function() {} );
 			}
 		}
@@ -53,7 +51,7 @@
 				<div class="{implode($classes, ' ')}" id="User_{$user['Id']}">
 					<a n:href="User:profile $user['Id']">
 						{if $user['AvatarFilename']}
-							<img src="{$user['AvatarFilename']}" class="Avatar">
+							<img src="{$basePath}/images/avatars/{$user['AvatarFilename']}" class="Avatar">
 						{/if}
 						<span class="Nickname">{$user['Nickname']}</span></a> {* There must be no whitespace before </a> *}
 					{if $user['IsAdmin']}

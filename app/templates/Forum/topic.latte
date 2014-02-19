@@ -7,20 +7,46 @@
  * @param Nette\Database\Selection|null $posts
  * @param array                         $access User permissions
  * @param int                           $jumpToPostId Id of post to jump to after page loads. 0 = no jump.
+ *				<li class="cara"></li>
+ *				<li style="padding:2px 10px;background-color:white;color:black;">
+ *					<b>Řazení příspěvků</b>:<br>
+ *					{var $user = new Fcz\UserUtilities($presenter)}
+ *					{var $razeni = $user->getData($presenter->user->id,"postsOrdering")}
+ *					<label for="nena"><input type=radio value=1 name="order" id="nena" {if $razeni=="NewestOnTop"}checked{/if} onClick="NotificationCreate('<b>Upozornění</b><br>Změny se projeví až po znovunačtení stránky!','','','{!$basePath}/images/error_big.png');"> Nejnovější nahoře</label><br>
+ *					<label for="nedo"><input type=radio value=2 name="order" id="nedo" {if $razeni=="NewestOnBottom"}checked{/if} onClick="NotificationCreate('<b>Upozornění</b><br>Změny se projeví až po znovunačtení stránky!','','','{!$basePath}/images/error_big.png');"> Nejnovější dole</label>
+ *					
+ *				</li>
  *}
 
 {var $pageTitle = $topic['Name'].' - Fórum'}
 
 {block content}
+	<div class="JS" style="position: relative;float: right; top: 13px;right: 13px;">
+		<a href=# class="ContextMenu" dropdown="topicSetting" dropdown-open="right" dropdown-absolute="false">Nabídka</a>
+		<div class="listDiv" id="topicSetting">
+			<div class="listBox" style="width:240px;">
+				<ul>
+				<li><a n:href="Forum:Info $topic['Id']">Informace o tématu</a></li>
+				<li><a href="#">Přidat téma do oblíbených</a></li>
+				{if $access["CanEditPermissions"] or $access["CanEditContentAndAttributes"] or $access["CanEditHeader"]}<li class="cara"></li>{/if}
+				{if $access["CanEditPermissions"]}<li><a n:href="Forum:Permision $topic['Id']">Oprávnění</a></li>{/if}
+				{if $access["CanEditContentAndAttributes"]}<li><a href="#">Upravit</a></li>{/if}
+				{if $access["CanEditHeader"]}<li><a href="#">Upravit hlavičku</a></li>{/if}
+				</ul>
+			</div>
+		</div>
+	</div>
 	<div class="Header" id="TopicHeaderPanel">
 		<div style="border-bottom:1px solid black;">
 		<h1>{$topic['Name']}</h1>
 		<span n:if="isset($paginator)" class="TitleInfo">
 			({$paginator->getItemCount()} příspěvků, strana {$paginator->getPage()}/{$paginator->getPageCount()})
-		</span>		
-		{if $access["CanEditPermissions"]}<div style="float:right;margin-left:10px;"><a n:href="Forum:Permision $topic['Id']">Upravit práva</a></div>{/if}
-		{if $access["CanEditContentAndAttributes"]}<div style="float:right;margin-left:10px;"><a n:href="Forum:Edit $topic['Id']">Upravit</a></div>{/if}
-		{if $access["CanEditHeader"]}<div style="float:right;margin-left:10px;"><a n:href="Forum:Header $topic['Id']">Upravit Hlavičku</a></div>{/if}
+		</span>				
+			<div class="NoJS">
+			{if $access["CanEditPermissions"]}<div style="float:right;margin-left:10px;"><a n:href="Forum:Permision $topic['Id']">Oprávnění</a></div>{/if}
+			{if $access["CanEditContentAndAttributes"]}<div style="float:right;margin-left:10px;"><a n:href="Forum:Edit $topic['Id']">Upravit</a></div>{/if}
+			{if $access["CanEditHeader"]}<div style="float:right;margin-left:10px;"><a n:href="Forum:Header $topic['Id']">Upravit Hlavičku</a></div>{/if}
+			</div>
 		</div>
 
 		{if $access['CanViewContent'] == true}

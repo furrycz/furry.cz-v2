@@ -25,12 +25,12 @@ class IntercomPresenter extends BasePresenter
 		}
 				
 		if($allUsers==NULL){$allUsers=array();}
-		$this->template->allUsers = $allUsers;			
+		$this->template->allUsers = $allUsers;
 		
-		if($name!=NULL){		
+		if($name!=NULL){
 			$ID=NULL;
 			foreach($allUsers as $us){if($us[1]==$name){$ID=$us[0];}}
-			$this->template->idAdresser = $ID;		
+			$this->template->idAdresser = $ID;
 			$this->template->selUser = $allUserWithInfo[$allUserName[$name]][0];
 			$this->template->selUserNick = $name;
 			$this->template->selAvatar = $allUserWithInfo[$allUserName[$name]][1];

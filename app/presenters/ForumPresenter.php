@@ -261,7 +261,29 @@ class ForumPresenter extends DiscussionPresenter
 		}
 	}
 	
+	/*
 	public function renderDelete($topicId, $postId){
 		$database = $this->context->database;
+	}
+	*/
+
+	public function renderInfo($topicId){
+		$database = $this->context->database;
+
+		$users = $database->table('Users');
+		foreach($users as $user){
+			$allUserWithInfo[$user["Id"]] = array($user["Nickname"], $user["AvatarFilename"], $user["Username"]);
+		}
+
+		$topic = $database->table('Topics')->where('Id', $topicId)->fetch();
+		$conte = $topic->ref('Content');
+
+		$this->template->Name = $topic["Name"];
+		$this->template->topicId = $topicId;
+		$this->template->create = $conte["TimeCreated"];
+		if ($topic['CategoryId'] != null){$this->template->sekce = $topic->ref('TopicCategories')->select('Name');}else{$this->template->sekce = array('Name' => 'Nezařazeno', 'Id' => 0);}
+		$owner = $database->table('Ownership')->where('ContentId', $conte["Id"])->fetch();
+		$this->template->owner = array($owner["UserId"],$allUserWithInfo[$owner["UserId"]][0],$allUserWithInfo[$owner["UserId"]][2]);
+		$this->template->posts = count($database->table('Posts')->where("ContentId",$conte["Id"])->where("Deleted",0));
 	}
 }

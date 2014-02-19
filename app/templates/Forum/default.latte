@@ -7,28 +7,25 @@
  
 {var $pageTitle = 'Fórum'}
 
-{block scripts}
-	<script src="{$basePath}/js/jquery.js"></script>
-	<script src="{$basePath}/js/netteForms.js"></script>
-	<script src="{$basePath}/js/main.js"></script>
-	<script>
-		$(function(){
-			$('#ForumToolsButton').click(function(){
-				var panel = $('#ForumToolsPanel');
-				if (panel.is(':visible')) {
-					panel.hide();
-				} else {
-					panel.show();
-				}
-			});
-		});
-	</script>
-{/block}
 
 {block content}
 	<div id="ForumListingHeader" class="LightBackground">
 		{if $presenter->user->isInRole('approved')}
-			<button id="ForumToolsButton">&#x25bc; Fórum</button>
+			<button class="NoJS" id="ForumToolsButton">&#x25bc; Fórum</button>
+			<span href=# class="JS ContextMenu" dropdown="forumSetting" dropdown-open="left" dropdown-absolute="true">Fórum</span>
+			<div class="listDiv" id="forumSetting">
+				<div class="listBox" style="width:240px;">
+					<ul>
+					{if $presenter->user->isInRole('approved')}
+						<li><a n:href="Forum:new-topic">Založit nové téma</a></li>
+						<li><a n:href="Ignorelist:edit">Nastavit ignorelist</a></li>
+					{/if}
+					{if $presenter->user->isInRole('admin')}
+						<li><a n:href="Forum:manage-categories">Spravovat sekce</a></li>
+					{/if}
+					</ul>
+				</div>
+			</div>
 		{else}
 			<strong>Fórum</strong> |
 		{/if}
@@ -73,7 +70,26 @@
 				{$topic['Name']}
 			</a></td>
 			<td class="right">{$count}</td>
-			<td><div class="inAvatar"><img src="{$baseUrl}/images/avatars/{$allUserWithInfo[$lastPost["Author"]][1]}" class="avatar"></div><span class="autor">{$allUserWithInfo[$lastPost["Author"]][0]}</span> <span class="time">{$time}</span></td>
+			<td>
+				{if $count>0}
+				<div class="inAvatar"><img src="{$baseUrl}/images/avatars/{$allUserWithInfo[$lastPost["Author"]][1]}" class="avatar"></div><span class="autor">{$allUserWithInfo[$lastPost["Author"]][0]}</span> <span class="time">{$time}</span>
+				{else}
+				Žádná zpráva...
+				{/if}
+			</td>
 		</tr>
 	</table>
+	
+	<script>
+		$(function(){
+			$('#ForumToolsButton').click(function(){
+				var panel = $('#ForumToolsPanel');
+				if (panel.is(':visible')) {
+					panel.hide();
+				} else {
+					panel.show();
+				}
+			});
+		});
+	</script>
 {/block}

@@ -215,4 +215,24 @@ class AjaxPresenter extends BasePresenter
 		
 		$this->sendResponse(new JsonResponse($data));
 	}
+
+	public function renderAttendanceschange($EventId, $Attendances = "Maybe"){
+		$database = $this->context->database;
+		$data = array("Id"=>$Attendances);
+
+		$uca = $database->table('EventAttendances')->where('EventId', $EventId)->where('UserId', $this->user->id)->fetch();
+		if($uca == false){
+			$database->table('EventAttendances')->insert(array(
+				'EventId' => $EventId,
+				'UserId' => $this->user->id,
+				"Attending" => $Attendances
+			));
+		}else{
+			$database->table('EventAttendances')->where('EventId', $EventId)->where('UserId', $this->user->id)->update(array(
+				"Attending" => $Attendances
+			));
+		}
+
+		$this->sendResponse(new JsonResponse($data));
+	}
 }	

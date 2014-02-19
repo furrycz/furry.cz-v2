@@ -113,10 +113,22 @@
 						{else}
 							<img src="{$baseUrl}/images/no_avatar.png">
 						{/if}
-						{$presenter->user->identity->nickname}</a> {* No space after text! *}
+						{$presenter->user->identity->nickname}</a>  
+						<a href=# class="JS ContextMenu" style="padding:3px 4px;" dropdown="forumSetting" dropdown-open="right" dropdown-absolute="true"></a>
+			<div class="listDiv" id="forumSetting">
+				<div class="listBox" style="width:140px;">
+					<ul>
+						<li><a href="#">Nastavení stránky</a></li>
+						<li><a n:href="User:edit $presenter->user->id">Upravit profil</a></li>
+						<li class="cara"></li>
+						<li><a href="#">Blokování</a></li>
+						<li><a href="#">Oblíbené</a></li>
+					</ul>
+				</div>
+			</div>
 					|
 					<a n:href="Intercom:default">Intercom</a> 
-					{? $countDBM = $presenter->context->database->table('PrivateMessages')->where("AddresseeId = ? AND Read = 0",$presenter->user->identity->id)->count()}
+					{? $countDBM = $presenter->context->database->table('Privatemessages')->where("AddresseeId = ? AND Read = 0",$presenter->user->identity->id)->count()}
 					<span title="Notifikace" style="display:none;background-color:green;border-radius:5px;padding: 3px 6px;color: white;font-weight: bold;text-decoration: none;border:1px solid red;position:relative;cursor:pointer;" id="buttonNotificationOther">0</span>
 					<span title="Zprávy" style="background-color:{if $countDBM>0}red{/if};border-radius:5px;padding: 3px 6px;color: white;font-weight: bold;text-decoration: none;border:1px solid red;position:relative;cursor:pointer;" id="buttonNotification">{$countDBM}</span>					
 					| 
@@ -168,6 +180,7 @@
 	$("#messageShow").click( function(){ jak=0;NotifView(5);$("#messageShow").css("color","black");$("#notifShow").css("color","");return false; });
 	$("#notifShow").click( function(){ jak=1;NotifView(5);$("#messageShow").css("color","");$("#notifShow").css("color","black");return false; });
 	function NotifView(op){
+		selectedDIV = "notificatons";
 		if(op!=5){ $("#notificatons").toggle(); }
 		$("#nottifSpin").css('display',"inline")
 		if($("#notificatons").css('display')=="block"){
@@ -300,6 +313,95 @@
 	$(window).resize(function() {
 		$("#dialog-rating").dialog("option", "position", "center");
 	});
+	var selectedDIV = "";
+	var selectedBUT = "";
+	$(".NoJS").hide();
+	$(".JS").show();
+	$(".ContextMenu").append(" &#x25bc;");
+	$(".ContextMenu").click(function(){
+		var divi = $(this).attr("dropdown");
+		var ope_ = $(this).attr("dropdown-open");
+		var abs_ = $(this).attr("dropdown-absolute");	
+		var sel_ = $(this).attr("selectType");
+		if($("#"+divi).css('display')=="none"){			
+			if(abs_=="true"){ top_=$(this).offset().top;left_=$(this).offset().left; }else{ top_=0;left_=0; }
+			if(ope_=="right"){
+				//$("#"+divi).show();
+				$("#"+divi).appendTo("body");
+				$("#"+divi).css("top",$(this).offset().top+this.offsetHeight-1);
+				$("#"+divi).css("left",$(this).offset().left-($($("#"+divi).children(".listBox")[0]).outerWidth()-this.offsetWidth));
+				$("#"+divi).show();
+				/*
+				$("#"+divi).css("top",top_+this.offsetHeight-1);
+				$("#"+divi).css("right",left_);//$("#"+divi).children(".listBox")[0].offsetWidth
+				*/
+			}
+			if(ope_=="left"){
+				$("#"+divi).appendTo("body");
+				$("#"+divi).css("top",$(this).offset().top+this.offsetHeight-1);
+				$("#"+divi).css("left",$(this).offset().left);
+				$("#"+divi).show();
+				//$("#"+divi).css("right",$("#"+divi).children(".listBox")[0].offsetWidth);
+			}
+			$(this).addClass("selected");
+			selectedDIV = divi;
+			selectedBUT = $(this);
+			return false;
+		}
+	});
+	
+	var selectData = new Array();
+	$(".ContextMenu").each(function(i)
+	{
+		var sel_ = $(this).attr("selectType");
+		var divi = $(this).attr("dropdown");
+		selectData[divi] = new Array();
+		selectData[divi][0] = 0;
+		selectData[divi][1] = $(this);		
+		if(sel_=="1"){
+			$(this).html(" &#x25bc;");
+			$(this).attr("value_","");			
+			$("#"+divi).find("li").each(function(i){
+				if($(this).attr("sel")==1){ $(this).addClass("sel");selectData[divi][1].html($(this).find("a")[0].innerHTML+" &#x25bc;");selectData[divi][1].attr("value_",$(this).attr("value_")); }else{ $(this).addClass("nos"); }
+				$(this).attr("divi",divi);
+				$(this).attr("pos",i);
+				$(this).click(function(){
+					divi = $(this).attr("divi");
+					$(this).addClass("sel");
+					selectData[divi][0] = $(this).attr("pos");
+					selectData[divi][1].html($(this).find("a")[0].innerHTML+" &#x25bc;");					
+					selectData[divi][1].attr("value_",$(this).attr("value_"));
+					eval("var value_='"+$(this).attr("value_")+"';"+selectData[divi][1].attr("onChange"));
+					$("#"+divi).find("li").each(function(i){
+						if(selectData[divi][0]!=i){
+							$(this).removeClass("sel");$(this).removeClass("nos");
+							$(this).addClass("nos");
+							//Close!
+							$("#"+selectedDIV).hide();
+							selectedDIV="";
+							selectedBUT.removeClass("selected");
+						}						
+					 });
+				});
+			});
+		}
+	});	
+	$(".ContextMenu").on('selectstart', false);
+	$(document).mouseup(function (e)
+	{
+		if(selectedDIV!=""){
+			var container = $("#"+selectedDIV);
+
+			if (!container.is(e.target) // if the target of the click isn't the container...
+				&& container.has(e.target).length === 0) // ... nor a descendant of the container
+			{
+				container.hide();
+				selectedDIV="";
+				selectedBUT.removeClass("selected");
+			}
+		}
+	});
+	
 	</script>
 </body>
 </html>

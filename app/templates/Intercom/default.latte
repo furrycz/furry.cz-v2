@@ -49,9 +49,20 @@
 					<b>{$selUser}</b>
 				</div>	
 				<div style="float:right;">
-					<a class="button" style="color:red;border:1px solid red;" {if $ignore!=2}n:href="block!, $selUserNick"{/if}>{if $ignore==1}Odblokovat{/if}{if $ignore==2}Zablokován{/if}{if $ignore==0}Blokovat{/if}</a>
-					<a class="button" n:href="export!, $selUserNick">Exportovat</a>
-					<a class="button">Více</a>
+					<a class="button" style="color:red;border-right:0px;margin-right:-5px;" {if $ignore!=2}n:href="block!, $selUserNick"{/if}>{if $ignore==1}Odblokovat{/if}{if $ignore==2}Zablokován{/if}{if $ignore==0}Blokovat{/if}</a>								
+					<a href=# class="ContextMenu" dropdown="messageSetting" dropdown-open="right" dropdown-absolute="false">Více</a>
+							<div class="listDiv" id="messageSetting">
+								<div class="listBox" style="width:170px;">
+									<ul>
+										<li><a href="#">Vyhledávání</a></li>
+										<li><a n:href="delete!, $selUserNick, -1">Odstranit konverzaci</a></li>
+										<li class="cara"></li>
+										<li><a n:href="export!, $selUserNick">Exportovat konverzaci</a></li>
+										<li class="cara"></li>
+										<li><a n:href="CmsPage:default help_message">Zobrazit nápovědu</a></li>
+									</ul>
+								</div>
+							</div>		
 				</div>
 				<div style="clear:both;"></div>	
 			</div>
