@@ -152,7 +152,7 @@ ul.GalleryThumbnails li { list-style-type: none; display: inline-block; margin: 
 
 ul.GalleryThumbnails a:hover { background-color: #006aeb; }
 
-ul.GalleryThumbnails a { display: block; padding: 3px; background-color: #3C3732; border-radius: 5px; }
+ul.GalleryThumbnails a { display: block; text-align: center; padding: 3px; background-color: #3C3732; border-radius: 5px; }
 
 ul.GalleryThumbnails li img { max-width: 164px; max-height: 170px; border-radius: 5px; }
 
@@ -367,7 +367,7 @@ div#Content-Ignorelist-edit img.Avatar { max-height: 35px; vertical-align: middl
 /* Default */
 /***********/
 
-#GalleryAuthorList { display: block; float: right; border-left: 3px solid #3C3732; padding: 0 10px; width: 125px; }
+#GalleryAuthorList { overflow: hidden; display: block; float: right; border-left: 3px solid #3C3732; padding: 0 10px; width: 125px; }
 
 #GalleryAuthorList li { list-style: none }
 
