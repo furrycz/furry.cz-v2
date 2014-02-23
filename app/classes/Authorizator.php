@@ -2,7 +2,25 @@
 
 use Nette\Diagnostics\Debugger;
 
-class Authorizator
+/**
+* Authorizes users to perform tasks.
+*
+* Permissions are represented by following array of booleans:
+	'CanListContent'              => Specified in Database/Permissions
+	'CanViewContent'              => Specified in Database/Permissions
+	'CanDeleteContent'            => Only owner (given in Database/Ownership) and admins can delete content.
+	'CanEditContentAndAttributes' => Specified in Database/Permissions
+	'CanEditHeader'               => Specified in Database/Permissions
+	'CanEditOwnPosts'             => Specified in Database/Permissions
+	'CanDeleteOwnPosts'           => Specified in Database/Permissions
+	'CanReadPosts'                => Specified in Database/Permissions
+	'CanDeletePosts'              => Specified in Database/Permissions
+	'CanWritePosts'               => Specified in Database/Permissions
+	'CanEditPermissions'          => Specified in Database/Permissions
+	'CanEditPolls'                => Specified in Database/Permissions
+	'IsOwner'                     => Is user owner? (given in Database/Ownership)
+*/
+class Authorizator extends \Nette\Object
 {
 	private $database;
 
@@ -47,12 +65,12 @@ class Authorizator
 		$overlord = $user->isInRole('admin');
 		if (!$overlord)
 		{
-			// Check ownership (owner is an overlord)
-			$ownership = $this->database->table('Ownership')->where(array(
+			// Check isOwner (owner is an overlord)
+			$isOwner = $this->database->table('Ownership')->where(array(
 				'ContentId' => $content['Id'],
 				'UserId' => $user->id
-			))->count();
-			$overlord = $ownership > 0;
+			))->count() > 0;
+			$overlord = $isOwner;
 		}
 
 		if ($overlord)
@@ -60,6 +78,7 @@ class Authorizator
 			return array(
 				'CanListContent' => true,
 				'CanViewContent' => true,
+				'CanDeleteContent' => true,
 				'CanEditContentAndAttributes' => true,
 				'CanEditHeader' => true,
 				'CanEditOwnPosts' => true,
@@ -69,7 +88,7 @@ class Authorizator
 				'CanWritePosts' => true,
 				'CanEditPermissions' => true,
 				'CanEditPolls' => true,
-				'Owner' => true
+				'IsOwner' => $isOwner
 			);
 		}
 
@@ -108,7 +127,7 @@ class Authorizator
 			$this->cascadeDeny($perms, 'CanViewContent');
 		}	
 		
-		$perms["Owner"] = false;
+		$perms["IsOwner"] = false;
 
 		return $perms;
 	}

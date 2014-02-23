@@ -51,7 +51,7 @@ class GalleryPresenter extends DiscussionPresenter
 			}
 			else
 			{
-				throw new Nette\Application\ForbiddenRequestException("Nejste schvalenym clenem");
+				throw new ForbiddenRequestException("Váš uživatelský účet není schválen");
 			}
 		}
 
@@ -69,7 +69,11 @@ class GalleryPresenter extends DiscussionPresenter
 
 	public function renderEditExposition($expositionId)
 	{
-		
+		// Check access
+		if (! $this->user->isInRole('approved'))
+		{
+			throw new ForbiddenRequestException('Pouze schválení uživatelé mohou upravovat expozice');
+		}
 	}
 
 
@@ -91,15 +95,15 @@ class GalleryPresenter extends DiscussionPresenter
 	public function renderDeleteExposition($expositionId)
 	{
 		// Check permissions (general)
-		if (! $this->user->isLoggedIn() || ! $this->user->isInRole('approved'))
+		if (! $this->user->isInRole('approved'))
 		{
-			throw new ForbiddenRequestException("Nemáte oprávnění");
+			throw new ForbiddenRequestException('Nejste oprávněn(a) k této operaci');
 		}
 	
 		// Check params
 		if ($expositionId == null)
 		{
-			throw new BadRequestException("Zadana expozice neexistuje");
+			throw new BadRequestException("Zadaná expozice neexistuje");
 		}
 
 		// Check data
@@ -107,7 +111,7 @@ class GalleryPresenter extends DiscussionPresenter
 		$expo = $database->table("ImageExpositions")->where("Id", $expositionId)->fetch();
 		if ($expo === false)
 		{
-			throw new BadRequestException("Zadana expozice neexistuje");
+			throw new BadRequestException("Zadaná expozice neexistuje");
 		}
 		
 		// Check permissions (specific)
@@ -138,7 +142,7 @@ class GalleryPresenter extends DiscussionPresenter
 		$image = $database->table("Images")->where("Id", $imageId)->fetch();
 		if ($image === false)
 		{
-			throw new Nette\Application\BadRequestException("Obrázek nenalezen");
+			throw new BadRequestException("Obrázek nenalezen");
 		}
 		$author = $image->ref("ContentId")->related("Ownership", "ContentId")->fetch()->ref("UserId");
 
@@ -153,21 +157,54 @@ class GalleryPresenter extends DiscussionPresenter
 	public function renderAddImage($expositionId)
 	{
 		// Check access
-		if (!($this->user->isInRole('member') || $this->user->isInRole('admin')))
+		if (! $this->user->isInRole('approved'))
 		{
-			throw new Nette\Application\ForbiddenRequestException(
-				'Pouze registrovaní uživatelé mohou vkladat obrazky do galerie');
+			throw new ForbiddenRequestException('Pouze schválení uživatelé mohou vkladat obrazky do galerie');
+		}
+	}
+
+
+
+	public function renderEditImage($imageId)
+	{
+		// Check access
+		if (! $this->user->isInRole('approved'))
+		{
+			throw new ForbiddenRequestException('Pouze schválení uživatelé mohou vkladat obrazky do galerie');
 		}
 
+		// Check data
 		$database = $this->context->database;
+		$item = $database->table("Images")->where("Id", $imageId)->fetch();
+		if ($item === false)
+		{
+			throw new BadRequestException("Obrázek neexistuje");
+		}
 
-		$this->template->setParameters(array(
-
-		));
+		// Check authority
+		if (! $this->user->isInRole('admin'))
+		{
+			$ownerId = $item->related("Content")->fetch()->related("Ownership")->fetch()->UserId;
+			if ($ownerId != $this->user->id)
+			{
+				throw new ForbiddenRequestException('Nejste oprávněn(a) manipulovat s touto položkou');
+			}
+		}
 	}
-	
-	
-	
+
+
+
+	public function renderDeleteImage($imageId)
+	{
+		// Check access
+		if (!($this->user->isInRole('approved') || $this->user->isInRole('admin')))
+		{
+			throw new ForbiddenRequestException('Pouze schválení uživatelé mohou vkladat obrazky do galerie');
+		}
+	}
+
+
+
 	public function createComponentGalleryThumbnails()
 	{
 		if ($this->action == 'user')
@@ -229,6 +266,12 @@ class GalleryPresenter extends DiscussionPresenter
 
 	public function validateNewExpositionForm($form)
 	{
+		// Check permissions
+		if (!($this->user->isInRole('approved') || $this->user->isInRole('admin')))
+		{
+			throw new ForbiddenRequestException('Nejste oprávněn(a) k této operaci');
+		}
+
 		$thumbUpload = $form->getComponent("Thumbnail", true);
 
 		if ($thumbUpload->isFilled())
@@ -242,6 +285,12 @@ class GalleryPresenter extends DiscussionPresenter
 
 	public function processValidatedNewExpositionForm($form)
 	{
+		// Check permissions
+		if (!($this->user->isInRole('approved') || $this->user->isInRole('admin')))
+		{
+			throw new ForbiddenRequestException('Nejste oprávněn(a) k této operaci');
+		}
+
 		$values = $form->getValues();
 		$database = $this->context->database;
 		$database->beginTransaction();
@@ -301,6 +350,12 @@ class GalleryPresenter extends DiscussionPresenter
 
 	public function processValidatedEditExpositionForm(UI\Form $form)
 	{
+		// Check permissions
+		if (!($this->user->isInRole('approved') || $this->user->isInRole('admin')))
+		{
+			throw new ForbiddenRequestException('Nejste oprávněn(a) k této operaci');
+		}
+
 		$values = $form->getValues();
 		$database = $this->context->database;
 		
@@ -394,13 +449,17 @@ class GalleryPresenter extends DiscussionPresenter
 	
 	public function validateEditExpositionForm(UI\Form $form)
 	{
-		$uploadHandler = new Fcz\FileUploadHandler($this);
+		// Check permissions
+		if (!($this->user->isInRole('approved') || $this->user->isInRole('admin')))
+		{
+			throw new ForbiddenRequestException('Nejste oprávněn(a) k této operaci');
+		}
 
 		// Validate thumbnail
 		$uploadComponent = $form->getComponent('NewThumbnail', true);
 		if ($uploadComponent->isFilled() == true) // If anything was uploaded...
 		{
-			list($result, $errMsg) = $uploadHandler->validateUpload($uploadComponent->getValue(), 'ExpositionThumbnail');
+			list($result, $errMsg) = $this->getUploadHandler()->validateUpload($uploadComponent->getValue(), 'ExpositionThumbnail');
 			if ($result == false)
 			{
 				$form->addError('Ikona: ' . $errMsg);
@@ -520,6 +579,12 @@ class GalleryPresenter extends DiscussionPresenter
 
 	public function validateAddImageForm($form)
 	{
+		// Check permissions
+		if (!($this->user->isInRole('approved') || $this->user->isInRole('admin')))
+		{
+			throw new ForbiddenRequestException('Nejste oprávněn(a) k této operaci');
+		}
+
 		$database = $this->context->database;
 		$values = $form->getValues();
 
@@ -538,6 +603,12 @@ class GalleryPresenter extends DiscussionPresenter
 
 	public function processValidatedAddImageForm($form)
 	{
+		// Check permissions
+		if (!($this->user->isInRole('approved') || $this->user->isInRole('admin')))
+		{
+			throw new ForbiddenRequestException('Nejste oprávněn(a) k této operaci');
+		}
+
 		$values = $form->getValues();
 		$database = $this->context->database;
 		$database->beginTransaction();
@@ -631,6 +702,12 @@ class GalleryPresenter extends DiscussionPresenter
 
 	public function processValidatedDeleteExpositionForm($form)
 	{
+		// Check permissions
+		if (!($this->user->isInRole('approved') || $this->user->isInRole('admin')))
+		{
+			throw new ForbiddenRequestException('Nejste oprávněn(a) k této operaci');
+		}
+
 		$values = $form->getValues();
 		$database = $this->context->database;
 		$expoId = $this->getParameter("expositionId");
