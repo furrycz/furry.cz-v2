@@ -476,13 +476,11 @@ class UserPresenter extends BasePresenter
 	*/
 	public function validateEditProfileForm(UI\Form $form)
 	{
-		$uploadHandler = new Fcz\FileUploadHandler($this);
-
 		// Validate avatar upload
 		$uploadComponent = $form->getComponent('avatarImage', true);
 		if ($uploadComponent->isFilled() == true) // If anything was uploaded...
 		{
-			list($result, $errMsg) = $uploadHandler->validateUpload($uploadComponent->getValue(), 'userAvatar');
+			list($result, $errMsg) = $this->getUploadHandler()->validateUpload($uploadComponent->getValue(), 'userAvatar');
 			if ($result == false)
 			{
 				$form->addError('Avatar: ' . $errMsg);
@@ -493,7 +491,7 @@ class UserPresenter extends BasePresenter
 		$uploadComponent = $form->getComponent('profilePhoto', true);
 		if ($uploadComponent->isFilled() == true) // If anything was uploaded...
 		{
-			list($result, $errMsg) = $uploadHandler->validateUpload($uploadComponent->getValue(), 'profilePhoto');
+			list($result, $errMsg) = $this->getUploadHandler()->validateUpload($uploadComponent->getValue(), 'profilePhoto');
 			if ($result == false)
 			{
 				$form->addError('Fotka: ' . $errMsg);

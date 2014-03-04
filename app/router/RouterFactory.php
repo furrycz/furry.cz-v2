@@ -24,13 +24,18 @@ class RouterFactory
 		// CmsPage
 		$router[] = new Route('page[/<idOrAlias>]', 'CmsPage:default');
 
-		// Gallery
+		// Gallery - expositions
 		$router[] = new Route('gallery/exposition/create', 'Gallery:createExposition');
 		$router[] = new Route('gallery/exposition/edit/<expositionId>', 'Gallery:editExposition');
 		$router[] = new Route('gallery/exposition/delete/<expositionId>', 'Gallery:deleteExposition');
 		$router[] = new Route('gallery/exposition/<expositionId>', 'Gallery:exposition');
+
+		// Gallery - images
 		$router[] = new Route('gallery/add', 'Gallery:addImage');
 		$router[] = new Route('gallery/show/<imageId>', 'Gallery:showImage');
+		$router[] = new Route('gallery/edit/<imageId>', 'Gallery:editImage');
+
+		// Gallery
 		$router[] = new Route('gallery/user[/<userId>][/<page=1>]', 'Gallery:user');
 		$router[] = new Route('gallery/<action>[/<userId>][/<page=1>]', 'Gallery:default');
 

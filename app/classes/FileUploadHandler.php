@@ -201,6 +201,47 @@ class FileUploadHandler extends \Nette\Object
 
 
 
+	/** Handles file upload, replaces an existing upload.
+	* @param \Nette\Http\FileUpload $fileUpload The data.
+	* @param int                    $uploadedFileId Database entry to updte
+	* @return bool                  True on success.
+	*/
+	public function handleUploadUpdate(\Nette\Http\FileUpload $fileUpload, $uploadedFileId)
+	{
+		$database = $this->presenter->context->database;
+		$config = $this->presenter->context->parameters;
+		$user = $this->presenter->user;
+
+		if (!$fileUpload->isOk())
+		{
+			throw new Exception("Upload se nezdaril.");
+		}
+
+		// Generate IDs
+		$dbUploadedFile = $database->table('UploadedFiles')->where("Id", $uploadedFileId)->fetch();
+		if ($dbUploadedFile === false)
+		{
+			throw new BadRequestException("Zadaný soubor neexistuje");
+		}
+
+		$fullPath = $config["baseDirectory"] . "/" . $dbUploadedFile["FileName"];
+
+		// Update database entry
+		$dbUploadedFile->update(array(
+			'Name' => $fileUpload->getName() . " (" . $user->identity->data['username'] . ")",
+		));
+
+		// Delete old file
+		unlink($fullPath);
+
+		// Move the new file
+		$fileUpload->move($fullPath);
+
+		return true;
+	}
+
+
+
 	/** Handles uploading user avatar/profile photo
 	* @param \Nette\Forms\Controls\UploadControl The upload
 	* @param string {userAvatar | profilePhoto}

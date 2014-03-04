@@ -18,6 +18,12 @@
 
 	{form newExpositionForm}
 		<div class="Body">
+
+			{* Print errors *}
+			<ul class="errors" n:if="$form->hasErrors()">
+				<li n:foreach="$form->errors as $error">{$error}</li>
+			</ul>
+
 			<dl>
 				<dt>{label Name /}</dt>
 				<dd>{input Name}</dd>
