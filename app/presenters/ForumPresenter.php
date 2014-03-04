@@ -21,7 +21,7 @@ class ForumPresenter extends DiscussionPresenter
 		$topics = $database->table('Topics');
 		$this->template->setParameters(array(
 			'categories' => $categories,
-			'topics' => $topics
+			'topics' => $topics,
 		));
 	}
 
