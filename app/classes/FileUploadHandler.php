@@ -298,14 +298,13 @@ class FileUploadHandler extends \Nette\Object
 	/**
 	* Deletes file and it's database entry.
 	*/
-	public function deleteUploadedFile(\Nette\Database\Table\ActiveRow $entry)
+	public function deleteUploadedFile(\Nette\Database\Table\ActiveRow $entry, $uploadType)
 	{
 		$config = $this->presenter->context->parameters;
 	
 		// Delete the file
-		$path = $config["baseDirectory"]
-			. '/' . $upConfig["types"][$uploadType]["directory"]
-			. '/' . $entry["FileName"];
+		// NOTE: UploadedFiles/FileName = Application-local path of the file
+		$path = $config["baseDirectory"] . '/' . $entry["FileName"];
 		unlink($path);
 
 		// Delete db entry
