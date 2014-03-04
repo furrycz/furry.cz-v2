@@ -256,7 +256,7 @@ class GalleryPresenter extends DiscussionPresenter
 		// Check authority
 		if (! $this->user->isInRole('admin'))
 		{
-			$ownerId = $item->related("Content")->fetch()->related("Ownership")->fetch()->UserId;
+			$ownerId = $item->ref("ContentId")->related("Ownership", "ContentId")->fetch()->UserId;
 			if ($ownerId != $this->user->id)
 			{
 				throw new ForbiddenRequestException('Nejste oprávněn(a) manipulovat s touto položkou');
@@ -853,6 +853,176 @@ class GalleryPresenter extends DiscussionPresenter
 		}*/
 
 		$this->redirect("Gallery:user");
+	}
+
+
+
+		public function createComponentEditImageForm()
+	{
+		// Get data
+		$database = $this->context->database;
+		$image = $database->table("Images")->where("Id", $this->getParameter("imageId"))->fetch();
+		if ($image === false)
+		{
+			throw new BadRequestException("Zadaný obrázek neexistuje", 404);
+		}
+
+		// Create form
+		$form = new UI\Form;
+
+		$form->addUpload("ArtworkUpload", "Změnit obrázek");
+			// NOTE: Can't use rule "Form::IMAGE" => makes field "required"
+
+		// Artwork title
+		$form->addText('Title', 'Název * :')
+			->setValue($image["Name"])
+			->setRequired('Je nutné zadat název dila')
+			->getControlPrototype()->class = 'Wide';
+
+		// Description text
+		$form->AddTextArea("Description", "Popis", 2, 5) // Small dimensions to allow CSS scaling
+			->setValue($image["Description"]);
+
+		// Exposition
+
+		$expoSelect = $form->AddSelect("ExpositionId", "Expozice:", $this->composeExpositionSelectList());
+		if ($image["Exposition"] != null)
+		{
+			$expoSelect->setValue($image["Exposition"]);
+		}
+
+		// Content flags
+		$content = $image->ref("Content");
+		$form->addCheckbox('IsForRegisteredOnly', 'Jen pro registrované')
+			->setValue($content["IsForRegisteredOnly"]);
+		$form->addCheckbox('IsForAdultsOnly', '18+')
+			->setValue($content["IsForAdultsOnly"]);
+		$form->addCheckbox('IsDiscussionAllowed', 'Povolit diskuzi')
+			->setValue($content["IsDiscussionAllowed"]);
+		$form->addCheckbox('IsRatingAllowed', 'Povolit hodnoceni')
+			->setValue($content["IsRatingAllowed"]);
+
+
+		// Submit
+		$form->onValidate[] = $this->validateEditImageForm;
+		$form->onSuccess[]  = $this->processValidatedEditImageForm;
+		$form->addSubmit('SubmitUpdatedArtwork', 'Uložit změny');
+
+		return $form;
+	}
+
+
+
+	public function validateEditImageForm(UI\Form $form)
+	{
+
+		// Check permissions
+		if (!($this->user->isInRole('approved') || $this->user->isInRole('admin')))
+		{
+			throw new ForbiddenRequestException('Nejste oprávněn(a) k této operaci');
+		}
+
+		$database = $this->context->database;
+		$values = $form->getValues();
+
+		// Validate image upload
+		if ($form->getComponent("ArtworkUpload")->isFilled() == true) // If anything was uploaded...
+		{
+			list($result, $errMsg) = $this->getUploadHandler()->validateUpload($values["ArtworkUpload"], 'genericFile');
+			if ($result == false)
+			{
+				$form->addError('Upload obrázku: ' . $errMsg);
+			}
+		}
+
+		// Check if exposition exists
+		if ($values["ExpositionId"] != 0)
+		{
+			$expoResult = $database->table("ImageExpositions")->select("Id", $values["ExpositionId"])->count();
+			if ($expoResult == 0)
+			{
+				$form->addError("Zadaná expozice neexistuje");
+			}
+		}
+
+		// Check image
+		$image = $database->table("Images")->where("Id", $this->getParameter("imageId"))->fetch();
+		if ($image === false)
+		{
+			throw new BadRequestException("Obrázek nenalezen");
+		}
+	}
+
+
+
+	public function processValidatedEditImageForm(UI\Form $form)
+	{
+		// Check permissions
+		if (!($this->user->isInRole('approved') || $this->user->isInRole('admin')))
+		{
+			throw new ForbiddenRequestException('Nejste oprávněn(a) k této operaci');
+		}
+
+		$values = $form->getValues();
+		$database = $this->context->database;
+
+		// Fetch & check data
+		$imageId = $this->getParameter("imageId");
+		$image = $database->table("Images")->where("Id", $imageId)->fetch();
+		if ($image === false)
+		{
+			throw new BadRequestException("Zadaná položka neexistuje");
+		}
+		$content = $image->ref("Content");
+		if ($content === false)
+		{
+			throw new ApplicationException(500, "Database/Image (Id: {$imageId}) has no asociated Database/Content");
+		}
+
+		// Update database
+		$database->beginTransaction();
+		/*try
+		{*/
+
+			$content->update(array(
+				'IsForRegisteredOnly' => $values['IsForRegisteredOnly'],
+				'IsForAdultsOnly' => $values['IsForAdultsOnly'],
+				"IsDiscussionAllowed" => $values["IsDiscussionAllowed"],
+				"IsRatingAllowed" => $values["IsRatingAllowed"],
+				"LastModifiedTime" => new DateTime(),
+				"LastModifiedByUser" => $this->user->id
+			));
+
+			$upload = $form->getComponent("ArtworkUpload");
+			if ($upload->isFilled())
+			{
+				$this->getUploadHandler()->handleUploadUpdate($values["ArtworkUpload"], $image["UploadedFileId"]);
+			}
+
+			// Update image entry
+			$image->update(array(
+				'Name' => $values['Title'],
+				"Description" => $values["Description"],
+				"Exposition" => $values["ExpositionId"]
+			));
+
+			$database->commit();
+		/*}
+		catch(Exception $exception)
+		{
+			$database->rollBack();
+			Nette\Diagnostics\Debugger::log($exception);
+		}*/
+
+		$this->flashMessage('Obrázek byl upraven', 'ok');
+		if ($values["ExpositionId"] != 0)
+		{
+			$this->redirect("Gallery:exposition", $values["ExpositionId"]);
+		}
+		else
+		{
+			$this->redirect('Gallery:user');
+		}
 	}
 
 }
