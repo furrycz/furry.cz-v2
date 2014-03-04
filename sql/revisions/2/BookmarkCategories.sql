@@ -1,0 +1,3 @@
+ALTER TABLE `BookmarkCategories`
+DROP FOREIGN KEY `BookmarkCategories_ibfk_1`,
+ADD FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
