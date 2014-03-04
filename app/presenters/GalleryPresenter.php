@@ -1,6 +1,7 @@
 <?php
 
-use Nette\Application;
+use Nette\Application\ForbiddenRequestException;
+use Nette\Application\ApplicationException;
 use Nette\Application\UI;
 use Nette\Utils\Html;
 use Nette\Diagnostics\Debugger;
@@ -20,17 +21,67 @@ class GalleryPresenter extends DiscussionPresenter
 	{
 		$database = $this->context->database;
 
-		$authors = $database->table("Users")->select("Id, Nickname, AvatarFilename");
+		// AUTHOR LIST
 
+		$authorsDB = $database->table("Users")->select("Id, Nickname, AvatarFilename");
+
+		$authors = array();
+		foreach ($authorsDB as $authorUser)
+		{
+			$allImages = $authorUser->related("Ownership")->where("Content.Type", "Image");
+			$totalImages = $allImages->count();
+
+			if ($totalImages > 0)
+			{
+				$authors[] = array(
+					'user' => $authorUser,
+					'numImagesTotal' => $totalImages,
+					'numImagesNotVisited' => 1 // TODO
+				);
+			}
+		}
+
+		// RECENTLY POSTED IMAGES
+
+		// Fetch data
 		$since = new DateTime();
 		$since = $since->sub(new DateInterval('P10D')); // Today minus 10 days
-		$recentPosts = $database
+		$recentPostsDB = $database
 			->table("Content")
 			->where(array(
 				"Type" => "Image",
-				"TimeCreated > ?" => $since
+				"LastModifiedTime > ?" => $since
 			))
-			->order("TimeCreated DESC");
+			->order("LastModifiedTime DESC");
+
+		// Prepare listing
+		$recentPosts = array();
+		foreach ($recentPostsDB as $content)
+		{
+			$image = $content->related("Images")->fetch();
+			$author = $content->related("Ownership")->fetch()->ref("User");
+			$lastVisit = $content->related("LastVisits")->where("UserId", $this->user->id)->fetch();
+			$whenPostedText = Fcz\CmsUtilities::getTimeElapsedString(strtotime($content["TimeCreated"]));
+
+			if ($this->user->isInRole('approved'))
+			{
+				$notVisited = ($lastVisit === false || $lastVisit["Time"] < $content["LastModifiedTime"]);
+			}
+			else
+			{
+				$notVisited = false;
+			}
+
+			$recentPosts[] = array(
+				'content' => $content,
+				'author' => $author,
+				'image' => $image,
+				'whenPostedText' => $whenPostedText,
+				'notVisited' => $notVisited
+			);
+		}
+
+		// SETUP TEMPLATE
 
 		$this->template->setParameters(array(
 			'authors' => $authors,
@@ -139,12 +190,33 @@ class GalleryPresenter extends DiscussionPresenter
 	{
 		$database = $this->context->database;
 
+		// Fetch image
 		$image = $database->table("Images")->where("Id", $imageId)->fetch();
 		if ($image === false)
 		{
 			throw new BadRequestException("Obrázek nenalezen");
 		}
 		$author = $image->ref("ContentId")->related("Ownership", "ContentId")->fetch()->ref("UserId");
+
+		// Fill last visit
+		$lastVisit = $database
+			->table("LastVisits")
+			->where("ContentId = ? AND UserId = ?", $image["ContentId"], $this->user->id)
+			->fetch();
+		if ($lastVisit !== false)
+		{
+			$lastVisit->update(array("Time" => new DateTime()));
+		}
+		else
+		{
+			$database
+				->table("LastVisits")
+				->insert(array(
+					"ContentId" => $image["ContentId"],
+					"UserId" => $this->user->id,
+					"Time" => new DateTime()
+				));
+		}
 
 		$this->template->setParameters(array(
 			'image' => $image,

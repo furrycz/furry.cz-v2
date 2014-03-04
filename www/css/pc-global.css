@@ -4,6 +4,8 @@
 /****************************************************************************/
 
 /*
+ * Header green: #63973d;
+ *
  * Background-brown: #2B2725
  * Lighter brown: #3C3732
  *
@@ -367,13 +369,17 @@ div#Content-Ignorelist-edit img.Avatar { max-height: 35px; vertical-align: middl
 /* Default */
 /***********/
 
+/* > Author list */
+
 #GalleryAuthorList { overflow: hidden; display: block; float: right; border-left: 3px solid #3C3732; padding: 0 10px; width: 125px; }
 
 #GalleryAuthorList li { list-style: none }
 
 #GalleryAuthorList a { max-width: 100px; display: inline-block;  }
 
-#GalleryAuthorList span.Total { color: #b6ad93; font-size: 0.8em; overflow: hidden; }
+#GalleryAuthorList span.NotVisited { background: #63973d; padding: 2px; border-radius: 3px; -color: #b6ad93; font-size: 0.8em; overflow: hidden; }
+
+/* > Latest posts */
 
 #GalleryLatestPosts { padding: 10px 0; width: 795px; }
 
@@ -384,6 +390,10 @@ div#Content-Ignorelist-edit img.Avatar { max-height: 35px; vertical-align: middl
 #GalleryLatestPosts img { max-width: 174px; max-height: 174px; }
 
 #GalleryLatestPosts a { text-decoration: none; text-align: center; }
+
+#GalleryLatestPosts a.NotVisited { color: #3a26dc; background: #63973d; }
+
+#GalleryLatestPosts a.NotVisited:hover { color: #fff; background-color: #006aeb; }
 
 #GalleryLatestPosts span.Name { text-decoration: underline; overflow: hidden; }
 
