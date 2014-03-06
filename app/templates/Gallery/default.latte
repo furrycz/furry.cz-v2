@@ -38,8 +38,9 @@
 					<li>
 						<a  {if $post['notVisited']}class="NotVisited LightBackground"{/if}
 							n:href="Gallery:showImage $post['image']['Id']">
-							{* TODO: Implement thumbnails! *}
-							<img src="{$baseUrl}/file/{$post['image']->ref('UploadedFileId')['Key']}">
+
+							<img src="{$baseUrl}/preview/{$post['image']->ref('UploadedFileId')['Key']}/recent">
+
 							<span class="Name">{$post["image"]["Name"]}</span>
 							<span class="Author">{$post["author"]["Nickname"]}</span>
 							<span class="Time">{$post["whenPostedText"]}</span>

@@ -59,6 +59,7 @@ class RouterFactory
 		$router[] = new Route('ajax/', 'Ajax:default');
 
 		// Files
+		$router[] = new Route('preview/<key>/<profile>', 'Files:preview');
 		$router[] = new Route('file/<key>', 'Files:default');
 		
 		// Post
