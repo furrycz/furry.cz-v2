@@ -1,0 +1,35 @@
+{**
+ * Provides a form to delete an image.
+ *}
+
+{var $pageTitle = 'Odstranit obrázek'}
+
+{block scripts}
+	<script src="{$basePath}/js/jquery.js"></script>
+	<script src="{$basePath}/js/netteForms.js"></script>
+	<script src="{$basePath}/js/main.js"></script>
+{/block}
+
+{block content}
+
+	<div class="Header LightBackground">
+		<h1>Odstranit obrázek</h1>
+	</div>
+
+	{form deleteImageForm}
+		<div class="Body">
+
+			{* Print errors *}
+			<ul class="errors" n:if="$form->hasErrors()">
+				<li n:foreach="$form->errors as $error">{$error}</li>
+			</ul>
+
+			<p>Opravdu chcete obrázek odstranit?</p>
+		</div>
+
+		<div class="Footer">
+			{input SubmitDeleteImage}
+		</div>
+	{/form}
+
+{/block}

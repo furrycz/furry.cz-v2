@@ -41,4 +41,36 @@ class SecurityUtilities extends \Nette\Object
 		return $inHtml; // TODO: strip all JavaScript!
 	}
 
+
+
+	/**
+	* Checks if Uploaded file key is valid. Throws exception if not.
+	*
+	* @throws Nette\Application\ApplicationException
+	* @return null
+	*/
+	public static function checkUploadedFileKey($key)
+	{
+		if(! preg_match("/^[A-Za-z0-9]*$/", $key))
+		{
+			throw new ApplicationException("Uploaded file key contained illegal characters: [{$key}]");
+		}
+	}
+
+
+
+	/**
+	* Checks if Preview Image Profile Name is valid. Throws exception if not.
+	*
+	* @throws Nette\Application\ApplicationException
+	* @return null
+	*/
+	public static function checkPreviewImageProfile($profile)
+	{
+		if(! preg_match("/^[a-z0-9-]*$/", $profile))
+		{
+			throw new ApplicationException("PreviewImageProfile contained illegal characters: [{$profile}]");
+		}
+	}
+
 }

@@ -857,7 +857,7 @@ class GalleryPresenter extends DiscussionPresenter
 
 
 
-		public function createComponentEditImageForm()
+	public function createComponentEditImageForm()
 	{
 		// Get data
 		$database = $this->context->database;
@@ -1018,6 +1018,76 @@ class GalleryPresenter extends DiscussionPresenter
 		if ($values["ExpositionId"] != 0)
 		{
 			$this->redirect("Gallery:exposition", $values["ExpositionId"]);
+		}
+		else
+		{
+			$this->redirect('Gallery:user');
+		}
+	}
+
+
+
+	public function createComponentDeleteImageForm()
+	{
+		// Get data
+		$database = $this->context->database;
+		$imageCount = $database->table("Images")->where("Id", $this->getParameter("imageId"))->count();
+		if ($imageCount === 0)
+		{
+			throw new BadRequestException("Zadaný obrázek neexistuje", 404);
+		}
+
+		// Create form
+		$form = new UI\Form;
+
+		// Submit
+		$form->onSuccess[]  = $this->processValidatedDeleteImageForm;
+		$form->addSubmit('SubmitDeleteImage', 'Smazat obrázek');
+
+		return $form;
+	}
+
+
+
+	public function processValidatedDeleteImageForm(UI\Form $form)
+	{
+		$database = $this->context->database;
+		$imageId = $this->getParameter("imageId");
+		$image = $database->table("Images")->where("Id", $imageId)->fetch();
+		if ($image === false)
+		{
+			throw new BadRequestException("Zadaný obrázek neexistuje", 404);
+		}
+		$expoId = $image["Exposition"];
+
+		$database->beginTransaction();
+		//try
+		//{
+			$image->delete();
+			$this->getUploadHandler()->deleteUploadedFile($image->ref("UploadedFileId"), 'genericFile');
+
+			$content = $image->ref("Content");
+
+			$content->related("Ownership")->delete();
+			$database->table("Permissions")->where(":Access.ContentId", $content["Id"]);
+			$content->related("Access")->delete();
+			$content->related("LastVisits")->delete();
+			$content->delete();
+
+			$database->commit();
+
+			$this->flashMessage("Obrázek byl smazán", "ok");
+		/*}
+		catch(Exception $exception)
+		{
+			$database->rollBack();
+			Nette\Diagnostics\Debugger::log($exception);
+			$this->flashMessage("Obrázek se nepodařilo smazat", "error");
+		}*/
+
+		if ($expoId != null)
+		{
+			$this->redirect("Gallery:exposition", $expoId);
 		}
 		else
 		{
