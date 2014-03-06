@@ -1,0 +1,52 @@
+{var $pageTitle = 'Chat'}
+
+{block content}
+	<h1>Chat</h1>
+	<div style="padding:10px;">
+		<div style="width:650px;" class="topbar">
+			<div class="button"><</div>
+				<div style="float:left;width: 600px;overflow: hidden;position: relative;top: 1px;">
+					<a class="bar selected">
+						<i class="icon" style="background-image:url({$basePath}/images/furrycz.ico)"></i>
+						<div class="name">Furry.cz</div>
+						<span class="notif">0</span>
+						<div style="clear:both;"></div>
+					</a>
+					<a class="bar">
+						<i class="icon" style="background-image:url({$basePath}/images/group_green.png)"></i>
+						<div class="name">Natsu mistnost</div>
+						<span class="notif">0</span>
+						<div style="clear:both;"></div>
+					</a>
+				</div>
+			<div class="button" style="float:right;">></div>
+			<div style="clear:both;"></div>
+		</div>
+		<div class="chat_text" id="chatBody">
+			<div class="text">gd</div>
+			<div class="bott">
+				<textarea rows=3 placeholder="Zde napiště zprávu..."></textarea>
+				<div class="bottbar">
+					<a href=# class="ContextMenu ContextMenuHi" dropdown="chatCommands" dropdown-open="top" dropdown-absolute="false">Příkazy</a>
+					
+					<div class="listDiv" id="chatCommands">
+						<div class="listBox">
+							<ul>
+							<li><a href="#no" onClick='$("#chatBody textarea").focus().val("/me ");'>/me - <span style="color:silver;">Psaní v první osobě</span></a></li>
+							<li><a href="#no" onClick='$("#chatBody textarea").focus().val("/to ");'>/to - <span style="color:silver;">Soukromá zpráva</span></a></li>
+							<li><a href="#no" onClick='$("#chatBody textarea").focus().val("/soukrome ");'>/soukrome - <span style="color:silver;">Soukromá místnost</span></a></li>
+							<li class="cara"></li>
+							<li><a href="#no" onClick='$("#chatBody textarea").focus().val("/name ");'>/name - <span style="color:silver;">Změní název místnosti</span></a></li>
+							<li><a href="#no" onClick='$("#chatBody textarea").focus().val("/lock ");'>/lock - <span style="color:silver;">Zamkne místnost</span></a></li>
+							</ul>
+						</div>
+					</div>
+					
+					<button class="send" title="Zprávu mužeš take odeslat stisknutím klávesy Enter.">Poslat</button>
+					<div style="clear:both;"></div>
+				</div>
+			</div>
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+{/block}

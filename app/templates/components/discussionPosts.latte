@@ -22,7 +22,7 @@
 
 	{foreach $posts as $post}
 
-		{var $resRelated = $post->ref("Users", "Author")->related("Ignorelist", "IgnoredUserId")}
+		{var $resRelated = $post->ref("Users", "Author")->related("Ignorelist", "IgnoredUserId")->where("IgnoreType","")}
 		{if (count($resRelated) > 0)}
 
 			{var $numIgnoredPosts++}

@@ -48,10 +48,13 @@ class RouterFactory
 		$router[] = new Route('intercom/autocomplete', 'Intercom:autocomplete');
 		$router[] = new Route('intercom[/<name>]', 'Intercom:default');
 		
-		//Ajax
+		// Chat
+		$router[] = new Route('chat/', 'Chat:default');
+		
+		// Ajax
 		$router[] = new Route('ajax/', 'Ajax:default');
 		
-		//Post
+		// Post
 		$router[] = new Route('post/delete[/<postId>]', 'Post:delete');
 		$router[] = new Route('post/edit[/<postId>]', 'Post:edit');
 		$router[] = new Route('post/', 'Post:default');

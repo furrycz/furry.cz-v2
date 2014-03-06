@@ -62,7 +62,7 @@ abstract class DiscussionPresenter extends BasePresenter
 			'paginator' => $paginator,
 			'access' => $access,
 			'content' => $content,
-			'subContentId' => $subContentId
+			'subContentId' => $subContentId			
 		);
 	}
 

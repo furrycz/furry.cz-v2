@@ -110,7 +110,7 @@
 						<div class="JS">	
 							<a href=# class="ContextMenu" dropdown="eventAttendet" selectType="1" onChange="setAttend(value_);" dropdown-open="left" dropdown-absolute="false">- Vyberte -</a>
 							<div class="listDiv" id="eventAttendet">
-								<div class="listBox" style="width:200px;">
+								<div class="listBox" style="width:174px;">
 									<ul>									
 									<li value_="Yes" {if $MojeUcast==1}sel="1"{/if}><a>Učastním se</a></li>
 									<li value_="Maybe" {if $MojeUcast==3}sel="1"{/if}><a>Možná se učastním</a></li>
@@ -118,6 +118,7 @@
 									</ul>
 								</div>
 							</div>
+							<a href="#" class="button DialogUser" ListUserUrl="{!$presenter->link('Ajax:gethostevent')}" ListUserData="{$Id}"><img src="{$basePath}/images/e_mail.png" align=texttop> Zobrazit pozvané</a>
 						</div>
 					</div>
 					<div class="NoJS">

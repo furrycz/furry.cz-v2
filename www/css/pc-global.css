@@ -575,13 +575,25 @@ background-color: #90CEFF;width: 280px;color: #000;padding: 1px 6px;border: 1px 
 	text-decoration: none;
 	font-weight: bold;
 	font-size: 13px;
-	padding: 3px 9px;
+	padding: 3px 6px;	
+}
+.ContextMenuHi {
+	background:transparent;
+	border:1px solid transparent;
 }
 .ContextMenu:active{
 	background: #CCC;
 	box-shadow: 0px 2px 3px #838383 inset;
 }
 .ContextMenu:hover{
+	color:black;
+	border: 1px solid #616161;
+	background: -webkit-linear-gradient(top, #CCC 5%, #808080 95%);
+	background: -moz-linear-gradient(top, #CCC 5%, #808080 95%);
+	background: -ms-linear-gradient(top, #CCC 5%, #808080 95%);
+	background: -o-linear-gradient(top, #CCC 5%, #808080 95%);
+}
+.ContextMenu:focus{
 	color:black;
 }
 .ContextMenu.selected {
@@ -590,7 +602,7 @@ background-color: #90CEFF;width: 280px;color: #000;padding: 1px 6px;border: 1px 
 	border-color: #005BCE;
 }
 
-.listDiv {float:left;width:0px;height:0px;display:none;position:absolute;top:0px;z-index:5;}
+.listDiv {float:left;width:400px;height:0px;display:none;position:absolute;top:0px;z-index:500;}
 .listBox {
 	background-color: #FFF;
 	border: 1px solid #005BCE;
@@ -598,6 +610,7 @@ background-color: #90CEFF;width: 280px;color: #000;padding: 1px 6px;border: 1px 
 	padding: 5px 0px;
 	min-width: 120px;
 	box-shadow:1px 1px 9px #464646;
+	display:inline-block;
 }
 .listBox ul{
 	list-style-type:none;
@@ -606,18 +619,68 @@ background-color: #90CEFF;width: 280px;color: #000;padding: 1px 6px;border: 1px 
 }
 .listBox ul li{ color:black;font-size:12px;cursor:pointer; } 
 .listBox ul li.cara {border-bottom:1px solid #B3D5FF;height:0px;margin:5px 3px;}
- li.sel {background-image:url(images/check.png);background-repeat: no-repeat;padding-left: 15px;background-position: 4px 5px;}
- li.nos {padding-left:15px;}
+ li.sel {background-image:url(images/check.png);background-repeat: no-repeat;padding-left: 15px;background-position: 6px 5px;font-weight:bold;}
+ li.nos {padding-left:14px;}
 .listBox ul li:hover{
 	background-color:#038BCC;
 	color:white;
 }
 .listBox ul li a {
 	display:block;
-	padding: 2px 10px;
+	padding: 2px 14px;
 	text-decoration: none;
 	color: #000;
 	background-color:transparent;
 	font-size:12px;
 }
 .listBox ul li a:hover {color:white;}
+
+.ui-dialog-content .top-bar {
+    background-color: #E9E9E9;
+    padding: 5px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid silver;
+    border-top: 1px solid #DADADA;
+}
+
+/* Chat */
+.topbar .button {
+	float:left;border: 1px solid #747474;
+	padding: 1px 5px;background-color: #FFF;margin-bottom: 4px;
+	border-radius: 5px;cursor:pointer;color: #3C3C3C;
+}
+.topbar .button:active {
+	background-color:#A0A0A0;
+	background: -webkit-linear-gradient(top, #A0A0A0 5%, #FFF 95%);
+	background: -moz-linear-gradient(top, #A0A0A0 5%, #FFF 95%);
+	background: -ms-linear-gradient(top, #A0A0A0 5%, #FFF 95%);
+	background: -o-linear-gradient(top, #A0A0A0 5%, #FFF 95%);
+}
+.topbar .bar {
+	border: 1px solid #549722;
+	padding: 3px;
+	margin: 0px 5px;
+	border-bottom: 0px;
+	background: #416D20;
+	color: #FFF;
+	width: 150px;
+	overflow: hidden;
+	float:left;
+	cursor:pointer;
+	display:block;
+	position:relative;top:3px;
+	height: 23px;
+}
+.topbar .bar .icon {width: 17px;height: 17px;display: inline-block;background-size: 100%;position: relative;top: 3px;margin-right: 3px;float:left;}
+.topbar .bar .notif {float: right;border: 1px solid #F00;padding: 0px 4px;border-radius: 3px;background-color: #FF5959;font-weight: bold;margin-top: -1px;}
+.topbar .bar .name {float:left;white-space: nowrap;width: 64%;overflow: hidden;}
+.topbar .bar:active {border-color:green;}
+.topbar .bar.selected {background:#63973D;border-color:#64C41F;top:0px;}
+.chat_text {width:650px;float:left;height:500px;background-color:#F0FFE5;color:black;}
+.chat_text .text {height: 400px;padding:5px;}
+.chat_text .bott {height: 90px;border-top: 1px solid #008000;background-color: #FFF;}
+.chat_text .bott textarea {width: 98%;margin: 4px 4px;border: 0px;font-family:Arial;outline:0;}
+.chat_text .bott .bottbar {margin-top: -6px;padding: 2px;padding-left: 4px;background-color: #E2E2E2;}
+.chat_text .bott .bottbar .send {float: right;border: 1px solid #3F6125;background-color: #63973D;padding: 2px 9px;font-weight: bold;color: #FFF;text-shadow: 1px 1px 3px #4E4C4C;}
+
+/* A ohol se v rozkroku nikdo nedělá rád orál v chlupatém roští xDDD */

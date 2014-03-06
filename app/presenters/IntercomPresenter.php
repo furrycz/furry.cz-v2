@@ -100,12 +100,21 @@ class IntercomPresenter extends BasePresenter
 	
 	public function handleDelete($name, $id){
 		$database = $this->presenter->context->database;
-		$message = $database->table('PrivateMessages')->where("id",$id)->fetch();
-		if($message["SenderId"] == $this->user->identity->id or $message["AddresseeId"] == $this->user->identity->id){
-			$database->table('PrivateMessages')->where("id",$id)->update("Deleted",1);
+		if($id==-1){
+			$users = $database->table('Users');
+			foreach($users as $user){
+				$allUserName[$user["Username"]] = $user["Id"];
+			}
+		
+			$database->table('PrivateMessages')->where("(SenderId = ? AND AddresseeId = ?) OR (SenderId = ? AND AddresseeId = ?)",$this->user->identity->id,$allUserName[$name],$this->user->identity->id,$allUserName[$name])->update(array("Deleted"=>1));
 		}else{
-			$this->flashMessage('Tato zpráva nepatří tobě! Nebyla napsána tebou a ani nebyla určena tobě!', 'error');
-		}
+			$message = $database->table('PrivateMessages')->where("Id",$id)->fetch();
+			if($message["SenderId"] == $this->user->identity->id or $message["AddresseeId"] == $this->user->identity->id){
+				$database->table('PrivateMessages')->where("Id",$id)->update(array("Deleted"=>1));
+			}else{
+				$this->flashMessage('Tato zpráva nepatří tobě! Nebyla napsána tebou a ani nebyla určena tobě!', 'error');
+			}
+		}	
 		$this->redirect("Intercom:default", $name);
 	}
 	

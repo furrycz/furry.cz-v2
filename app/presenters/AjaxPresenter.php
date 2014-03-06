@@ -235,4 +235,29 @@ class AjaxPresenter extends BasePresenter
 
 		$this->sendResponse(new JsonResponse($data));
 	}
+	public function renderGethostevent($Data){
+		$database = $this->context->database;
+		$data = array("EventId"=>$Data);
+		
+		$users = $database->table('Users')->order('Nickname');
+		foreach($users as $user){
+			if($this->user->identity->nickname!=$user["Nickname"])
+			$allUsers[] = array($user["Id"],$user["Username"]);
+			$allUserId[$user["Id"]] = $user["Username"];
+			$allUserName[$user["Username"]] = $user["Id"];
+			if($user["AvatarFilename"]==""){$user["AvatarFilename"]="no_avatar.png";}
+			$allUserWithInfo[$user["Id"]] = array($user["Nickname"], $user["AvatarFilename"]);
+		}
+		
+		$data["width"] = 170;
+		$data["title"] = "Seznam pozvaných";
+		$data["sekcion"] = array("Učastní se","Možná se účastní","Neúčastní se","-","Odmítnuto");
+		
+		$ucastnici = $database->table('EventAttendances')->where('EventId', $Data);
+		foreach($ucastnici as $ucastnik){
+			if($ucastnik["Attending"]=="Yes"){$u=0;}elseif($ucastnik["Attending"]=="No"){$u=2;}else{$u=1;}			
+			$data["users"][$u][] = array("Name" => $allUserWithInfo[$ucastnik["UserId"]][0], "Avatar" => $allUserWithInfo[$ucastnik["UserId"]][1], "Id" => $ucastnik["UserId"]);
+		}
+		$this->sendResponse(new JsonResponse($data));
+	}
 }	

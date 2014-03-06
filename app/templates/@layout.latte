@@ -114,18 +114,18 @@
 							<img src="{$baseUrl}/images/no_avatar.png">
 						{/if}
 						{$presenter->user->identity->nickname}</a>  
-						<a href=# class="JS ContextMenu" style="padding:3px 4px;" dropdown="forumSetting" dropdown-open="right" dropdown-absolute="true"></a>
-			<div class="listDiv" id="forumSetting">
-				<div class="listBox" style="width:140px;">
-					<ul>
-						<li><a href="#">Nastavení stránky</a></li>
-						<li><a n:href="User:edit $presenter->user->id">Upravit profil</a></li>
-						<li class="cara"></li>
-						<li><a href="#">Blokování</a></li>
-						<li><a href="#">Oblíbené</a></li>
-					</ul>
-				</div>
-			</div>
+						<a href=# class="JS ContextMenu" style="padding:3px 4px;" dropdown="userSetting" dropdown-open="right" dropdown-absolute="true"></a>
+						<div class="listDiv" id="userSetting">
+							<div class="listBox" style="-width:140px;">
+								<ul>
+									<li><a href="#">Nastavení stránky</a></li>
+									<li><a n:href="User:edit $presenter->user->id">Upravit profil</a></li>
+									<li class="cara"></li>
+									<li><a href="#">Blokování</a></li>
+									<li><a href="#">Oblíbené</a></li>
+								</ul>
+							</div>
+						</div>
 					|
 					<a n:href="Intercom:default">Intercom</a> 
 					{? $countDBM = $presenter->context->database->table('Privatemessages')->where("AddresseeId = ? AND Read = 0",$presenter->user->identity->id)->count()}
@@ -151,7 +151,7 @@
 					<li><a n:href="Gallery:default">Galerie</a></li>
 					<li>Texty</li>
 					<li><a n:href="User:default">Členové</a></li>
-					<li>Chat</li>
+					<li><a n:href="Chat:default">Chat</a></li>
 				</ul>
 			</nav>
 		</div>
@@ -172,6 +172,10 @@
 	</div>
 	<div style="float: right; width: 0px; height: 0px; position: absolute; top: 56px; display: block;margin-left: 1px;" id="notificatonsAlert"></div>
 	<div id="dialog-rating" title="Hodnocení" style="display:none;">Error!</div>
+	<div id="dialog-users" title="Tvorové" style="display:none;">Error!</div>
+	<div id="dialog-loading" style="position:fixed;padding: 12px;width: 300px;text-align: center;display:none;" class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-front">
+		<img src="{$basePath}/images/ajax-loader.gif" style="padding-top:5px;">
+	</div>
 	<script>
 	var jak=0,prevJak=-1;
 	$("#buttonNotification").click( function(){ jak=0;NotifView(0);$("#messageShow").css("color","black");$("#notifShow").css("color",""); });
@@ -281,12 +285,12 @@
 	$("#dialog-rating").dialog({
       autoOpen: false,
       show: {
-        effect: "fade",
-        duration: 500
+        effect: "scale",
+        duration: 400
       },
       hide: {
         effect: "fade",
-        duration: 500
+        duration: 200
       },
 	  draggable: false,
 	  create: function(event, ui) {
@@ -294,6 +298,23 @@
 	  },
 	  width: "auto"
     });
+	$("#dialog-users").dialog({
+      autoOpen: false,
+      show: {
+        effect: "scale",
+        duration: 400
+      },
+      hide: {
+        effect: "fade",
+        duration: 200
+      },
+	  draggable: false,
+	  create: function(event, ui) {
+        $(event.target).parent().css('position', 'fixed');
+	  },
+	  width: "auto"
+    });
+	
 	$(".ratingBox").click(function(){
 		var data = $(this).attr("ajax-user-rating-data");
 		if(data.substr(0,1)==":"){
@@ -312,81 +333,113 @@
 	}); 
 	$(window).resize(function() {
 		$("#dialog-rating").dialog("option", "position", "center");
+		$("#dialog-users").dialog("option", "position", "center");
+		$("#dialog-loading").center();
 	});
 	var selectedDIV = "";
 	var selectedBUT = "";
 	$(".NoJS").hide();
 	$(".JS").show();
-	$(".ContextMenu").append(" &#x25bc;");
-	$(".ContextMenu").click(function(){
-		var divi = $(this).attr("dropdown");
-		var ope_ = $(this).attr("dropdown-open");
-		var abs_ = $(this).attr("dropdown-absolute");	
-		var sel_ = $(this).attr("selectType");
-		if($("#"+divi).css('display')=="none"){			
-			if(abs_=="true"){ top_=$(this).offset().top;left_=$(this).offset().left; }else{ top_=0;left_=0; }
-			if(ope_=="right"){
-				//$("#"+divi).show();
-				$("#"+divi).appendTo("body");
-				$("#"+divi).css("top",$(this).offset().top+this.offsetHeight-1);
-				$("#"+divi).css("left",$(this).offset().left-($($("#"+divi).children(".listBox")[0]).outerWidth()-this.offsetWidth));
-				$("#"+divi).show();
-				/*
-				$("#"+divi).css("top",top_+this.offsetHeight-1);
-				$("#"+divi).css("right",left_);//$("#"+divi).children(".listBox")[0].offsetWidth
-				*/
-			}
-			if(ope_=="left"){
-				$("#"+divi).appendTo("body");
-				$("#"+divi).css("top",$(this).offset().top+this.offsetHeight-1);
-				$("#"+divi).css("left",$(this).offset().left);
-				$("#"+divi).show();
-				//$("#"+divi).css("right",$("#"+divi).children(".listBox")[0].offsetWidth);
-			}
-			$(this).addClass("selected");
-			selectedDIV = divi;
-			selectedBUT = $(this);
-			return false;
-		}
-	});
 	
-	var selectData = new Array();
-	$(".ContextMenu").each(function(i)
-	{
-		var sel_ = $(this).attr("selectType");
-		var divi = $(this).attr("dropdown");
-		selectData[divi] = new Array();
-		selectData[divi][0] = 0;
-		selectData[divi][1] = $(this);		
-		if(sel_=="1"){
-			$(this).html(" &#x25bc;");
-			$(this).attr("value_","");			
-			$("#"+divi).find("li").each(function(i){
-				if($(this).attr("sel")==1){ $(this).addClass("sel");selectData[divi][1].html($(this).find("a")[0].innerHTML+" &#x25bc;");selectData[divi][1].attr("value_",$(this).attr("value_")); }else{ $(this).addClass("nos"); }
-				$(this).attr("divi",divi);
-				$(this).attr("pos",i);
-				$(this).click(function(){
-					divi = $(this).attr("divi");
-					$(this).addClass("sel");
-					selectData[divi][0] = $(this).attr("pos");
-					selectData[divi][1].html($(this).find("a")[0].innerHTML+" &#x25bc;");					
-					selectData[divi][1].attr("value_",$(this).attr("value_"));
-					eval("var value_='"+$(this).attr("value_")+"';"+selectData[divi][1].attr("onChange"));
+	function ContextMenuClickable(){
+		$(".ContextMenu").each(function(i)
+		{
+		if($(this).attr("jsed")!=1){
+			$(this).attr("jsed",1);
+			$(this).append(" &#x25bc;");
+			$(this).click(function(){
+				var divi = $(this).attr("dropdown");
+				var ope_ = $(this).attr("dropdown-open");
+				var abs_ = $(this).attr("dropdown-absolute");	
+				var sel_ = $(this).attr("selectType");
+				$("#"+divi).css("width",$(window).width()-$("#"+divi).offset().left-20);
+				if($("#"+divi).css('display')=="none"){			
+					if(abs_=="true"){ top_=$(this).offset().top;left_=$(this).offset().left; }else{ top_=0;left_=0; }
+					if(ope_=="right"){
+						//$("#"+divi).show();
+						$("#"+divi).appendTo("body");
+						$("#"+divi).show();
+						$("#"+divi).css("top",$(this).offset().top+this.offsetHeight-1);						
+						$("#"+divi).css("left",$(this).offset().left-($($("#"+divi).children(".listBox")[0]).outerWidth()-this.offsetWidth));												
+						/*
+						$("#"+divi).css("top",top_+this.offsetHeight-1);
+						$("#"+divi).css("right",left_);//$("#"+divi).children(".listBox")[0].offsetWidth
+						*/
+					}
+					if(ope_=="left"){
+						$("#"+divi).appendTo("body");
+						$("#"+divi).css("top",$(this).offset().top+this.offsetHeight-1);
+						$("#"+divi).css("left",$(this).offset().left);
+						$("#"+divi).show();
+						//$("#"+divi).css("right",$("#"+divi).children(".listBox")[0].offsetWidth);
+					}	
+					if(ope_=="top"){
+						$("#"+divi).appendTo("body");
+						$("#"+divi).show();
+						$("#"+divi).css("top",$(this).offset().top-($($("#"+divi).children(".listBox")[0]).outerHeight()));
+						$("#"+divi).css("left",$(this).offset().left);						
+						//$("#"+divi).css("right",$("#"+divi).children(".listBox")[0].offsetWidth);
+					}						
+					$("#"+divi).css("width",$(window).width()-$("#"+divi).offset().left-20);					
+					$(this).addClass("selected");
+					selectedDIV = divi;
+					selectedBUT = $(this);
+					return false;
+				}
+			});
+			
+			var selectData = new Array();
+			$(this).each(function(i)
+			{
+				var sel_ = $(this).attr("selectType");
+				var divi = $(this).attr("dropdown");
+				selectData[divi] = new Array();
+				selectData[divi][0] = 0;
+				selectData[divi][1] = $(this);		
+				if(sel_=="1"){
+					$(this).html(" &#x25bc;");
+					$(this).attr("value_","");			
 					$("#"+divi).find("li").each(function(i){
-						if(selectData[divi][0]!=i){
-							$(this).removeClass("sel");$(this).removeClass("nos");
-							$(this).addClass("nos");
-							//Close!
+						if($(this).attr("sel")==1){ $(this).addClass("sel");selectData[divi][1].html($(this).find("a")[0].innerHTML+" &#x25bc;");selectData[divi][1].attr("value_",$(this).attr("value_")); }else{ $(this).addClass("nos"); }
+						$(this).attr("divi",divi);
+						$(this).attr("pos",i);
+						$(this).click(function(){
+							divi = $(this).attr("divi");
+							$(this).addClass("sel");
+							selectData[divi][0] = $(this).attr("pos");
+							selectData[divi][1].html($(this).find("a")[0].innerHTML+" &#x25bc;");					
+							selectData[divi][1].attr("value_",$(this).attr("value_"));
+							eval("var value_='"+$(this).attr("value_")+"';"+selectData[divi][1].attr("onChange"));
+							$("#"+divi).find("li").each(function(i){
+								if(selectData[divi][0]!=i){
+									$(this).removeClass("sel");$(this).removeClass("nos");
+									$(this).addClass("nos");
+									//Close!
+									$("#"+selectedDIV).hide();
+									selectedDIV="";
+									selectedBUT.removeClass("selected");
+								}						
+							 });
+						});
+					});
+				}else{
+					$("#"+divi).find("li").each(function(i){
+						$(this).click(function(){
+							//Close!							
 							$("#"+selectedDIV).hide();
 							selectedDIV="";
 							selectedBUT.removeClass("selected");
-						}						
-					 });
-				});
-			});
-		}
-	});	
-	$(".ContextMenu").on('selectstart', false);
+							if($($(this).find("a")[0]).attr("href")=="#no"){ return false; }
+						});
+					});
+				}
+			});	
+			$(this).on('selectstart', false);
+			}
+		});
+	}
+	ContextMenuClickable();
+	
 	$(document).mouseup(function (e)
 	{
 		if(selectedDIV!=""){
@@ -402,6 +455,83 @@
 		}
 	});
 	
+	jQuery.fn.center = function () {
+		this.css("position","fixed");
+		this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop()) + "px");
+		this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
+		return this;
+	}
+	function loading_show(){ $("#dialog-loading").show("scale",400); }
+	function loading_hide(){ $("#dialog-loading").hide("fade",200);  }
+	
+	//Funkce pro načtení a vypisu uživatelu v kategoriich v dialog boxu	
+	var allUserCategory = new Array();
+	$(".DialogUser").click(function(){
+		Url_    = $(this).attr("ListUserUrl");
+		Data_   = $(this).attr("ListUserData");
+		loading_show();
+		$.ajax({				
+				url: "{!$presenter->link('Ajax:gethostevent')}",
+				data: {"Data":Data_},
+				success: function( data ) {		
+					loading_hide();
+					allUserCategory = data;
+					$("#userList").remove();
+					if(allUserCategory.sekcion.length>1){
+						html="<div class='top-bar'>";
+							html+='<a href=# class="ContextMenu" dropdown="userList" selectType="1" onChange="UserShowCategory(value_);" dropdown-open="left" dropdown-absolute="false">Všichni</a>';
+							html+='<div class="listDiv" id="userList">';
+								html+='<div class="listBox" style="">';
+									html+='<ul>';
+										all=0;
+										for(i=0;i<allUserCategory.sekcion.length;i++){
+											if(typeof allUserCategory.users[i]!="undefined"){ all+=allUserCategory.users[i].length; }
+										}
+										html+='<li value_="-1" sel=1><a>Všichni ('+all+')</a></li>';
+										for(i=0;i<data.sekcion.length;i++){ 
+											if(data.sekcion[i]=="-"){ html+='<li class="cara"></li>'; }
+											else{ 
+												kolik="";
+												if(typeof allUserCategory.users[i]!="undefined"){ if(allUserCategory.users[i].length>0){ kolik=" ("+allUserCategory.users[i].length+")"; } }
+												html+='<li value_="'+i+'"><a>'+data.sekcion[i]+kolik+'</a></li>';
+											} 
+										}
+									html+='</ul>';
+								html+='</div>';
+							html+='</div>';
+						html+="</div>";	
+					}
+					$("#dialog-users").html("<div style='height:500px;width:447px;overflow:auto;padding:0px;'>"+html+"<div id=UserListCategory></div></div>");
+					$("#dialog-users").dialog('option', 'title', data.title);
+					$("#dialog-users").dialog("open");
+					ContextMenuClickable();
+					UserShowCategory(-1);
+				}
+			});		
+	});
+	function UserShowCategory(ids){
+		html="";
+		if(ids==-1){
+			for(i=0;i<allUserCategory.sekcion.length;i++){
+				if(typeof allUserCategory.users[i]!="undefined"){
+					for(a=0;a<allUserCategory.users[i].length;a++){
+						html+="<div class='ratingBoxis'><img src='{!$baseUrl}/images/avatars/"+allUserCategory.users[i][a]["Avatar"]+"' class='ratingAvatar'><div style='float:left;'><b><a style='bacground:white;' href='{!$presenter->link('Intercom:default')}/"+allUserCategory.users[i][a]["Id"]+"/'>"+allUserCategory.users[i][a]["Name"]+"</a></b><br>"+allUserCategory.sekcion[i]+"</div><div style='clear:both;'></div></div>";
+					}
+				}
+			}
+		}else{
+			if(typeof allUserCategory.users[ids] == "undefined"){
+				html = "<div style='font-weight:bold;text-align:center;padding:20px;'>Nebyly nalezeny žádné výsledky.</div>";
+			}else{
+				for(var i=0;i<allUserCategory.users[ids].length;i++){
+					html+="<div class='ratingBoxis'><img src='{!$baseUrl}/images/avatars/"+allUserCategory.users[ids][i]["Avatar"]+"' class='ratingAvatar'><div style='float:left;'><b>"+allUserCategory.users[ids][i]["Name"]+"</b><br><a href='{!$presenter->link('Intercom:default')}/"+allUserCategory.users[ids][i]["Id"]+"/'>Poslat zprávu</a></div><div style='clear:both;'></div></div>";
+				}
+			}
+		}	
+		$("#UserListCategory").html(html);
+	}
+	
+	$("#dialog-loading").center();
 	</script>
 </body>
 </html>

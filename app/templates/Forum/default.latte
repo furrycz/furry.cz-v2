@@ -14,7 +14,7 @@
 			<button class="NoJS" id="ForumToolsButton">&#x25bc; Fórum</button>
 			<span href=# class="JS ContextMenu" dropdown="forumSetting" dropdown-open="left" dropdown-absolute="true">Fórum</span>
 			<div class="listDiv" id="forumSetting">
-				<div class="listBox" style="width:240px;">
+				<div class="listBox" style="">
 					<ul>
 					{if $presenter->user->isInRole('approved')}
 						<li><a n:href="Forum:new-topic">Založit nové téma</a></li>
@@ -60,8 +60,9 @@
 			{else}
 				{var $category = array('Name' => 'Nezařazeno', 'Id' => 0)}
 			{/if}
-			{var $count = count($presenter->context->database->table('Posts')->where("ContentId",$topic['ContentId'])->where("Deleted",0))}
-			{var $lastPost = $presenter->context->database->table('Posts')->where("ContentId",$topic['ContentId'])->where("Deleted",0)->order("TimeCreated DESC")->fetch();}
+			{var $lastPost = $presenter->context->database->table('Posts')->where("ContentId",$topic['ContentId'])->where("Deleted",0)->order("TimeCreated DESC");}
+			{var $count = count($lastPost)}		
+			{var $lastPost = $lastPost->fetch()}			
 			{var $time = Fcz\CmsUtilities::getTimeElapsedString(strtotime($lastPost["TimeCreated"]))}
 			{var $content = $topic->ref('Content')}
 			<td class="Category">{$category['Name']}</td>

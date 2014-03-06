@@ -24,6 +24,13 @@ class ForumPresenter extends DiscussionPresenter
 		
 		$categories = $database->table('TopicCategories')->select('Id, Name');
 		$topics = $database->table('Topics');
+		$topicsAll = null;
+		$i=0;
+		foreach($topics as $topic){
+			$postCount[$topic["Id"]]["Count"] = 
+			$i++;
+		}
+		
 		$this->template->setParameters(array(
 			'categories' => $categories,
 			'topics' => $topics,

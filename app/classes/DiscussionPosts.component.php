@@ -32,7 +32,8 @@ class DiscussionPosts extends \Nette\Application\UI\Control
 	public function render()
 	{
 		$database = $this->presenter->context->database;
-
+		$idp = $this->presenter->getParameter('topicId');		
+		
 		// Load posts to display
 		if ($this->presenter->user->identity->postsOrdering == "NewestOnTop")
 		{
@@ -102,7 +103,7 @@ class DiscussionPosts extends \Nette\Application\UI\Control
 			'contentId' => $this->content['Id']
 		));
 		
-		$this['newPostForm']->setDefaults(array("DiscussionID"=>$this->content['Id']));
+		$this['newPostForm']->setDefaults(array("DiscussionID"=>$idp));
 		
 		$template->render();
 	}
