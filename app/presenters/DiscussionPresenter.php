@@ -12,6 +12,13 @@ abstract class DiscussionPresenter extends BasePresenter
 
 
 
+	/**
+	* @param array $access Array of permissions returned by Authorizator.
+	* @param Nette\Database\Table\ActiveRow $content ActiveRow object representing SQL/Content table.
+	* @param int $subContentId ID of Content-derived SQL table (Topic/Image/Event etc.)
+	* @param int $pageNumber Number of page to display.
+	* @param int $findPost ID of post to find and highlight.
+	*/
 	public function setupDiscussion($access, $content, $subContentId, $pageNumber, $findPost)
 	{
 		$database = $this->context->database;

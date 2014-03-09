@@ -196,31 +196,48 @@ class GalleryPresenter extends DiscussionPresenter
 		{
 			throw new BadRequestException("Obrázek nenalezen");
 		}
-		$author = $image->ref("ContentId")->related("Ownership", "ContentId")->fetch()->ref("UserId");
+		$content = $image->ref("ContentId");
+
+		// Check access
+		$permissions = $this->getAuthorizator()->authorize($content, $this->user);
+		if (! $permissions["CanViewContent"])
+		{
+			throw new ForbiddenRequestException("K tomuto obrázku nemáte přístup");
+		}
 
 		// Fill last visit
-		$lastVisit = $database
-			->table("LastVisits")
-			->where("ContentId = ? AND UserId = ?", $image["ContentId"], $this->user->id)
-			->fetch();
-		if ($lastVisit !== false)
+		if ($this->user->isInRole('approved'))
 		{
-			$lastVisit->update(array("Time" => new DateTime()));
-		}
-		else
-		{
-			$database
+			$lastVisit = $database
 				->table("LastVisits")
-				->insert(array(
-					"ContentId" => $image["ContentId"],
-					"UserId" => $this->user->id,
-					"Time" => new DateTime()
-				));
+				->where("ContentId = ? AND UserId = ?", $image["ContentId"], $this->user->id)
+				->fetch();
+			if ($lastVisit !== false)
+			{
+				$lastVisit->update(array("Time" => new DateTime()));
+			}
+			else
+			{
+				$database
+					->table("LastVisits")
+					->insert(array(
+						"ContentId" => $image["ContentId"],
+						"UserId" => $this->user->id,
+						"Time" => new DateTime()
+					));
+			}
+		}
+
+		// Setup discussion
+		if ($permissions["CanReadPosts"])
+		{
+			$this->setupDiscussion($permissions, $content, $imageId, null, null);
 		}
 
 		$this->template->setParameters(array(
 			'image' => $image,
-			'author' => $author
+			'author' => $content->related("Ownership", "ContentId")->fetch()->ref("UserId"),
+			"access" => $permissions
 		));
 	}
 

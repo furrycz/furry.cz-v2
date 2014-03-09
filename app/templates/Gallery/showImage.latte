@@ -3,6 +3,7 @@
  *
  * @param Nette\Database\Table\ActiveRow $image
  * @param Nette\Database\Table\ActiveRow $author
+ * @param array                          $access Current users's permission to the image.
  *}
 
 {block scripts}
@@ -38,10 +39,17 @@
 	</section>
 	
 	<section class="Discussion">
-		
+		{if $access['CanReadPosts']}
+			CAN READ POSTS!!
+			{control discussionPaginator}
+			{control discussionPosts}
+		{/if}
 	</section>
 
 	<div class="Footer">
-
+		{if $access['CanReadPosts']}
+			{control discussionPaginator}
+		{/if}
 	</div>
 {/block}
+
