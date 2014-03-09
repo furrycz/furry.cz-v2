@@ -220,7 +220,12 @@ class ForumPresenter extends DiscussionPresenter
 
 
 
-	public function renderTopic($topicId, $page, $subAction, $findPost)
+	/**
+	* @param int $topicId Topic ID
+	* @param int $page Page number
+	* @param int $findPost ID of topic to find find and highlight.
+	*/
+	public function renderTopic($topicId, $page, $findPost)
 	{
 		$database = $this->context->database;
 
