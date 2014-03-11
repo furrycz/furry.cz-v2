@@ -3,7 +3,9 @@
 namespace Fcz
 {
 
-class DiscussionPaginator extends \Nette\Application\UI\Control
+use Nette\Application\UI;
+
+class DiscussionPaginator extends UI\Control
 {
 
 	private $nettePaginator;
@@ -16,8 +18,10 @@ class DiscussionPaginator extends \Nette\Application\UI\Control
 
 
 
-	public function __construct($presenter, $nettePaginator, $subContentId, $baseUrl)
+	public function __construct(UI\Control $parent, UI\Presenter $presenter, \Nette\Utils\Paginator $nettePaginator, $subContentId, $baseUrl)
 	{
+		parent::__construct($parent, "discussionPaginator");
+
 		//$this->presenter = $presenter;
 		$this->nettePaginator = $nettePaginator;
 		$this->subContentId = $subContentId;
@@ -73,7 +77,7 @@ class DiscussionPaginator extends \Nette\Application\UI\Control
 		$prevPageHref = ($currentPage > $firstPage) ? $staticUrl . "/" . ($currentPage - 1) . '#discussion' : null;
 
 		// Setup template
-		$template = $this->presenter->template;
+		$template = $this->template;
 		$template->setFile(__DIR__ . '/../templates/components/discussionPaginator.latte');
 		$template->setParameters(array(
 			'paginator' => $this->nettePaginator,
@@ -82,6 +86,13 @@ class DiscussionPaginator extends \Nette\Application\UI\Control
 			'paginatorHtmlLinks' => $items
 		));
 		$template->render();
+	}
+
+
+
+	public function getNettePaginator()
+	{
+		return $this->nettePaginator;
 	}
 
 }

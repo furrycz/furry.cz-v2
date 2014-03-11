@@ -41,7 +41,7 @@ class RouterFactory
 		$router[] = new Route('gallery/<action>[/<userId>][/<page=1>]', 'Gallery:default');
 
 		// Forum
-		$router[] = new Route('forum/<action>[/<topicId>][/<page=1>][/<subAction>]', 'Forum:default');
+		$router[] = new Route('forum/<action>[/<topicId>][/<page=1>]', 'Forum:default');
 		
 		// Calendar
 		$router[] = new Route('events/new[/<year>][/<month>]', 'Events:new');

@@ -9,7 +9,7 @@ use Nette\Diagnostics\Debugger;
 /**
  * Image gallery presenter
  */
-class GalleryPresenter extends DiscussionPresenter
+class GalleryPresenter extends BasePresenter
 {
 
 
