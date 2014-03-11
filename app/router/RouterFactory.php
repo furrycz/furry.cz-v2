@@ -32,7 +32,7 @@ class RouterFactory
 
 		// Gallery - images
 		$router[] = new Route('gallery/add', 'Gallery:addImage');
-		$router[] = new Route('gallery/show/<imageId>', 'Gallery:showImage');
+		$router[] = new Route('gallery/show/<imageId>[/<page=1>]', 'Gallery:showImage');
 		$router[] = new Route('gallery/edit/<imageId>', 'Gallery:editImage');
 		$router[] = new Route('gallery/delete/<imageId>', 'Gallery:deleteImage');
 

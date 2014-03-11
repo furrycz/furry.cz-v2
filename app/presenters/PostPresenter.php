@@ -79,6 +79,10 @@ class PostPresenter extends BasePresenter
 				$this->redirect("Forum:topic", $content->related("Topics")->fetch()->Id);
 				break;
 
+			case "Image":
+				$this->redirect("Gallery:showImage", $content->related("Images")->fetch()->Id);
+				break;
+
 			default:
 				$this->redirect("Homepage:default");
 		}

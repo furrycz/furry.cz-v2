@@ -186,19 +186,39 @@ class GalleryPresenter extends BasePresenter
 
 
 
-	public function renderShowImage($imageId)
+	/**
+	* Fetches item from DB and checkes permissions.
+	* @return array $image, $access
+	* @throws BadRequestException If the image isn't found.
+	*/
+	private function checkImageAccess($imageId, $user)
 	{
 		$database = $this->context->database;
-
 		// Fetch image
 		$image = $database->table("Images")->where("Id", $imageId)->fetch();
 		if ($image === false)
 		{
 			throw new BadRequestException("Obrázek nenalezen");
 		}
+
+		$access = $this->getAuthorizator()->authorize($image->ref("Content"), $user);
+		return array($image, $access);
+	}
+
+
+
+	public function renderShowImage($imageId, $page)
+	{
+		list($image, $access) = $this->checkImageAccess($imageId, $this->user);
+		if (! $access["CanViewContent"])
+		{
+			throw new ForbiddenRequestException("K tomuto obrázku nemáte přístup");
+		}
+
 		$author = $image->ref("ContentId")->related("Ownership", "ContentId")->fetch()->ref("UserId");
 
 		// Fill last visit
+		$database = $this->context->database;
 		$lastVisit = $database
 			->table("LastVisits")
 			->where("ContentId = ? AND UserId = ?", $image["ContentId"], $this->user->id)
@@ -220,7 +240,8 @@ class GalleryPresenter extends BasePresenter
 
 		$this->template->setParameters(array(
 			'image' => $image,
-			'author' => $author
+			'author' => $author,
+			"access" => $access
 		));
 	}
 
@@ -1093,6 +1114,24 @@ class GalleryPresenter extends BasePresenter
 		{
 			$this->redirect('Gallery:user');
 		}
+	}
+
+
+
+	public function createComponentDiscussion()
+	{
+		$database = $this->context->database;
+		$id = $this->getParameter("imageId");
+		$image = $database->table("Images")->where('Id', $id)->fetch();
+		if ($image === false)
+		{
+			throw new BadRequestException("Obrázek neexistuje", 404);
+		}
+		$content = $image->ref('Content');
+		$access = $this->getAuthorizator()->authorize($content, $this->user);
+		$baseUrl = $this->presenter->getHttpRequest()->url->baseUrl;
+
+		return new Fcz\Discussion($this, $content, $id, $baseUrl, $access, $this->getParameter('page'), null);
 	}
 
 }
