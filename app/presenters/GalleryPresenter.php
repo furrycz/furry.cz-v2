@@ -186,30 +186,9 @@ class GalleryPresenter extends BasePresenter
 
 
 
-	/**
-	* Fetches item from DB and checkes permissions.
-	* @return array $image, $access
-	* @throws BadRequestException If the image isn't found.
-	*/
-	private function checkImageAccess($imageId, $user)
-	{
-		$database = $this->context->database;
-		// Fetch image
-		$image = $database->table("Images")->where("Id", $imageId)->fetch();
-		if ($image === false)
-		{
-			throw new BadRequestException("Obrázek nenalezen");
-		}
-
-		$access = $this->getAuthorizator()->authorize($image->ref("Content"), $user);
-		return array($image, $access);
-	}
-
-
-
 	public function renderShowImage($imageId, $page)
 	{
-		list($image, $access) = $this->checkImageAccess($imageId, $this->user);
+		list($image, $content, $access) = $this->checkImageAccess($imageId, $this->user);
 		if (! $access["CanViewContent"])
 		{
 			throw new ForbiddenRequestException("K tomuto obrázku nemáte přístup");
@@ -976,34 +955,51 @@ class GalleryPresenter extends BasePresenter
 
 
 
+	/**
+	* Fetches item from DB and checkes permissions.
+	* @return array $image, $content, $access
+	* @throws BadRequestException If the image isn't found.
+	*/
+	private function checkImageAccess($imageId, $user)
+	{
+		$database = $this->context->database;
+		// Fetch image
+		$image = $database->table("Images")->where("Id", $imageId)->fetch();
+		if ($image === false)
+		{
+			throw new BadRequestException("Obrázek nenalezen");
+		}
+
+		$content = $image->ref("Content");
+		if ($content === false)
+		{
+			throw new ApplicationException("Database/Image (Id: {$imageId}) has no asociated Database/Content");
+		}
+
+		$access = $this->getAuthorizator()->authorize($content, $user);
+		return array($image, $content, $access);
+	}
+
+
+
 	public function processValidatedEditImageForm(UI\Form $form)
 	{
+		// Fetch & check data
+		$imageId = $this->getParameter("imageId");
+		list($image, $content, $access) = $this->checkImageAccess($imageId, $this->user);
+
 		// Check permissions
-		if (!($this->user->isInRole('approved') || $this->user->isInRole('admin')))
+		if (! $access["CanEditContentAndAttributes"])
 		{
 			throw new ForbiddenRequestException('Nejste oprávněn(a) k této operaci');
 		}
 
-		$values = $form->getValues();
-		$database = $this->context->database;
-
-		// Fetch & check data
-		$imageId = $this->getParameter("imageId");
-		$image = $database->table("Images")->where("Id", $imageId)->fetch();
-		if ($image === false)
-		{
-			throw new BadRequestException("Zadaná položka neexistuje");
-		}
-		$content = $image->ref("Content");
-		if ($content === false)
-		{
-			throw new ApplicationException(500, "Database/Image (Id: {$imageId}) has no asociated Database/Content");
-		}
-
 		// Update database
+		$database = $this->context->database;
 		$database->beginTransaction();
 		/*try
 		{*/
+			$values = $form->getValues();
 
 			$content->update(array(
 				'IsForRegisteredOnly' => $values['IsForRegisteredOnly'],
