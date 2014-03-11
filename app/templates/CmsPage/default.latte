@@ -1,14 +1,32 @@
 {**
- * CMS page template
+ * CMS index
  *
- * @param Nette\Database\ActiveRow $cmsPage
+ * @param Nette\Database\Selection $myPages
  *}
 
-{var $pageTitle = $cmsPage['Name']}
+{var $pageTitle = "Moje CMS stránky"}
 
 {block content}
-	<h1>{$cmsPage['Name']}</h1>
-	<div class="CmsPageContentWrapper">
-		{!$cmsPage['Text']}
+	<div class="Header LightBackground">
+		<span class="HeaderTools">
+			<a n:href="CmsPage:newPage">[+] Vytvořit</a>
+		</span>
+		<h1>Moje CMS stránky</h1>
+	</div>
+
+	<div class="Body">
+		{if count($myPages) > 0}
+		<ul>
+			{foreach $myPages as $content}
+				{var $cmsPage = $content->related("CmsPages")->fetch()}
+				<li>
+					<a class="CmsLink" n:href="CmsPage:showPage $cmsPage['Id']">{$cmsPage["Name"]}</a>
+					<p>{$cmsPage["Description"]}</p>
+				</li>
+			{/foreach}
+		</ul>
+		{else}
+			Nemáte žádné CMS stránky. <a n:href="CmsPage:newPage">Vytvořte</a> si nějakou.
+		{/if}
 	</div>
 {/block}

@@ -21,8 +21,9 @@ class RouterFactory
 		// Homepage
 		$router[] = new Route('index.php', 'Homepage:default', Route::ONE_WAY);
 
-		// CmsPage
-		$router[] = new Route('page[/<idOrAlias>]', 'CmsPage:default');
+		// CMS
+		//$router[] = new Route('cms[/<action>][/<cmsPageId>]', 'CmsPage:default');
+		$router[] = new Route('page[/<idOrAlias>]', 'CmsPage:showPage');
 
 		// Gallery - expositions
 		$router[] = new Route('gallery/exposition/create', 'Gallery:createExposition');

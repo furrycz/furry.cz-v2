@@ -53,6 +53,8 @@ form tr, form td { vertical-align: top; font-weight: normal; }
 
 form .required label { font-weight: bold; }
 
+span.HeaderTools a { float: right; padding: 0 3px; line-height: 49px; margin: 3px 0 0; display: block; }
+
 /*********************************/
 /* DiscussionPaginator component */
 /*********************************/
@@ -190,9 +192,9 @@ div.ContentWrapper { padding: 0; border: none; border-radius: 10px; margin: 10px
 
 div.ContentWrapper h1 { padding: 5px 10px; background-color: #63973d; color: #2b2725; border-radius: 10px 10px 0 0; }
 
-div.ContentWrapper .Header { background-color: #63973d; padding: 5px 10px; border-radius: 10px 10px 0 0; color: #000; }
+div.ContentWrapper .Header { background-color: #63973d; padding: 0 10px; border-radius: 10px 10px 0 0; color: #2B2725; line-height: 50px; }
 
-div.ContentWrapper .Header h1 { padding: 0; }
+div.ContentWrapper .Header h1 { padding: 0; display:inline; }
 
 div.ContentWrapper .Header a { color: #3a26dc; }
 
@@ -295,6 +297,20 @@ div#Footer { padding: 10px; background-color: #63973d; color: #2b2725; border-ra
 /****************************************************************************/
 /*                            Cms presenter                                 */
 /****************************************************************************/
+
+div.CmsFormEditorWrapper { padding-top: 10px; }
+
+div.CmsFormEditorWrapper .CmsPageText { height: 500px; }
+
+/*************/
+/* Cms index */
+/*************/
+
+a.CmsLink { font-size: 1.2em; }
+
+/******************/
+/* New page form  */
+/******************/
 
 /************/
 /* Cms page */

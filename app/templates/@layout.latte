@@ -139,7 +139,9 @@
 					<li><a n:href="Gallery:default">Galerie</a></li>
 					<li>Texty</li>
 					<li><a n:href="User:default">Členové</a></li>
-					<li>Chat</li>
+					{if $presenter->user->isInRole("approved")}
+						<li><a n:href="CmsPage:default">CMS</a></li>
+					{/if}
 				</ul>
 			</nav>
 		</div>
