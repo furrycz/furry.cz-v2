@@ -42,10 +42,7 @@ class DiscussionPaginator extends UI\Control
 		$firstPage = $this->nettePaginator->getFirstPage();
 		$lastPage = $this->nettePaginator->getLastPage();
 		$currentPage = $this->nettePaginator->getPage();
-		$staticUrl = $this->baseUrl . "/"
-			. strtolower($this->presenter->name) . "/"
-			. $this->presenter->action . "/"
-			. $this->subContentId;
+		$route = "{$this->presenter->name}:{$this->presenter->action}";
 
 		// Figure out precision
 		$precisionSkip = (int) ($this->nettePaginator->getPageCount() / $config['maxLinks']);
@@ -54,7 +51,7 @@ class DiscussionPaginator extends UI\Control
 		$items = array();
 		for ($i = $firstPage; $i <= $lastPage; $i++)
 		{
-			$href = $staticUrl . "/" . $i . '#discussion';
+			$href = $this->presenter->link($route, $this->subContentId, $i) . "#discussion";
 
 			if ($i == $currentPage)
 			{
@@ -73,8 +70,16 @@ class DiscussionPaginator extends UI\Control
 		}
 
 		// Generate arrow links
-		$nextPageHref = ($currentPage < $lastPage) ? $staticUrl . "/" . ($currentPage + 1) . '#discussion' : null;
-		$prevPageHref = ($currentPage > $firstPage) ? $staticUrl . "/" . ($currentPage - 1) . '#discussion' : null;
+		$nextPageHref = null;
+		if ($currentPage < $lastPage)
+		{
+			$nextPageHref = $this->presenter->link($route, $this->subContentId, $currentPage + 1) . "#discussion";
+		}
+		$prevPageHref = null;
+		if ($currentPage > $firstPage)
+		{
+			$prevPageHref = $this->presenter->link($route, $this->subContentId, $currentPage - 1) . "#discussion";
+		}
 
 		// Setup template
 		$template = $this->template;
