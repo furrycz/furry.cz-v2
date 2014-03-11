@@ -1014,6 +1014,9 @@ class GalleryPresenter extends BasePresenter
 			if ($upload->isFilled())
 			{
 				$this->getUploadHandler()->handleUploadUpdate($values["ArtworkUpload"], $image["UploadedFileId"]);
+
+				// Clear thumbnail cache
+				$this->getUploadHandler()->deleteImagePreviews($image["UploadedFileId"]);
 			}
 
 			// Update image entry
