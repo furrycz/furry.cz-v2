@@ -707,6 +707,8 @@ class GalleryPresenter extends BasePresenter
 				'TimeCreated' => new DateTime,
 				'IsForRegisteredOnly' => $values['IsForRegisteredOnly'],
 				'IsForAdultsOnly' => $values['IsForAdultsOnly'],
+				"IsDiscussionAllowed" => $values["IsDiscussionAllowed"],
+				"IsRatingAllowed" => $values["IsRatingAllowed"],
 				'DefaultPermissions' => $defaultPermission['Id']
 			));
 
