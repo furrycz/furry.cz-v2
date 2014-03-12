@@ -257,10 +257,10 @@ class CmsPagePresenter extends BasePresenter
 			throw new BadRequestException("CMS stránka nenalezena");
 		}
 
-		$content = $cmsPage->ref("Content");
-		if ($content === false)
+		$content = $cmsPage->ref("ContentId");
+		if ($content === false or $content === null)
 		{
-			throw new ApplicationException("Database/CmsPage (Id: {$cmsPageId}) has no asociated Database/Content");
+			throw new ApplicationException("Database/CmsPage (idOrAlias: {$idOrAlias}) has no asociated Database/Content");
 		}
 
 		$access = $this->getAuthorizator()->authorize($content, $user);
