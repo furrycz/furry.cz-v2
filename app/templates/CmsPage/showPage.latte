@@ -1,13 +1,23 @@
 {**
  * CMS page template
  *
- * @param Nette\Database\ActiveRow $cmsPage
+ * @param Nette\Database\Table\ActiveRow  $cmsPage
+ * @param array                           $access
+ * @param Nette\Database\Table\ActiveRow  $content
  *}
 
 {var $pageTitle = $cmsPage['Name']}
 
 {block content}
-	<h1>{$cmsPage['Name']}</h1>
+	<div class="Header LightBackground">
+		{if $access["IsOwner"]}
+			<span class="HeaderTools">
+				<a n:href="CmsPage:deletePage $cmsPage['Id']">Smazat</a>
+				<a n:href="CmsPage:editPage $cmsPage['Id']">Upravit</a>
+			</span>
+		{/if}
+		<h1>{$cmsPage['Name']}</h1>
+	</div>
 	<div class="CmsPageContentWrapper">
 		{!$cmsPage['Text']}
 	</div>

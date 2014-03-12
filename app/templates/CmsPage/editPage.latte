@@ -1,0 +1,40 @@
+{**
+ * CMS page edit form
+ *
+ * @param Nette\Database\ActiveRow $cmsPage
+ *}
+
+{var $pageTitle = "Upravit CMS stránku"}
+
+{block content}
+	<header>
+		<h1>Upravit: {$cmsPage["Name"]}</h1>
+	</header>
+
+	{form cmsPageEditForm}
+		<div class="Body">
+			<dl>
+				<dt>{label Name /}</dt>
+				<dd>{input Name}</dd>
+
+				<dt>{label Description /}</dt>
+				<dd>{input Description}</dd>
+
+				<dt>Příznaky:</dt>
+				<dd>{input IsForRegisteredOnly} {label IsForRegisteredOnly /}</dd>
+				<dd>{input IsForAdultsOnly} {label IsForAdultsOnly /}</dd>
+				<dd>{input IsDiscussionAllowed} {label IsDiscussionAllowed /}</dd>
+				<dd>{input IsRatingAllowed} {label IsRatingAllowed /}</dd>
+
+			</dl>
+
+			<div class="CmsFormEditorWrapper">
+				{input Text}
+			</div>
+		</div>
+
+		<div class="Footer">
+			{input Save}
+		</div>
+	{/form}
+{/block}
