@@ -1,13 +1,16 @@
 {**
  * DiscussionPosts component template
  *
- * @param Nette\Database\Table\Selection $posts
- * @param array                          $access
+ * NOTE: The $presenter variable here points to DiscussionPosts component, not the root presenter.
+ *
+ * @param Nette\Database\Table\Selection          $posts
+ * @param array                                   $access
+ * @param Nette\Application\UI\PresenterComponent $rootPresenter The presenter which displays the containing page.
  *}
  
 <div class="DiscussionPosts">
 	{if $access['CanWritePosts'] == true}
-		{form discussionPosts-newPostForm} {* Nette sub-component *}
+		{form newPostForm}
 			<div class="NewPostForm">
 				<div>{input text}</div>				
 				{input save}
@@ -46,6 +49,7 @@
 				{var $numIgnoredPosts = 0}
 				{var $numDeletedPosts = 0}
 			{/if}
+
 			{var $userData = $users[$post["Author"]]}
 			<div class="Post">
 				<a name="{$post['Id']}" style="display:inline;width:0px;height:0px;padding:0px;margin:0px;"></a>
@@ -53,15 +57,25 @@
 				<div class="Text">
 					<span class="HeaderBar" id="Header-Bar-Hash-{$post['Id']}">
 						<a name="post-{$post['Id']}"></a>
-						<a class="Nick {$userData["Color"]}" n:href="User:profile $post['Author']" title="{$userData["Hodnost"]}">{if $userData["Image"]!=""}<img align="absmiddle" style="position: relative;top: -2px;padding-right: 3px;" src="{$basePath}/images/{$userData["Image"]}">{/if}{$post->ref("Author")->Nickname}</a>
+						<a class="Nick {$userData["Color"]}" href="{$rootPresenter->link('User:profile', $post['Author'])}" title="{$userData["Hodnost"]}">
+							{if $userData["Image"]!=""}
+								<img align="absmiddle" style="position: relative;top: -2px;padding-right: 3px;" src="{$basePath}/images/{$userData["Image"]}">
+							{/if}
+							{$post->ref("Author")->Nickname}
+						</a>
 						<a class="Referent" href="#{$post['Id']}">#{$post['Id']}</a>
-						<span class="Time">{$post['TimeCreated']->format("d.m.Y H:i")}</span>		
+						<span class="Time">{$post['TimeCreated']->format("d.m.Y H:i")}</span>
+
 						{if $post["Author"]==$presenter->user->id or $presenter->user->isInRole('admin') or $access['CanDeletePosts']}
-							{if $access['CanEditOwnPosts']}<a n:href="Post:edit, $post['Id']" class="Autor">Upravit</a> {/if}
-							{if $access['CanDeleteOwnPosts']}<a n:href="Post:delete, $post['Id']" style="background-color: #F00;" class="Autor">Smazat</a>{/if}
-						{/if}	
-							{if isset($ratings[$post['Id']][2]) and @$ratings[$post['Id']][2]!=""}{var $ratings[$post['Id']][2] = substr($ratings[$post['Id']][2],0,strlen($ratings[$post['Id']][2])-2)}{/if}
-							<div class="hodnoc" {if $ratings[$post['Id']][0]==0 and $post["Author"]==$presenter->user->id}style="display:none;"{/if}>{if $post["Author"]!=$presenter->user->id}<img src="{$basePath}/images/vote_yes.png" rate-postid="{$post['Id']}" class="RateUp" title="Líbí se mi to"><img src="{$basePath}/images/vote_no.png" rate-postid="{$post['Id']}" class="RateDown" title="Nelíbí se mi to">{/if}<b id="rating-post-{$post['Id']}" {if isset($ratings[$post['Id']][3]) and @$ratings[$post['Id']][3]!=""}ajax-user-rating-data="{$ratings[$post['Id']][3]}"{/if} title="{if isset($ratings[$post['Id']][2]) and @$ratings[$post['Id']][2]!=""}Hodnocení: {$ratings[$post['Id']][2]}{/if}" class="ratingBox rating{$ratings[$post['Id']][1]}">{if $ratings[$post['Id']][0]!=0}{$ratings[$post['Id']][0]}{/if}</b></div>
+							{if $access['CanEditOwnPosts']}
+								<a href="{$rootPresenter->link('Post:edit', $post['Id'])}" class="Autor">Upravit</a>
+							{/if}
+							{if $access['CanDeleteOwnPosts']}
+								<a n:href="delete!, $post['Id']" style="background-color: #F00;" class="Autor">Smazat</a>
+							{/if}
+						{/if}
+						{if isset($ratings[$post['Id']][2]) and @$ratings[$post['Id']][2]!=""}{var $ratings[$post['Id']][2] = substr($ratings[$post['Id']][2],0,strlen($ratings[$post['Id']][2])-2)}{/if}
+						<div class="hodnoc" {if $ratings[$post['Id']][0]==0 and $post["Author"]==$presenter->user->id}style="display:none;"{/if}>{if $post["Author"]!=$presenter->user->id}<img src="{$basePath}/images/vote_yes.png" rate-postid="{$post['Id']}" class="RateUp" title="Líbí se mi to"><img src="{$basePath}/images/vote_no.png" rate-postid="{$post['Id']}" class="RateDown" title="Nelíbí se mi to">{/if}<b id="rating-post-{$post['Id']}" {if isset($ratings[$post['Id']][3]) and @$ratings[$post['Id']][3]!=""}ajax-user-rating-data="{$ratings[$post['Id']][3]}"{/if} title="{if isset($ratings[$post['Id']][2]) and @$ratings[$post['Id']][2]!=""}Hodnocení: {$ratings[$post['Id']][2]}{/if}" class="ratingBox rating{$ratings[$post['Id']][1]}">{if $ratings[$post['Id']][0]!=0}{$ratings[$post['Id']][0]}{/if}</b></div>
 					</span>
 					<div class="context">
 					{var $textParse = Fcz\CmsUtilities::parseHTML($post['Text'])}

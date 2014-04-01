@@ -1,0 +1,42 @@
+
+{var $pageTitle = 'Odstranit kategorii'}
+
+{block scripts}
+	<script src="{$basePath}/js/jquery.js"></script>
+	<script src="{$basePath}/js/netteForms.js"></script>
+	<script src="{$basePath}/js/main.js"></script>
+{/block}
+
+{block content}
+
+	<div class="Header LightBackground">
+		<h1>Odstranit kategorii</h1>
+	</div>
+
+	{form deleteCategoryForm}
+		<div class="Body">
+
+			{* Print errors *}
+			<ul class="errors" n:if="$form->hasErrors()">
+				<li n:foreach="$form->errors as $error">{$error}</li>
+			</ul>
+
+			<p>Opravdu chcete odstranit kategorii {$category["Name"]}?</p>
+		
+			{if $writingCount > 0}
+				<p>V kategorii je {$writingCount}
+					<?php echo Fcz\LanguageUtilities::czechCount($imageCount, array("text", "", "y", "ů")) ?>,
+					{if $writingCount == 1}bude přesunut{else}budou přesunuty{/if} do kategorie "Nezařazeno"
+				</p>
+			{else}
+				<p>Tato kategorie je prázdná</p>
+			{/if}
+		
+		</div>
+
+		<div class="Footer">
+			{input SubmitDeleteCategory}
+		</div>
+	{/form}
+
+{/block}

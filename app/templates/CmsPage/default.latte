@@ -1,14 +1,42 @@
 {**
- * CMS page template
+ * CMS index
  *
- * @param Nette\Database\ActiveRow $cmsPage
+ * @param Nette\Database\Selection $myPages
  *}
 
-{var $pageTitle = $cmsPage['Name']}
+{var $pageTitle = "Moje CMS stránky"}
 
 {block content}
-	<h1>{$cmsPage['Name']}</h1>
-	<div class="CmsPageContentWrapper">
-		{!$cmsPage['Text']}
+	<div class="Header LightBackground">
+		<span class="HeaderTools">
+			<a n:href="CmsPage:newPage">[+] Vytvořit</a>
+		</span>
+		<h1>Moje CMS stránky</h1>
+	</div>
+
+	<div class="Body">
+		{if count($myPages) > 0}
+		<ul>
+			{foreach $myPages as $content}
+				{var $cmsPage = $content->related("CmsPages")->fetch()}
+				<li>
+					<a class="CmsLink" n:href="CmsPage:showPage $cmsPage['Id']">{$cmsPage["Name"]}</a>
+					<p>{$cmsPage["Description"]}</p>
+				</li>
+			{/foreach}
+		</ul>
+		{else}
+			<p>Vítejte v CMS (Content Management System = Systém Správy Obsahu).</p>
+
+			<p>CMS je novinka projektu FCZv2 a umožňuje vám vytvářet stránky se zcela libovolným obsahem a za jakýmkoli účelem.
+			Můžete prezentovat svoje koníčky, zveřejňovat výsledky soutěží, psát návody a rady, cokoliv.
+			Každá stránka má vlastní oprávnění, komentáře, hodnocení a ankety.</p>
+
+			<p>Web neobsahuje žádný automatický seznam CMS stránek. Uživatel musí své stránky zveřejnit ve svém profilu či jakékoli
+			jiné sekci obsahující oddíl "prezentace", který je sám o sobě CMS stránkou. Případně je možné dohodnout s administrátory
+			umístění odkazu na hlavní stránku, která je taktéž CMS stránkou.</p>
+
+			<p>V tuto chvíli nemáte žádné CMS stránky. <a n:href="CmsPage:newPage">Vytvořte</a> si nějakou.</p>
+		{/if}
 	</div>
 {/block}

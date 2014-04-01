@@ -5,7 +5,7 @@
  * @param Nette\Database\ActiveRow      $content
  * @param Nette\Database\ActiveRow      $topic
  * @param Nette\Database\Selection|null $posts
- * @param array                         $access User permissions
+ * @param array                         $access       User permissions
  * @param int                           $jumpToPostId Id of post to jump to after page loads. 0 = no jump.
  *}
 
@@ -14,13 +14,19 @@
 {block content}
 	<div class="Header" id="TopicHeaderPanel">
 		<div style="border-bottom:1px solid black;">
-		<h1>{$topic['Name']}</h1>
-		<span n:if="isset($paginator)" class="TitleInfo">
-			({$paginator->getItemCount()} příspěvků, strana {$paginator->getPage()}/{$paginator->getPageCount()})
-		</span>		
-		{if $access["CanEditPermissions"]}<div style="float:right;margin-left:10px;"><a n:href="Forum:Permision $topic['Id']">Upravit práva</a></div>{/if}
-		{if $access["CanEditContentAndAttributes"]}<div style="float:right;margin-left:10px;"><a n:href="Forum:Edit $topic['Id']">Upravit</a></div>{/if}
-		{if $access["CanEditHeader"]}<div style="float:right;margin-left:10px;"><a n:href="Forum:Header $topic['Id']">Upravit Hlavičku</a></div>{/if}
+			<h1>{$topic['Name']}</h1>
+			<span n:if="isset($paginator)" class="TitleInfo">
+				({$paginator->getItemCount()} příspěvků, strana {$paginator->getPage()}/{$paginator->getPageCount()})
+			</span>
+			{if $access["CanEditPermissions"]}
+				<div style="float:right;margin-left:10px;"><a n:href="Forum:Permision $topic['Id']">Upravit práva</a></div>
+			{/if}
+			{if $access["CanEditContentAndAttributes"]}
+				<div style="float:right;margin-left:10px;"><a n:href="Forum:Edit $topic['Id']">Upravit</a></div>
+			{/if}
+			{if $access["CanEditHeader"]}
+				<div style="float:right;margin-left:10px;"><a n:href="Forum:Header $topic['Id']">Upravit Hlavičku</a></div>
+			{/if}
 		</div>
 
 		{if $access['CanViewContent'] == true}
@@ -34,17 +40,17 @@
 		{/if}
 		<a id="discussion" class="Position Topic"></a> {* Intentionally lowercase, used in url *}
 		{if $access['CanReadPosts']}
-			{control discussionPaginator}
+			{control discussion-discussionPaginator}
 		{/if}
 	</div>
 	<div class="Body">
 		{if $access['CanReadPosts']}
-			{control discussionPosts}
+			{control discussion-discussionPosts}
 		{/if}
 	</div>
 	<div class="Footer">
 		{if $access['CanReadPosts']}
-			{control discussionPaginator}
+			{control discussion-discussionPaginator}
 		{/if}
 	</div>
 {/block}

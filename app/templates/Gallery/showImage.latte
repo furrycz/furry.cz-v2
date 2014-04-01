@@ -6,11 +6,7 @@
  * @param array                          $access Current users's permission to the image.
  *}
 
-{block scripts}
-	<script src="{$basePath}/js/jquery.js"></script>
-	<script src="{$basePath}/js/netteForms.js"></script>
-	<script src="{$basePath}/js/main.js"></script>
-{/block}
+{var $pageTitle = $image["Name"]}
 
 {block content}
 	{var $my = $author['Id'] == $presenter->user->id}
@@ -29,7 +25,7 @@
 			{$image["Name"]}
 		</h1>
 	</div>
-	
+
 	<section class="Image">
 		<a href='{$baseUrl}/file/{$image->ref("UploadedFileId")["Key"]}'>
 			<img src='{$baseUrl}/file/{$image->ref("UploadedFileId")["Key"]}' alt="{$image['Name']}"></a>{* TODO: Implement scaling *}
@@ -37,18 +33,19 @@
 			<?php echo nl2br($image["Description"]); ?>
 		</div>
 	</section>
-	
-	<section class="Discussion">
-		{if $access['CanReadPosts']}
-			CAN READ POSTS!!
-			{control discussionPaginator}
-			{control discussionPosts}
-		{/if}
-	</section>
+
+	{if $access['CanReadPosts']}
+		<section class="Discussion" id="discussion">
+			<div id="ImageDiscussionPaginatorTop" class="LightBackground">
+				{control discussion-discussionPaginator}
+			</div>
+			{control discussion-discussionPosts}
+		</section>
+	{/if}
 
 	<div class="Footer">
 		{if $access['CanReadPosts']}
-			{control discussionPaginator}
+			{control discussion-discussionPaginator}
 		{/if}
 	</div>
 {/block}

@@ -20,5 +20,7 @@ temp/sessions/*
 temp/*.dat
 # Kate text editor backup files (ending with ~)
 *~
+# Kate text editor unsaved files
+*.kate-swp
 # Other editor backups
 *.bak

@@ -1,0 +1,71 @@
+{**
+ * Shows a portfolio of a writer.
+ *
+ * @param Nette\Database\Table\Selection $user
+ * @param Nette\Database\Table\Selection $contentWritings
+ *}
+
+{var $pageTitle = 'Portfolio uživatele '. $user['Nickname']}
+
+{block scripts}
+	<script src="{$basePath}/js/jquery.js"></script>
+	<script src="{$basePath}/js/netteForms.js"></script>
+	<script src="{$basePath}/js/main.js"></script>
+{/block}
+
+{block content}
+	{var $my = $user['Id'] == $presenter->user->id}
+
+	<div class="Header LightBackground">
+		{if $my}
+			<span class="HeaderTools">
+				<a n:href="Writings:addWriting">[+] Text</a>
+			</span>
+		{/if}
+		<img src="{$baseUrl}/images/avatars/{$user['AvatarFilename']}" class="Avatar">
+		<h1>
+			{if $my}
+				Moje texty
+			{else}
+				{$user['Nickname']}: literatura
+			{/if}
+		</h1>
+	</div>
+
+	<div style="clear: both; margin: 0 0 10px 0;"></div>
+
+	<div class="Body">
+		{if $user["WritingsPresentation"] != null}
+			{var $cms = $user->ref("WritingsPresentation")}
+			<div class="CmsPageContentWrapper">
+				{!$cms["Text"]}
+			</div>
+		{/if}
+
+		{if count($contentWritings) > 0}
+			<ul id="UserWritingsList">
+				{foreach $contentWritings as $content}
+					{var $writing = $content->related("Writings")->fetch()}
+					<li>
+						<div class="Top">
+							<span class="Right">
+								{var $category = $writing->ref("CategoryId")}
+								{if $category}
+									<a class="Category" n:href="Writings:category $category['Id']">{$category["Name"]}</a>
+								{/if}
+								<span class="Time">{$content["TimeCreated"]}</span>
+								<a class="Edit" n:href="Writings:editWriting $writing['Id']">Upravit</a>
+								<a class="Delete" n:href="Writings:deleteWriting $writing['Id']">Smazat</a>
+							</span>
+							<a class="Name" n:href="Writings:showWriting $writing['Id']">{$writing["Name"]}</a>
+						</div>
+
+						<div class="Description">{$writing["Description"]}</div>
+					</li>
+				{/foreach}
+			</ul>
+		{else}
+			Tento uživatel zatím nic nenapsal.
+		{/if}
+	</div>
+{/block}
