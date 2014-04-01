@@ -1,0 +1,56 @@
+{**
+ * Writings - create new entry
+ *}
+
+{var $pageTitle = 'Nový spis'}
+
+{block content}
+	<h1>Nový spis</h1>
+
+	{form addWritingForm}
+		<div class="Body">
+
+			{* Print errors *}
+			<ul class="errors" n:if="$form->hasErrors()">
+				<li n:foreach="$form->errors as $error">{$error}</li>
+			</ul>
+
+			<dl>
+				<dt>{label Title /}</dt>
+				<dd>{input Title}</dd>
+
+				<dt>{label Description /}</dt>
+				<dd>{input Description}</dd>
+
+				<dt>{label Category /}</dt>
+				<dd>{input Category}</dd>
+
+				<dt>Příznaky:</dt>
+				<dd>{input IsForRegisteredOnly} {label IsForRegisteredOnly /}</dd>
+				<dd>{input IsForAdultsOnly} {label IsForAdultsOnly /}</dd>
+				<dd>{input IsDiscussionAllowed} {label IsDiscussionAllowed /}</dd>
+				<dd>{input IsRatingAllowed} {label IsRatingAllowed /}</dd>
+
+				<dt>Výchozí oprávnění:</dt>
+				<dd>{input CanListContent} {label CanListContent /}</dd>
+				<dd>{input CanViewContent} {label CanViewContent /}</dd>
+				<dd>{input CanWritePosts} {label CanWritePosts /}</dd>
+				<dd>{input CanEditOwnPosts} {label CanEditOwnPosts /}</dd>
+				<dd>{input CanDeleteOwnPosts} {label CanDeleteOwnPosts /}</dd>
+				<dd>{input CanEditContentAndAttributes} {label CanEditContentAndAttributes /}</dd>
+				<dd>{input CanEditHeader} {label CanEditHeader /}</dd>
+				<dd>{input CanEditPermissions} {label CanEditPermissions /}</dd>
+				<dd>{input CanDeletePosts} {label CanDeletePosts /}</dd>
+				<dd>{input CanEditPolls} {label CanEditPolls /}</dd>
+			</dl>
+
+			<div class="WritingFormEditorWrapper">
+				{input Text}
+			</div>
+		</div>
+
+		<div class="Footer">
+			{input SubmitWriting}
+		</div>
+	{/form}
+{/block}

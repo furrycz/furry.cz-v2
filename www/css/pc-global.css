@@ -498,6 +498,82 @@ div#Content-Ignorelist-edit img.Avatar { max-height: 35px; vertical-align: middl
 #UserPortolioExpositions span { display: block; }
 
 /****************************************************************************/
+/*                                Writings                                  */
+/****************************************************************************/
+
+#Content-Writings-user div.Header img.Avatar { float: left; position: relative; top: 10px; margin: 0 10px 0 0; max-width: 200px; max-height: 200px; border-radius: 10px; }
+
+#frmaddWritingForm-Description { height: 50px; }
+
+.WritingText { height: 500px; }
+
+div.WritingFormEditorWrapper { margin: 10px 0 0; }
+
+/*********/
+/* Index */
+/*********/
+
+#LiteratureNav { float: left; width: 200px; overflow: hidden; border-right: 2px solid #3c3732; }
+
+#LiteratureNav strong { background-color: #3c3732; display: block; padding: 0 0 0 10px; }
+
+#LiteratureNav ul { list-style: none; padding: 0 0 0 10px; margin: 0; }
+
+#Content-Writings-default div.BottomClear { clear: both; }
+
+#LiteratureBody { padding: 0 10px 0 212px; }
+
+#WritingsLatestPosts { padding: 0; margin: 0; }
+
+#WritingsLatestPosts li { list-style: none; background-color: #3c3732; border-radius: 10px; margin: 10px 0; }
+
+#WritingsLatestPosts li div.Top { padding: 5px 10px; border-radius: 10px 10px 0 0; }
+
+#WritingsLatestPosts li.NotVisited { background: #63973d; color: #000; }
+
+#WritingsLatestPosts li span.Right { float: right; padding: 5px 0 0; }
+
+#WritingsLatestPosts li span.Right a { padding: 3px 5px; }
+
+#WritingsLatestPosts li a.Name { font-size: 1.4em; font-family: Verdana, serif; font-weight: bold; }
+
+#WritingsLatestPosts li div.Description { padding: 0 10px 5px; }
+
+/***********/
+/* Writing */
+/***********/
+
+#Content-Writings-showWriting div.Header { padding-left: 0; }
+
+#Content-Writings-showWriting div.Header div.Description { padding-left: 10px; }
+
+#Content-Writings-showWriting div.Header a.ArtistLink { background: transparent; }
+
+#Content-Writings-showWriting div.Header h1 { float: left; display: inline; }
+
+#Content-Writings-showWriting div.Header img.Avatar { float: left; margin: 0 10px 0 0; max-width: 50px; max-height: 50px; border-radius: 10px 0 0; }
+
+#Content-Writings-showWriting section.WritingText { display: block; padding: 10px; }
+
+/********/
+/* User */
+/********/
+
+#UserWritingsList { padding: 0; }
+
+#UserWritingsList li { list-style: none; background-color: #3c3732; margin: 0 0 10px; border-radius: 10px; }
+
+#UserWritingsList li div.Top { padding: 5px 10px; border-radius: 10px 10px 0 0; }
+
+#UserWritingsList li span.Right { float: right; padding: 5px 0 0; }
+
+#UserWritingsList li span.Right a { padding: 3px 5px; }
+
+#UserWritingsList li a.Name { font-size: 1.4em; font-family: Verdana, serif; font-weight: bold; }
+
+#UserWritingsList li div.Description { padding: 0 10px 5px; }
+
+/****************************************************************************/
 /*                                 Events                                   */
 /****************************************************************************/
 

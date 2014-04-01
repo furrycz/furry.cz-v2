@@ -1,0 +1,41 @@
+
+{var $pageTitle = 'Úprava kategorie'}
+
+{block scripts}
+	<script src="{$basePath}/js/jquery.js"></script>
+	<script src="{$basePath}/js/netteForms.js"></script>
+	<script src="{$basePath}/js/main.js"></script>
+{/block}
+
+{block content}
+
+	<div class="Header LightBackground">
+		<h1>Úprava kategorie</h1>
+	</div>
+
+	{form editCategoryForm}
+		<div class="Body">
+
+			{* Print errors *}
+			<ul class="errors" n:if="$form->hasErrors()">
+				<li n:foreach="$form->errors as $error">{$error}</li>
+			</ul>
+
+			<dl>
+				<dt>{label Name /}</dt>
+				<dd>{input Name}</dd>
+
+				<dt>{label Description /}</dt>
+				<dd>{input Description}</dd>
+
+				<dt>{label IsForAdultsOnly /}</dt>
+				<dd>{input IsForAdultsOnly}</dd>
+			</dl>
+		</div>
+
+		<div class="Footer">
+			{input SubmitUpdateCategory}
+		</div>
+	{/form}
+
+{/block}

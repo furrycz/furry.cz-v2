@@ -54,6 +54,16 @@ class RouterFactory
 		$router[] = new Route('events/day/[<year>/][<month>/][<day>]', 'Events:day');
 		$router[] = new Route('events/[<year>/][<month>]', 'Events:default');
 
+		// Writings
+		$router[] = new Route('writings/categories', 'Writings:manageCategories');
+		$router[] = new Route('writings/categories/add', 'Writings:addCategory');
+		$router[] = new Route('writings/categories/edit/<categoryId>', 'Writings:editCategory');
+		$router[] = new Route('writings/categories/delete/<categoryId>', 'Writings:deleteCategory');
+
+		$router[] = new Route('writings/author/<userId>', 'Writings:user');
+		$router[] = new Route('writings/show/<writingId>', 'Writings:showWriting');
+		$router[] = new Route('writings/<action>[/<id>]', 'Writings:default');
+
 		// Intercom
 		$router[] = new Route('intercom/autocomplete', 'Intercom:autocomplete');
 		$router[] = new Route('intercom[/<name>]', 'Intercom:default');
