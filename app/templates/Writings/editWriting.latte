@@ -1,0 +1,47 @@
+
+{var $pageTitle = 'Upravit text'}
+
+{block content}
+	<h1>Upravit text</h1>
+
+	{form editWritingForm}
+		<div class="Body">
+
+			{* Print errors *}
+			<ul class="errors" n:if="$form->hasErrors()">
+				<li n:foreach="$form->errors as $error">{$error}</li>
+			</ul>
+
+			<dl>
+				<dt>{label Title /}</dt>
+				<dd>{input Title}</dd>
+
+				<dt>{label Description /}</dt>
+				<dd>{input Description}</dd>
+
+				<dt>{label Category /}</dt>
+				<dd>{input Category}</dd>
+
+				<dt>Příznaky:</dt>
+				<dd>
+					{input IsForRegisteredOnly} {label IsForRegisteredOnly /}
+					<small>(Pokud zvolíte kategorii 18+, tento příznak bude nastaven automaticky)</small>
+				</dd>
+				<dd>
+					{input IsForAdultsOnly} {label IsForAdultsOnly /}
+					<small>(Pokud zvolíte kategorii 18+, tento příznak bude nastaven automaticky)</small>
+				</dd>
+				<dd>{input IsDiscussionAllowed} {label IsDiscussionAllowed /}</dd>
+				<dd>{input IsRatingAllowed} {label IsRatingAllowed /}</dd>
+
+				<div class="WritingFormEditorWrapper">
+					{input Text}
+				</div>
+			</dl>
+		</div>
+
+		<div class="Footer">
+			{input SubmitUpdatedWriting}
+		</div>
+	{/form}
+{/block}

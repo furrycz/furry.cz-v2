@@ -1,0 +1,32 @@
+
+{var $pageTitle = 'Smazat text'}
+
+{block scripts}
+	<script src="{$basePath}/js/jquery.js"></script>
+	<script src="{$basePath}/js/netteForms.js"></script>
+	<script src="{$basePath}/js/main.js"></script>
+{/block}
+
+{block content}
+
+	<div class="Header LightBackground">
+		<h1>Smazat text</h1>
+	</div>
+
+	{form deleteWritingForm}
+		<div class="Body">
+
+			{* Print errors *}
+			<ul class="errors" n:if="$form->hasErrors()">
+				<li n:foreach="$form->errors as $error">{$error}</li>
+			</ul>
+
+			<p>Opravdu chcete text odstranit?</p>
+		</div>
+
+		<div class="Footer">
+			{input SubmitDeleteWriting}
+		</div>
+	{/form}
+
+{/block}

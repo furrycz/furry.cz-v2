@@ -1,0 +1,32 @@
+{**
+ * Writings / manage categories (admin panel)
+ *}
+
+{var $pageTitle = "Spravovat kategorie textů"}
+
+{block content}
+	<div class="Header LightBackground">
+		<span class="HeaderTools">
+			<a n:href="Writings:addCategory">[+] Nová</a>
+		</span>
+
+		<h1>Spravovat kategorie textů</h1>
+	</div>
+
+	<div class="Body">
+		{if count($categories) > 0}
+			<ul>
+				{foreach $categories as $category}
+					<li>
+						{$category["Name"]}
+						<a n:href="Writings:editCategory $category['Id']">Upravit</a>
+						<a n:href="Writings:deleteCategory $category['Id']">Smazat</a>
+						<div>{$category["Description"]}</div>
+					</li>
+				{/foreach}
+			</ul>
+		{else}
+			Žádné kategorie nejsou definovány.
+		{/if}
+	</div>
+{/block}

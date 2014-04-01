@@ -1,0 +1,35 @@
+{**
+ * Provides a form to delete a CMS page.
+ *}
+
+{var $pageTitle = 'Smazat CMS stránku'}
+
+{block scripts}
+	<script src="{$basePath}/js/jquery.js"></script>
+	<script src="{$basePath}/js/netteForms.js"></script>
+	<script src="{$basePath}/js/main.js"></script>
+{/block}
+
+{block content}
+
+	<div class="Header LightBackground">
+		<h1>Smazat CMS stránku</h1>
+	</div>
+
+	{form deleteCmsPageForm}
+		<div class="Body">
+
+			{* Print errors *}
+			<ul class="errors" n:if="$form->hasErrors()">
+				<li n:foreach="$form->errors as $error">{$error}</li>
+			</ul>
+
+			<p>Opravdu chcete smazat CMS stránku?</p>
+		</div>
+
+		<div class="Footer">
+			{input SubmitDelete}
+		</div>
+	{/form}
+
+{/block}

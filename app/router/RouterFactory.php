@@ -21,8 +21,11 @@ class RouterFactory
 		// Homepage
 		$router[] = new Route('index.php', 'Homepage:default', Route::ONE_WAY);
 
-		// CmsPage
-		$router[] = new Route('page[/<idOrAlias>]', 'CmsPage:default');
+		// CMS
+		$router[] = new Route('cms/add', 'CmsPage:newPage');
+		$router[] = new Route('cms/edit/<idOrAlias>', 'CmsPage:editPage');
+		$router[] = new Route('cms', 'CmsPage:default');
+		$router[] = new Route('page[/<idOrAlias>]', 'CmsPage:showPage');
 
 		// Gallery - expositions
 		$router[] = new Route('gallery/exposition/create', 'Gallery:createExposition');
@@ -32,7 +35,7 @@ class RouterFactory
 
 		// Gallery - images
 		$router[] = new Route('gallery/add', 'Gallery:addImage');
-		$router[] = new Route('gallery/show/<imageId>', 'Gallery:showImage');
+		$router[] = new Route('gallery/show/<imageId>[/<page=1>]', 'Gallery:showImage');
 		$router[] = new Route('gallery/edit/<imageId>', 'Gallery:editImage');
 		$router[] = new Route('gallery/delete/<imageId>', 'Gallery:deleteImage');
 
@@ -41,7 +44,7 @@ class RouterFactory
 		$router[] = new Route('gallery/<action>[/<userId>][/<page=1>]', 'Gallery:default');
 
 		// Forum
-		$router[] = new Route('forum/<action>[/<topicId>][/<page=1>][/<subAction>]', 'Forum:default');
+		$router[] = new Route('forum/<action>[/<topicId>][/<page=1>]', 'Forum:default');
 		
 		// Calendar
 		$router[] = new Route('events/new[/<year>][/<month>]', 'Events:new');
@@ -50,6 +53,16 @@ class RouterFactory
 		$router[] = new Route('events/edit[/<eventId>]', 'Events:edit');
 		$router[] = new Route('events/day/[<year>/][<month>/][<day>]', 'Events:day');
 		$router[] = new Route('events/[<year>/][<month>]', 'Events:default');
+
+		// Writings
+		$router[] = new Route('writings/categories', 'Writings:manageCategories');
+		$router[] = new Route('writings/categories/add', 'Writings:addCategory');
+		$router[] = new Route('writings/categories/edit/<categoryId>', 'Writings:editCategory');
+		$router[] = new Route('writings/categories/delete/<categoryId>', 'Writings:deleteCategory');
+
+		$router[] = new Route('writings/author/<userId>', 'Writings:user');
+		$router[] = new Route('writings/show/<writingId>', 'Writings:showWriting');
+		$router[] = new Route('writings/<action>[/<id>]', 'Writings:default');
 
 		// Intercom
 		$router[] = new Route('intercom/autocomplete', 'Intercom:autocomplete');

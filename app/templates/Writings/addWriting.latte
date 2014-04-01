@@ -1,14 +1,13 @@
 {**
- * Gallery - add new image page (template)
- * @param int $targetExpositionId
+ * Writings - create new entry
  *}
 
-{var $pageTitle = 'Nový obrázek - Galerie'}
+{var $pageTitle = 'Nový spis'}
 
 {block content}
-	<h1>Pridat do galerie novy obrazek</h1>
+	<h1>Nový spis</h1>
 
-	{form addImageForm}
+	{form addWritingForm}
 		<div class="Body">
 
 			{* Print errors *}
@@ -17,17 +16,14 @@
 			</ul>
 
 			<dl>
-				<dt>{label ArtworkUpload /}</dt>
-				<dd>{input ArtworkUpload}</dd>
-
 				<dt>{label Title /}</dt>
 				<dd>{input Title}</dd>
 
 				<dt>{label Description /}</dt>
 				<dd>{input Description}</dd>
 
-				<dt>{label ExpositionId /}</dt>
-				<dd>{input ExpositionId}</dd>
+				<dt>{label Category /}</dt>
+				<dd>{input Category}</dd>
 
 				<dt>Příznaky:</dt>
 				<dd>{input IsForRegisteredOnly} {label IsForRegisteredOnly /}</dd>
@@ -47,10 +43,14 @@
 				<dd>{input CanDeletePosts} {label CanDeletePosts /}</dd>
 				<dd>{input CanEditPolls} {label CanEditPolls /}</dd>
 			</dl>
+
+			<div class="WritingFormEditorWrapper">
+				{input Text}
+			</div>
 		</div>
 
 		<div class="Footer">
-			{input SubmitNewArtwork}
+			{input SubmitWriting}
 		</div>
 	{/form}
 {/block}

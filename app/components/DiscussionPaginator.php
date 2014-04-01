@@ -3,7 +3,9 @@
 namespace Fcz
 {
 
-class DiscussionPaginator extends \Nette\Application\UI\Control
+use Nette\Application\UI;
+
+class DiscussionPaginator extends UI\Control
 {
 
 	private $nettePaginator;
@@ -16,8 +18,10 @@ class DiscussionPaginator extends \Nette\Application\UI\Control
 
 
 
-	public function __construct($presenter, $nettePaginator, $subContentId, $baseUrl)
+	public function __construct(UI\Control $parent, UI\Presenter $presenter, \Nette\Utils\Paginator $nettePaginator, $subContentId, $baseUrl)
 	{
+		parent::__construct($parent, "discussionPaginator");
+
 		//$this->presenter = $presenter;
 		$this->nettePaginator = $nettePaginator;
 		$this->subContentId = $subContentId;
@@ -38,10 +42,7 @@ class DiscussionPaginator extends \Nette\Application\UI\Control
 		$firstPage = $this->nettePaginator->getFirstPage();
 		$lastPage = $this->nettePaginator->getLastPage();
 		$currentPage = $this->nettePaginator->getPage();
-		$staticUrl = $this->baseUrl . "/"
-			. strtolower($this->presenter->name) . "/"
-			. $this->presenter->action . "/"
-			. $this->subContentId;
+		$route = "{$this->presenter->name}:{$this->presenter->action}";
 
 		// Figure out precision
 		$precisionSkip = (int) ($this->nettePaginator->getPageCount() / $config['maxLinks']);
@@ -50,7 +51,7 @@ class DiscussionPaginator extends \Nette\Application\UI\Control
 		$items = array();
 		for ($i = $firstPage; $i <= $lastPage; $i++)
 		{
-			$href = $staticUrl . "/" . $i . '#discussion';
+			$href = $this->presenter->link($route, $this->subContentId, $i) . "#discussion";
 
 			if ($i == $currentPage)
 			{
@@ -69,11 +70,19 @@ class DiscussionPaginator extends \Nette\Application\UI\Control
 		}
 
 		// Generate arrow links
-		$nextPageHref = ($currentPage < $lastPage) ? $staticUrl . "/" . ($currentPage + 1) . '#discussion' : null;
-		$prevPageHref = ($currentPage > $firstPage) ? $staticUrl . "/" . ($currentPage - 1) . '#discussion' : null;
+		$nextPageHref = null;
+		if ($currentPage < $lastPage)
+		{
+			$nextPageHref = $this->presenter->link($route, $this->subContentId, $currentPage + 1) . "#discussion";
+		}
+		$prevPageHref = null;
+		if ($currentPage > $firstPage)
+		{
+			$prevPageHref = $this->presenter->link($route, $this->subContentId, $currentPage - 1) . "#discussion";
+		}
 
 		// Setup template
-		$template = $this->presenter->template;
+		$template = $this->template;
 		$template->setFile(__DIR__ . '/../templates/components/discussionPaginator.latte');
 		$template->setParameters(array(
 			'paginator' => $this->nettePaginator,
@@ -82,6 +91,13 @@ class DiscussionPaginator extends \Nette\Application\UI\Control
 			'paginatorHtmlLinks' => $items
 		));
 		$template->render();
+	}
+
+
+
+	public function getNettePaginator()
+	{
+		return $this->nettePaginator;
 	}
 
 }

@@ -9,7 +9,7 @@ use Nette\Diagnostics\Debugger;
 /**
  * Image gallery presenter
  */
-class GalleryPresenter extends DiscussionPresenter
+class GalleryPresenter extends BasePresenter
 {
 
 
@@ -186,41 +186,60 @@ class GalleryPresenter extends DiscussionPresenter
 
 
 
-	public function renderShowImage($imageId)
+	public function renderShowImage($imageId, $page)
 	{
-		$database = $this->context->database;
-
-		// Fetch image
-		$image = $database->table("Images")->where("Id", $imageId)->fetch();
-		if ($image === false)
+		list($image, $content, $access) = $this->checkImageAccess($imageId, $this->user);
+		if (! $access["CanViewContent"])
 		{
-			throw new BadRequestException("Obrázek nenalezen");
+			throw new ForbiddenRequestException("K tomuto obrázku nemáte přístup");
 		}
+
 		$author = $image->ref("ContentId")->related("Ownership", "ContentId")->fetch()->ref("UserId");
 
 		// Fill last visit
+		$database = $this->context->database;
 		$lastVisit = $database
 			->table("LastVisits")
 			->where("ContentId = ? AND UserId = ?", $image["ContentId"], $this->user->id)
 			->fetch();
 		if ($lastVisit !== false)
 		{
-			$lastVisit->update(array("Time" => new DateTime()));
+			throw new ForbiddenRequestException("K tomuto obrázku nemáte přístup");
 		}
-		else
+
+		// Fill last visit
+		if ($this->user->isInRole('approved'))
 		{
-			$database
+			$lastVisit = $database
 				->table("LastVisits")
-				->insert(array(
-					"ContentId" => $image["ContentId"],
-					"UserId" => $this->user->id,
-					"Time" => new DateTime()
-				));
+				->where("ContentId = ? AND UserId = ?", $image["ContentId"], $this->user->id)
+				->fetch();
+			if ($lastVisit !== false)
+			{
+				$lastVisit->update(array("Time" => new DateTime()));
+			}
+			else
+			{
+				$database
+					->table("LastVisits")
+					->insert(array(
+						"ContentId" => $image["ContentId"],
+						"UserId" => $this->user->id,
+						"Time" => new DateTime()
+					));
+			}
+		}
+
+		// Setup discussion
+		if ($permissions["CanReadPosts"])
+		{
+			$this->setupDiscussion($permissions, $content, $imageId, null, null);
 		}
 
 		$this->template->setParameters(array(
 			'image' => $image,
-			'author' => $author
+			'author' => $author,
+			"access" => $access
 		));
 	}
 
@@ -707,6 +726,8 @@ class GalleryPresenter extends DiscussionPresenter
 				'TimeCreated' => new DateTime,
 				'IsForRegisteredOnly' => $values['IsForRegisteredOnly'],
 				'IsForAdultsOnly' => $values['IsForAdultsOnly'],
+				"IsDiscussionAllowed" => $values["IsDiscussionAllowed"],
+				"IsRatingAllowed" => $values["IsRatingAllowed"],
 				'DefaultPermissions' => $defaultPermission['Id']
 			));
 
@@ -955,34 +976,51 @@ class GalleryPresenter extends DiscussionPresenter
 
 
 
+	/**
+	* Fetches item from DB and checkes permissions.
+	* @return array $image, $content, $access
+	* @throws BadRequestException If the image isn't found.
+	*/
+	private function checkImageAccess($imageId, $user)
+	{
+		$database = $this->context->database;
+		// Fetch image
+		$image = $database->table("Images")->where("Id", $imageId)->fetch();
+		if ($image === false)
+		{
+			throw new BadRequestException("Obrázek nenalezen");
+		}
+
+		$content = $image->ref("Content");
+		if ($content === false)
+		{
+			throw new ApplicationException("Database/Image (Id: {$imageId}) has no asociated Database/Content");
+		}
+
+		$access = $this->getAuthorizator()->authorize($content, $user);
+		return array($image, $content, $access);
+	}
+
+
+
 	public function processValidatedEditImageForm(UI\Form $form)
 	{
+		// Fetch & check data
+		$imageId = $this->getParameter("imageId");
+		list($image, $content, $access) = $this->checkImageAccess($imageId, $this->user);
+
 		// Check permissions
-		if (!($this->user->isInRole('approved') || $this->user->isInRole('admin')))
+		if (! $access["CanEditContentAndAttributes"])
 		{
 			throw new ForbiddenRequestException('Nejste oprávněn(a) k této operaci');
 		}
 
-		$values = $form->getValues();
-		$database = $this->context->database;
-
-		// Fetch & check data
-		$imageId = $this->getParameter("imageId");
-		$image = $database->table("Images")->where("Id", $imageId)->fetch();
-		if ($image === false)
-		{
-			throw new BadRequestException("Zadaná položka neexistuje");
-		}
-		$content = $image->ref("Content");
-		if ($content === false)
-		{
-			throw new ApplicationException(500, "Database/Image (Id: {$imageId}) has no asociated Database/Content");
-		}
-
 		// Update database
+		$database = $this->context->database;
 		$database->beginTransaction();
 		/*try
 		{*/
+			$values = $form->getValues();
 
 			$content->update(array(
 				'IsForRegisteredOnly' => $values['IsForRegisteredOnly'],
@@ -997,6 +1035,9 @@ class GalleryPresenter extends DiscussionPresenter
 			if ($upload->isFilled())
 			{
 				$this->getUploadHandler()->handleUploadUpdate($values["ArtworkUpload"], $image["UploadedFileId"]);
+
+				// Clear thumbnail cache
+				$this->getUploadHandler()->deleteImagePreviews($image["UploadedFileId"]);
 			}
 
 			// Update image entry
@@ -1093,6 +1134,24 @@ class GalleryPresenter extends DiscussionPresenter
 		{
 			$this->redirect('Gallery:user');
 		}
+	}
+
+
+
+	public function createComponentDiscussion()
+	{
+		$database = $this->context->database;
+		$id = $this->getParameter("imageId");
+		$image = $database->table("Images")->where('Id', $id)->fetch();
+		if ($image === false)
+		{
+			throw new BadRequestException("Obrázek neexistuje", 404);
+		}
+		$content = $image->ref('Content');
+		$access = $this->getAuthorizator()->authorize($content, $this->user);
+		$baseUrl = $this->presenter->getHttpRequest()->url->baseUrl;
+
+		return new Fcz\Discussion($this, $content, $id, $baseUrl, $access, $this->getParameter('page'), null);
 	}
 
 }

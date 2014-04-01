@@ -1,15 +1,16 @@
-{var $pageTitle = 'Editace - '.$typ}
+
+{var $pageTitle = "Upravit diskusní příspěvek"}
 
 {block content}
-<h1>{$typ} [Editace]</h1>
-<div class="DiscussionPosts">
-{form editPostForm} {* Nette sub-component *}
-	<div class="NewPostForm">
-		<div>{input text}</div>				
-		<div style="float:right;">{input save}</div>
-		<div style="float:left;padding-left: 5px;color: #888888;padding-top: 5px;">#jmeno_tvora - vloží jeho jmeno a odkaz na profil</div>
-		<div class="Clear"></div>
+	<h1>Upravit diskusní příspěvek</h1>
+	<div class="DiscussionPosts">
+		{form editPostForm}
+			<div class="NewPostForm">
+				<div>{input text}</div>
+				<div style="float:right;">{input save}</div>
+				<div style="float:left;padding-left: 5px;color: #888888;padding-top: 5px;">#jmeno_tvora - vloží jeho jmeno a odkaz na profil</div>
+				<div class="Clear"></div>
+			</div>
+		{/form}
 	</div>
-{/form}
-</div>
 {/block}
