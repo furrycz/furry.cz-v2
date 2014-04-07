@@ -72,33 +72,34 @@ class ForumPresenter extends BasePresenter
 	public function createComponentPermissions()
 	{
 		$database = $this->context->database;
-		$topic = $database->table("Topic")->select("Id, ContentId")->where("Id", $this->getParameter("topicId"))->fetch();
+
+		$topic = $database->table("Topics")->select("Id, ContentId")->where("Id", $this->getParameter("topicId"))->fetch();
 		if ($topic === false)
 		{
 			throw new BadRequestException("Toto diskusní téma neexistuje", 404);
 		}
 		$data = array(
-							"Permisions" => array(  //Permision data
-												"CanListContent" => array("L","Může topic vidět v seznamu","","CanViewContent","",1), //$Zkratka 1 písmeno(""==Nezobrazí), $Popis, $BarvaPozadí, $Parent(""!=Nezobrazí), $Zařazení práv, $default check
-												"CanViewContent" => array("","","","CanReadPosts","Context",1),
-												"CanEditContentAndAttributes" => array("E","Může topic upravit","D80093","","Context - Správce",0),
-												"CanEditHeader" => array("H","Může upravit hlavičku","D80093","","Context - Správce",0),
-												"CanEditPermissions" => array("S","Může upravit práva","D80093","","Context - Správce - NEBEZEPEČNÉ",0),												
-												"CanDeleteOwnPosts" => array("","","","CanEditOwnPosts","",1),
-												"CanReadPosts" => array("R","Může topic číst","","","",1),																								
-												"CanWritePosts" => array("P","Může psát příspěvky","61ADFF","","Context",1),												
-												"CanDeletePosts" => array("D","Může mazat a editovat všechny příspěvky","007AFF","","Moderátor",0),
-												"CanEditPolls" => array("EP","Muže upravit ankety","007AFF","","Moderátor",0),
-												"CanEditOwnPosts" => array("F","Frozen... Tímto uživately zakažete editovat a mazat vlastní příspěvky\n(Když nebude zaškrtnuto!)","F00","","",1)
-												),
-							"Description" => "!",
-							"Visiblity" => array(
-												"Public" => "Vidí všichni",
-												"Private" => "Nevidí nikdo je třeba přidelit práva",
-												"Hidden" => "Nezobrazí se v seznamu všech topiků, je třeba přidelit práva"
-												),
-							"DefaultShow" => true					
-							);
+			"Permisions" => array(  //Permision data
+				"CanListContent" => array("L","Může topic vidět v seznamu","","CanViewContent","",1), //$Zkratka 1 písmeno(""==Nezobrazí), $Popis, $BarvaPozadí, $Parent(""!=Nezobrazí), $Zařazení práv, $default check
+				"CanViewContent" => array("","","","CanReadPosts","Context",1),
+				"CanEditContentAndAttributes" => array("E","Může topic upravit","D80093","","Context - Správce",0),
+				"CanEditHeader" => array("H","Může upravit hlavičku","D80093","","Context - Správce",0),
+				"CanEditPermissions" => array("S","Může upravit práva","D80093","","Context - Správce - NEBEZEPEČNÉ",0),
+				"CanDeleteOwnPosts" => array("","","","CanEditOwnPosts","",1),
+				"CanReadPosts" => array("R","Může topic číst","","","",1),
+				"CanWritePosts" => array("P","Může psát příspěvky","61ADFF","","Context",1),
+				"CanDeletePosts" => array("D","Může mazat a editovat všechny příspěvky","007AFF","","Moderátor",0),
+				"CanEditPolls" => array("EP","Muže upravit ankety","007AFF","","Moderátor",0),
+				"CanEditOwnPosts" => array("F","'Frozen', pokud nebude zaškrtnuto, uživatel nebude moci editovat a mazat vlastní příspěvky.","F00","","",1)
+				),
+			"Description" => "!", // "!" means NULL here
+			"Visiblity" => array(
+				"Public" => "Vidí všichni",
+				"Private" => "Nevidí nikdo je třeba přidelit práva",
+				"Hidden" => "Nezobrazí se v seznamu všech topiků, je třeba přidelit práva"
+				),
+			"DefaultShow" => true
+		);
 		return new Fcz\Permissions($this, $content = $topic->ref("ContentId"), $this->getAuthorizator(), $data);
 	}
 
