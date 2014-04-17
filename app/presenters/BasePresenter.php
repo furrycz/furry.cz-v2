@@ -101,7 +101,7 @@ abstract class BasePresenter extends UI\Presenter
 		} catch (\Nette\Security\AuthenticationException $ex) {
 			$this->flashMessage($ex->getMessage(), 'error');
 		}
-		$this->redirect($this->backlink());
+		$this->redirect("this");
 	}
 
 
@@ -110,7 +110,7 @@ abstract class BasePresenter extends UI\Presenter
 	{
 		$this->getUser()->logout(true);
 		$this->flashMessage('Byl(a) jste odhlášen(a).');
-		$this->redirect($this->backlink());
+		$this->redirect("this");
 	}
 
 }
