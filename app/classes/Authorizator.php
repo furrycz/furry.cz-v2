@@ -91,6 +91,7 @@ class Authorizator extends \Nette\Object
 		}
 
 		$overlord = $user->isInRole('admin');
+		$isOwner = false;
 		if (!$overlord)
 		{
 			// Check isOwner (owner is an overlord)
