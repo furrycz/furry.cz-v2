@@ -3,6 +3,13 @@
 namespace Fcz
 {
 
+use Nette\Utils;
+use Nette\Application;
+use Nette\Database;
+use Nette\Application\ForbiddenRequestException;
+use Nette\Application\ApplicationException;
+use Nette\Application\BadRequestException;
+
 class FileUploadHandler extends \Nette\Object
 {
 
@@ -257,9 +264,11 @@ class FileUploadHandler extends \Nette\Object
 	/**
 	* Deletes file and it's database entry.
 	*/
-	public function deleteUploadedFile(\Nette\Database\Table\ActiveRow $entry)
+	public function deleteUploadedFile(Database\Table\ActiveRow $entry, $uploadType)
 	{
 		$config = $this->presenter->context->parameters;
+
+		$this->deleteImagePreviews($entry["Id"]);
 	
 		// Delete the file
 		$path = $config["baseDirectory"]
@@ -270,6 +279,48 @@ class FileUploadHandler extends \Nette\Object
 		// Delete db entry
 		$entry->delete();
 	}
+
+
+
+	/**
+	* Deletes thumbnails of specified uploaded file(s).
+	* @param int|array $uploadedFileIds
+	*/
+	public function deleteImagePreviews($uploadedFileIds)
+	{
+		if (is_int($uploadedFileIds))
+		{
+			$uploadedFileIds = array($uploadedFileIds);
+		}
+		if (! is_array($uploadedFileIds))
+		{
+			throw new \Nette\InvalidArgumentException("Expected int or array, got " . gettype($uploadedFileIds));
+		}
+
+		$database = $this->presenter->context->database;
+		$thumbs = $database->table("ImagePreviewCache")->where("UploadedFile", $uploadedFileIds);
+		if ($thumbs === false)
+		{
+			// Nothing to do
+			return;
+		}
+		$config = $this->presenter->context->parameters;
+		$cacheDir = $config["baseDirectory"] . "/" . $config["fileUploads"]["previews"]["cache"]["directory"];
+		foreach ($thumbs as $thumb)
+		{
+			$path = $cacheDir . "/" . $thumb["Filename"];
+			if (! is_file($path))
+			{
+				throw new ApplicationException("Could not find image preview file `$path`, DB id: `{$thumb["Id"]}`");
+			}
+			if (! unlink($path))
+			{
+				throw new ApplicationException("Failed to unlink() image preview file `$path`, DB id: `{$thumb["Id"]}`");
+			}
+		}
+		$thumbs->delete();
+	}
+
 }
 
 } // namespace Fcz

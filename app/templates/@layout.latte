@@ -149,9 +149,11 @@
 					<li><a n:href="Forum:default">Fórum</a></li>
 					<li><a n:href="Events:default, month=>0, year=>0">Kalendář</a></li>
 					<li><a n:href="Gallery:default">Galerie</a></li>
-					<li>Texty</li>
+					<li><a n:href="Writings:default">Texty</a></li>
 					<li><a n:href="User:default">Členové</a></li>
-					<li><a n:href="Chat:default">Chat</a></li>
+					{if $presenter->user->isInRole("approved")}
+						<li><a n:href="CmsPage:default">CMS</a></li>
+					{/if}
 				</ul>
 			</nav>
 		</div>

@@ -1,0 +1,86 @@
+{**
+ * Shows a main page of `Writings` section.
+ * Contains a list of authors, recent additions and changes.
+ *
+ * @param Nette\Database\Table\Selection $authors
+ * @param Nette\Database\Table\Selection $categories
+ * @param Nette\Database\Table\Selection $recentPosts
+ * @param                            int $numNotVisitedPosts
+ *}
+
+{var $pageTitle = 'Literatura'}
+
+{block scripts}
+	<script src="{$basePath}/js/jquery.js"></script>
+	<script src="{$basePath}/js/netteForms.js"></script>
+	<script src="{$basePath}/js/main.js"></script>
+{/block}
+
+{block content}
+	<div class="Header LightBackground">
+		{if $presenter->user->isInRole("approved")}
+			<span class="HeaderTools">
+				<a n:href="Writings:user">Moje</a>
+				{if $presenter->user->isInRole('admin')}
+					<a n:href="Writings:manageCategories">Spravovat kategorie</a>
+				{/if}
+				{if $numNotVisitedPosts > 0}
+					<a n:href="MarkAllRead!">Označit vše za přečtené</a>
+				{/if}
+			</span>
+		{/if}
+		<h1>Literatura</h1>
+	</div>
+
+	<div id="LiteratureNav">
+		<strong>Kategorie:</strong>
+		<ul id="LiteratureCategories">
+			<li><a href="Writings:default">Všechny</a></li>
+			{foreach $categories as $category}
+				<li>
+					<a href="Writings:default $category['Id']">{$category["Name"]}</a>
+				</li>
+			{/foreach}
+		</ul>
+
+		<strong>Autoři:</strong>
+		<ul id="LiteratureAuthorList">
+			{foreach $authors as $author}
+				<li>
+					<span class="NotVisited">{$author["numWritingsNotVisited"]}</span>
+					<a n:href="Writings:user $author['user']['Id']">{$author["user"]['Nickname']}</a>
+				</li>
+			{/foreach}
+		</ul>
+
+	</div> {* #LiteratureNav *}
+
+	<div id="LiteratureBody">
+		{if count($recentPosts) != 0}
+			<ul id="WritingsLatestPosts">
+				{foreach $recentPosts as $post}
+					<li {if $post["notVisited"]} class="NotVisited LightBackground"{/if} >
+						<div class="Top">
+							<span class="Right">
+								{if $post['writing']['CategoryId'] != null}
+									{var $category = $post['writing']->ref("CategoryId")}
+									<a class="Category" n:href="Writings:category $category['Id']">{$category["Name"]}</a>
+								{/if}
+								<span class="Time">{$post["whenPostedText"]}</span>
+								<a class="Author" n:href="Writings:user $post['author']['Id']">{$post['author']['Nickname']}</a>
+							</span>
+							<a class="Name" n:href="Writings:showWriting $post['writing']['Id']">{$post['writing']["Name"]}</a>
+						</div>
+
+						<div class="Description">{$post['writing']["Description"]}</div>
+					</li>
+				{/foreach}
+			</ul>
+		{else}
+			<p class="NoNewPosts">Žádné nové příspěvky za posledních 10 dní</p>
+		{/if}
+	</div> {* #LiteratureBody *}
+
+	<div class="BottomClear"></div>
+	<div class="Footer"></div>
+{/block}

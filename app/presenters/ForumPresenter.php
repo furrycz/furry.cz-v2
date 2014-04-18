@@ -7,7 +7,7 @@ use Nette\Diagnostics\Debugger;
 /**
  * Discussion forum presenter
  */
-class ForumPresenter extends DiscussionPresenter
+class ForumPresenter extends BasePresenter
 {
 
 	/**
@@ -47,9 +47,9 @@ class ForumPresenter extends DiscussionPresenter
 	{
 
 	}
-	
-	private $content = "";
-	
+
+
+
 	public function renderPermision($topicId){
 		$database = $this->context->database;
 		$topic = $database->table('Topics')->where('Id', $topicId)->fetch();
@@ -62,32 +62,60 @@ class ForumPresenter extends DiscussionPresenter
 		$this->content = $database->table('Content')->where('Id', $topic["ContentId"])->fetch();
 	}
 
+
+
+	public function createComponentDiscussion()
+	{
+		$database = $this->context->database;
+		$topicId = $this->getParameter('topicId');
+		$topic = $database->table('Topics')->where('Id', $topicId)->fetch();
+		if ($topic === false)
+		{
+			throw new BadRequestException("Diskusní téma neexistuje", 404);
+		}
+		$content = $topic->ref('Content');
+		$access = $this->getAuthorizator()->authorize($content, $this->user);
+		$baseUrl = $this->presenter->getHttpRequest()->url->baseUrl;
+
+		return new Fcz\Discussion($this, $content, $topicId, $baseUrl, $access, $this->getParameter('page'), null);
+	}
+
+
+
 	public function createComponentPermissions()
 	{
+		$database = $this->context->database;
+
+		$topic = $database->table("Topics")->select("Id, ContentId")->where("Id", $this->getParameter("topicId"))->fetch();
+		if ($topic === false)
+		{
+			throw new BadRequestException("Toto diskusní téma neexistuje", 404);
+		}
 		$data = array(
-							"Permisions" => array(  //Permision data
-												"CanListContent" => array("L","Může topic vidět v seznamu","","CanViewContent","",1), //$Zkratka 1 písmeno(""==Nezobrazí), $Popis, $BarvaPozadí, $Parent(""!=Nezobrazí), $Zařazení práv, $default check
-												"CanViewContent" => array("","","","CanReadPosts","Context",1),
-												"CanEditContentAndAttributes" => array("E","Může topic upravit","D80093","","Context - Správce",0),
-												"CanEditHeader" => array("H","Může upravit hlavičku","D80093","","Context - Správce",0),
-												"CanEditPermissions" => array("S","Může upravit práva","D80093","","Context - Správce - NEBEZEPEČNÉ",0),												
-												"CanDeleteOwnPosts" => array("","","","CanEditOwnPosts","",1),
-												"CanReadPosts" => array("R","Může topic číst","","","",1),																								
-												"CanWritePosts" => array("P","Může psát příspěvky","61ADFF","","Context",1),												
-												"CanDeletePosts" => array("D","Může mazat a editovat všechny příspěvky","007AFF","","Moderátor",0),
-												"CanEditPolls" => array("EP","Muže upravit ankety","007AFF","","Moderátor",0),
-												"CanEditOwnPosts" => array("F","Frozen... Tímto uživately zakažete editovat a mazat vlastní příspěvky\n(Když nebude zaškrtnuto!)","F00","","",1)
-												),
-							"Description" => "!",
-							"Visiblity" => array(
-												"Public" => "Vidí všichni",
-												"Private" => "Nevidí nikdo je třeba přidelit práva",
-												"Hidden" => "Nezobrazí se v seznamu všech topiků, je třeba přidelit práva"
-												),
-							"DefaultShow" => true					
-							);
-		return new Fcz\Permissions($this, $this->content, new Authorizator($this->context->database), $data);
+			"Permisions" => array(  //Permision data
+				"CanListContent" => array("L","Může topic vidět v seznamu","","CanViewContent","",1), //$Zkratka 1 písmeno(""==Nezobrazí), $Popis, $BarvaPozadí, $Parent(""!=Nezobrazí), $Zařazení práv, $default check
+				"CanViewContent" => array("","","","CanReadPosts","Context",1),
+				"CanEditContentAndAttributes" => array("E","Může topic upravit","D80093","","Context - Správce",0),
+				"CanEditHeader" => array("H","Může upravit hlavičku","D80093","","Context - Správce",0),
+				"CanEditPermissions" => array("S","Může upravit práva","D80093","","Context - Správce - NEBEZEPEČNÉ",0),
+				"CanDeleteOwnPosts" => array("","","","CanEditOwnPosts","",1),
+				"CanReadPosts" => array("R","Může topic číst","","","",1),
+				"CanWritePosts" => array("P","Může psát příspěvky","61ADFF","","Context",1),
+				"CanDeletePosts" => array("D","Může mazat a editovat všechny příspěvky","007AFF","","Moderátor",0),
+				"CanEditPolls" => array("EP","Muže upravit ankety","007AFF","","Moderátor",0),
+				"CanEditOwnPosts" => array("F","'Frozen', pokud nebude zaškrtnuto, uživatel nebude moci editovat a mazat vlastní příspěvky.","F00","","",1)
+				),
+			"Description" => "!", // "!" means NULL here
+			"Visiblity" => array(
+				"Public" => "Vidí všichni",
+				"Private" => "Nevidí nikdo je třeba přidelit práva",
+				"Hidden" => "Nezobrazí se v seznamu všech topiků, je třeba přidelit práva"
+				),
+			"DefaultShow" => true
+		);
+		return new Fcz\Permissions($this, $content = $topic->ref("ContentId"), $this->getAuthorizator(), $data);
 	}
+
 
 
 	public function createComponentNewTopicForm()
@@ -233,7 +261,12 @@ class ForumPresenter extends DiscussionPresenter
 
 
 
-	public function renderTopic($topicId, $page, $subAction, $findPost)
+	/**
+	* @param int $topicId Topic ID
+	* @param int $page Page number
+	* @param int $findPost ID of topic to find find and highlight.
+	*/
+	public function renderTopic($topicId, $page, $findPost)
 	{
 		$database = $this->context->database;
 
@@ -248,24 +281,12 @@ class ForumPresenter extends DiscussionPresenter
 		$authorizator = new Authorizator($database);
 		$access = $authorizator->authorize($content, $this->user);
 		
-		if ($access['CanReadPosts'] == true)
-		{			
-			$this->setupDiscussion($access, $content, $topic['Id'], $page, $findPost);
-
-			// Setup template
-			$this->template->setParameters(array(
-				'topic' => $topic
-			));
-		}
-		else
-		{
-			// Setup template
-			$this->template->setParameters(array(
-				'topic' => $topic,
-				'content' => $content,
-				'access' => $access
-			));
-		}
+		// Setup template
+		$this->template->setParameters(array(
+			'topic' => $topic,
+			'content' => $content,
+			'access' => $access
+		));
 	}
 	
 	/*

@@ -1,0 +1,51 @@
+{**
+ * Shows a single image.
+ *
+ * @param Nette\Database\Table\ActiveRow $image
+ * @param Nette\Database\Table\ActiveRow $author
+ * @param array                          $access Current users's permission to the image.
+ *}
+
+{var $pageTitle = $image["Name"]}
+
+{block content}
+	{var $my = $author['Id'] == $presenter->user->id}
+
+	<div class="Header LightBackground">
+		<a n:href="Gallery:user $author['Id']" class="ArtistLink">
+			<img src="{$baseUrl}/images/avatars/{$author['AvatarFilename']}" class="Avatar">
+		</a>
+		{if $my}
+			<span id="MyExpoTools">
+				<a n:href="Gallery:deleteImage $image['Id']">Odstranit</a>
+				<a n:href="Gallery:editImage $image['Id']">Upravit</a>
+			</span>
+		{/if}
+		<h1>
+			{$image["Name"]}
+		</h1>
+	</div>
+
+	<section class="Image">
+		<a href='{$baseUrl}/file/{$image->ref("UploadedFileId")["Key"]}'>
+			<img src='{$baseUrl}/file/{$image->ref("UploadedFileId")["Key"]}' alt="{$image['Name']}"></a>{* TODO: Implement scaling *}
+		<div class="Description">
+			<?php echo nl2br($image["Description"]); ?>
+		</div>
+	</section>
+
+	{if $access['CanReadPosts']}
+		<section class="Discussion" id="discussion">
+			<div id="ImageDiscussionPaginatorTop" class="LightBackground">
+				{control discussion-discussionPaginator}
+			</div>
+			{control discussion-discussionPosts}
+		</section>
+	{/if}
+
+	<div class="Footer">
+		{if $access['CanReadPosts']}
+			{control discussion-discussionPaginator}
+		{/if}
+	</div>
+{/block}

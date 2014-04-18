@@ -44,7 +44,36 @@ class Authorizator
 	{
 		// CHECK FULL ACCESS
 
+		if (! $user->isLoggedIn())
+		{
+			if ($content["IsForRegisteredOnly"] || $content["IsForAdultsOnly"])
+			{
+				return array(
+					"CanListContent" => false,
+					"CanViewContent" => false,
+					"CanDeleteContent" => false,
+					"CanEditContentAndAttributes" => false,
+					"CanEditHeader" => false,
+					"CanEditOwnPosts" => false,
+					"CanDeleteOwnPosts" => false,
+					"CanReadPosts" => false,
+					"CanDeletePosts" => false,
+					"CanWritePosts" => false,
+					"CanEditPermissions" => false,
+					"CanEditPolls" => false,
+					"IsOwner" => false
+				);
+			}
+			else
+			{
+				$perms = $content->ref('DefaultPermissions')->toArray();
+				$perms["IsOwner"] = false;
+				return $perms;
+			}
+		}
+
 		$overlord = $user->isInRole('admin');
+		$isOwner = false;
 		if (!$overlord)
 		{
 			// Check ownership (owner is an overlord)
