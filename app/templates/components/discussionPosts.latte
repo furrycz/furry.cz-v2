@@ -39,7 +39,7 @@
 		{else}
 
 			{if $numIgnoredPosts > 0 or $numDeletedPosts > 0}
-				{var $hidden = $presenter->formatHiddenPosts($numIgnoredPosts, $numDeletedPosts)}
+				{var $hidden = $thisComponent->formatHiddenPosts($numIgnoredPosts, $numDeletedPosts)}
 				<div class="Post HiddenPosts {$hidden['css']}">
 					<div class="AvatarBox"></div>
 					<div class="Text">

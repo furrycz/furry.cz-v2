@@ -123,12 +123,13 @@ class DiscussionPosts extends Application\UI\Control
 		$template = $this->template;
 		$template->setFile(__DIR__ . '/../templates/components/discussionPosts.latte');
 		$template->setParameters(array(
-			'posts' => $posts,			
+			'posts' => $posts,
 			'users' => $userData,
 			'access' => $this->access,
 			'ratings' => $ratingsData,
 			'rootPresenter' => $this->presenter,
-			'contentId' => $this->content['Id']
+			'contentId' => $this->content['Id'],
+			'thisComponent' => $this,
 		));
 		
 		$this['newPostForm']->setDefaults(array("DiscussionID"=>$this->content['Id']));
