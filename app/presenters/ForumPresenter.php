@@ -1,8 +1,13 @@
 <?php
 
-use Nette\Application\UI;
 use Nette\Utils\Html;
 use Nette\Diagnostics\Debugger;
+use Nette\Database;
+use Nette\Application;
+use Nette\Application\UI;
+use Nette\Application\ForbiddenRequestException;
+use Nette\Application\ApplicationException;
+use Nette\Application\BadRequestException;
 
 /**
  * Discussion forum presenter
@@ -32,36 +37,34 @@ class ForumPresenter extends BasePresenter
 	*/
 	public function renderNewTopic()
 	{
-
+		if (! $this->user->isInRole("approved"))
+		{
+			throw new BadRequestException("Nemáte oprávnění");
+		}
 	}
 
 
 
-	public function renderPermision($topicId){
-		$database = $this->context->database;
-		$topic = $database->table('Topics')->where('Id', $topicId)->fetch();
-		if ($topic == false)
+	public function renderPermision($topicId)
+	{
+		list($topic, $content, $access) = $this->checkTopicAccess($topicId, $this->user);
+		if (! $access["CanEditPermissions"])
 		{
-			throw new Nette\Application\BadRequestException('Zadané téma neexistuje');
+			throw new BadRequestException("Nemáte oprávnění upravovat přístupová práva");
 		}
-		$this->template->Name = $topic["Name"];
-		$this->template->topicId = $topicId;
-		$this->content = $database->table('Content')->where('Id', $topic["ContentId"])->fetch();
+
+		$this->template->setParameters(array(
+			"Name" => $topic["Name"],
+			"topicId" => $topicId,
+		));
 	}
 
 
 
 	public function createComponentDiscussion()
 	{
-		$database = $this->context->database;
 		$topicId = $this->getParameter('topicId');
-		$topic = $database->table('Topics')->where('Id', $topicId)->fetch();
-		if ($topic === false)
-		{
-			throw new BadRequestException("Diskusní téma neexistuje", 404);
-		}
-		$content = $topic->ref('Content');
-		$access = $this->getAuthorizator()->authorize($content, $this->user);
+		list($topic, $content, $access) = $this->checkTopicAccess($topicId, $this->user);
 		$baseUrl = $this->presenter->getHttpRequest()->url->baseUrl;
 
 		return new Fcz\Discussion($this, $content, $topicId, $baseUrl, $access, $this->getParameter('page'), null);
@@ -107,13 +110,6 @@ class ForumPresenter extends BasePresenter
 
 	public function createComponentNewTopicForm()
 	{
-		// Check access
-		if (!($this->user->isInRole('member') || $this->user->isInRole('admin')))
-		{
-			throw new Nette\Application\ForbiddenRequestException(
-				'Pouze registrovaní uživatelé mohou zakládat nová diskusní témata');
-		}
-
 		$form = new UI\Form;
 
 		// Topic name
@@ -166,6 +162,11 @@ class ForumPresenter extends BasePresenter
 
 	public function processValidatedNewTopicForm($form)
 	{
+		if (! $this->user->isInRole("approved"))
+		{
+			throw new BadRequestException("Pouze schválení uživatelé mohou zakládat nová diskusní témata");
+		}
+
 		$values = $form->getValues();
 		$database = $this->context->database;
 		$database->beginTransaction();
@@ -255,26 +256,40 @@ class ForumPresenter extends BasePresenter
 	*/
 	public function renderTopic($topicId, $page, $findPost)
 	{
-		$database = $this->context->database;
+		list($topic, $content, $access) = $this->checkTopicAccess($topicId, $this->user);
 
-		// Load topic
-		$topic = $database->table('Topics')->where('Id', $topicId)->fetch();
-		if ($topic == false)
-		{
-			throw new Nette\Application\BadRequestException('Zadané diskusní téma neexistuje');
-		}
-		$content = $topic->ref('Content');
-
-		$authorizator = new Authorizator($database);
-		$access = $authorizator->authorize($content, $this->user);
-		
 		// Setup template
 		$this->template->setParameters(array(
 			'topic' => $topic,
 			'content' => $content,
 			'access' => $access
 		));
-
 	}
 
+
+
+	/**
+	* Fetches item from DB and checkes permissions.
+	* @return array $topic, $content, $access
+	* @throws BadRequestException If the topic isn't found.
+	*/
+	private function checkTopicAccess($topicId, $user)
+	{
+		$database = $this->context->database;
+		// Fetch item
+		$topic = $database->table("Topics")->where("Id", $topicId)->fetch();
+		if ($topic === false)
+		{
+			throw new BadRequestException("Diskusní téma nenalezeno");
+		}
+
+		$content = $topic->ref("Content");
+		if ($content === false)
+		{
+			throw new ApplicationException("Database/Image (Id: {$topicId}) has no asociated Database/Content");
+		}
+
+		$access = $this->getAuthorizator()->authorize($content, $user);
+		return array($topic, $content, $access);
+	}
 }
