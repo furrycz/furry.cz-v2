@@ -658,7 +658,7 @@ background-color: #90CEFF;width: 280px;color: #000;padding: 1px 6px;border: 1px 
 .notifList {display:block;background-color: #FFF;text-decoration:none;color:black;border-bottom: 1px solid #ECECEC;}
 .notifList:hover {background-color: #CFF0FF;color:black;}
 .notifList.Read_0 {background-color: #5BC4F5;}
-.notifList img {float: left;width: 50px;height: 50px;}
+.notifList img {float: left;width: 50px;height: 50px;margin: 1px 4px;}
 .notifList .body {font-size: 12px;}
 .notifList .body .info {font-size: 9px;color: #8F8F8F;}
 
@@ -691,6 +691,15 @@ background-color: #90CEFF;width: 280px;color: #000;padding: 1px 6px;border: 1px 
 	border-bottom-right-radius: 5px;
 	text-decoration:none;
 	white-space:nowrap;
+	text-overflow: ellipsis;
+}
+
+.redbox {
+	background: #F00;
+	padding: 4px 3px;
+	border-radius: 3px;
+	color: #FFF;
+	font-weight: bold;
 }
 
 /*Rating box*/
@@ -740,6 +749,15 @@ background-color: #90CEFF;width: 280px;color: #000;padding: 1px 6px;border: 1px 
 	border-color: #005BCE;
 }
 
+.ContextMenu input {
+	background-color:transparent;
+	border:0px;
+	outline:0;
+}
+.ContextMenu.selected input {
+	color: #FFF;
+}
+
 .listDiv {float:left;width:400px;height:0px;display:none;position:absolute;top:0px;z-index:500;}
 .listBox {
 	background-color: #FFF;
@@ -749,6 +767,8 @@ background-color: #90CEFF;width: 280px;color: #000;padding: 1px 6px;border: 1px 
 	min-width: 120px;
 	box-shadow:1px 1px 9px #464646;
 	display:inline-block;
+	max-height: 200px;
+	overflow: auto;
 }
 .listBox ul{
 	list-style-type:none;
@@ -757,8 +777,12 @@ background-color: #90CEFF;width: 280px;color: #000;padding: 1px 6px;border: 1px 
 }
 .listBox ul li{ color:black;font-size:12px;cursor:pointer; } 
 .listBox ul li.cara {border-bottom:1px solid #B3D5FF;height:0px;margin:5px 3px;}
+
  li.sel {background-image:url(images/check.png);background-repeat: no-repeat;padding-left: 15px;background-position: 6px 5px;font-weight:bold;}
  li.nos {padding-left:14px;}
+ li.selx {background: #1BA6E9;color: #FFF;}
+ li.selx a {color:white;}
+ 
 .listBox ul li:hover{
 	background-color:#038BCC;
 	color:white;
@@ -820,5 +844,68 @@ background-color: #90CEFF;width: 280px;color: #000;padding: 1px 6px;border: 1px 
 .chat_text .bott textarea {width: 98%;margin: 4px 4px;border: 0px;font-family:Arial;outline:0;}
 .chat_text .bott .bottbar {margin-top: -6px;padding: 2px;padding-left: 4px;background-color: #E2E2E2;}
 .chat_text .bott .bottbar .send {float: right;border: 1px solid #3F6125;background-color: #63973D;padding: 2px 9px;font-weight: bold;color: #FFF;text-shadow: 1px 1px 3px #4E4C4C;}
+
+.notif_button {text-decoration: none;color: #000;font-weight: bold;background-color: #CECECE;padding: 5px 6px;position: relative;top: 3px;border-bottom: 0px;color:black;}
+.notif_button.selected {position: relative;top: 4px;border: 1px solid #000;border-bottom: 0px;background-color: #FFF;}
+
+.uprow_pan {width: 400px;position: relative;height: 11px;}
+.uprow {background-image:url(images/up.png);width:20px;height:11px;right: 2px;position: absolute;}
+
+.section {
+	padding: 5px 10px;
+	background-color: #63973D;
+	color: #2B2725;
+	display: inline-block;
+	border-radius: 0px 5px 5px 0px;
+	margin: 0px 0px 0px 0px;
+	min-width: 500px;
+	font-size: 18px;
+}
+
+::-webkit-input-placeholder { /* WebKit browsers */
+    color:    #525252;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:    #525252;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:    #525252;
+}
+:-ms-input-placeholder { /* Internet Explorer 10+ */
+    color:    #525252;
+}
+
+input[type="submit"] {
+	/*
+	background: #EEE;
+	background: -webkit-linear-gradient(top, #EEE 0px, #888 100%);
+	border: 1px solid #999;
+	padding: 3px 6px;
+	color: #000;
+	font-weight: bold;
+	cursor:pointer;
+	outline:0;
+	*/
+	border: 1px solid #616161;
+	color: #000;
+	background: -webkit-linear-gradient(top, #CCC 5%, #808080 95%);
+	background: -moz-linear-gradient(top, #CCC 5%, #808080 95%);
+	background: -ms-linear-gradient(top, #CCC 5%, #808080 95%);
+	background: -o-linear-gradient(top, #CCC 5%, #808080 95%);
+	cursor: pointer;
+	text-decoration: none;
+	font-weight: bold;
+	font-size: 13px;
+	padding: 3px 6px;	
+	outline:0;
+}
+input[type="submit"]:active {
+	/*
+	background: -webkit-linear-gradient(top, #888 0px, #EEE 100%);
+	box-shadow: 0px 3px 3px #6D6B6B inset;
+	*/
+	background: #CCC;
+	box-shadow: 0px 2px 3px #838383 inset;
+}
 
 /* A ohol se v rozkroku nikdo nedělá rád orál v chlupatém roští xDDD */

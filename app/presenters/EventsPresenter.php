@@ -268,12 +268,13 @@ class EventsPresenter extends BasePresenter
 			$this->template->Name = $event["Name"];
 			$this->template->Description = $event["Description"];
 			SetLocale(LC_ALL, "Czech");
+			if(strtotime($event["EndTime"])-time()<0){ $this->template->Ended = true; }else{ $this->template->Ended = false; }
 			$this->template->StartTime = Date("j. m, Y H:i", strtotime($event["StartTime"]));
 			$this->template->EndTime = Date("j. m, Y H:i", strtotime($event["EndTime"]));
 			$this->template->Place = $event["Place"];
 			$pat=explode(", ",substr($event["GPS"],1,-1));
 			$this->template->GPS = array($pat[0],$pat[1]);
-			$this->template->Owner = $access["Owner"];
+			$this->template->Owner = $access["IsOwner"];
 			$this->template->Edit = $access["CanEditContentAndAttributes"];
 			$this->template->EditVisible = $access["CanEditPermissions"];
 			$this->template->EventId = $event["Id"];
@@ -317,7 +318,7 @@ class EventsPresenter extends BasePresenter
 		$event = $database->table('Events')->where('Id', $eventId)->fetch();
 		$authorizator = new Authorizator($database);
 		$access = $authorizator->authorize($event["ContentId"], $this->user);
-		if ($access['Owner'] == true)
+		if ($access['IsOwner'] == true)
 		{
 			$content = $database->table('Content')->where('Id', $event["ContentId"])->fetch();
 			$database->table('EventAttendances')->where('EventId', $eventId)->delete();

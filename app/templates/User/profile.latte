@@ -8,7 +8,8 @@
 
 {block content}
 	<div id="ProfileHeader" class="LightBackground">
-		<img src="{$profile['AvatarFilename']}" class="Avatar">
+		<img src="{if $profile['AvatarFilename']==""}{$baseUrl}/images/avatars/0.jpg{else}{$baseUrl}/images/avatars/{$profile['AvatarFilename']}{/if}" class="Avatar">
+			<a id="EditProfile" n:href="Intercom:default $profile['Username']">Zpráva</a>
 		{if $profile['CanBeEdited']}
 			<a id="EditProfile" n:href="User:edit $profile['Id']">Upravit</a>
 		{/if}
@@ -47,7 +48,7 @@
 
 	{if $presenter->user->isLoggedIn() && $profile['HasAnyPersonalInfo']}
 		<div id="ProfileReal">
-			<img src="{$profile['ProfilePhotoFilename']}" class="Photo">
+			<img src="{if $profile['ProfilePhotoFilename']==""}{$baseUrl}/images/avatars/0.jpg{else}{$baseUrl}/images/avatars/{$profile['ProfilePhotoFilename']}{/if}" class="Photo">
 			<dl>
 				{if $profile['FullName'] != null}
 					<dt>Jméno:</dt>

@@ -291,25 +291,27 @@ class UserPresenter extends BasePresenter
 		$profile['LastLogin'] = date("d. m. Y H:i", strtotime($profile["LastLogin"]));
 
 		// Format favourite websites
-		$favouries = array();
+		$favourites = null;
 		foreach (explode(' ', $profile['FavouriteWebsites']) as $fav)
 		{
-			$hasHttp = substr($fav, 0, 7) == 'http://';
-			$hasHttps = substr($fav, 0, 8) == 'https://';
+			if($fav!=""){
+				$hasHttp = substr($fav, 0, 7) == 'http://';
+				$hasHttps = substr($fav, 0, 8) == 'https://';
 
-			if (!$hasHttp && !$hasHttps)
-			{
-				$favourites['http://' . $fav] = $fav;
-			}
-			else if ($hasHttp)
-			{
-				// Trim http://www. if present
-				$favourites[$fav] = (substr($fav, 7, 4) == 'www.') ? substr($fav, 11) : substr($fav, 7);
-			}
-			else
-			{
-				// Trim https://www. if present
-				$favourites[$fav] = (substr($fav, 8, 4) == 'www.') ? substr($fav, 12) : substr($fav, 8);
+				if (!$hasHttp && !$hasHttps)
+				{
+					$favourites['http://' . $fav] = $fav;
+				}
+				else if ($hasHttp)
+				{
+					// Trim http://www. if present
+					$favourites[$fav] = (substr($fav, 7, 4) == 'www.') ? substr($fav, 11) : substr($fav, 7);
+				}
+				else
+				{
+					// Trim https://www. if present
+					$favourites[$fav] = (substr($fav, 8, 4) == 'www.') ? substr($fav, 12) : substr($fav, 8);
+				}
 			}
 		}
 		$profile['FavouriteWebsites'] = $favourites;

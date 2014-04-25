@@ -43,6 +43,8 @@ class Authorizator
 	public function authorize($content, $user)
 	{
 		// CHECK FULL ACCESS
+		
+		if(is_numeric($content)){ $content = $this->database->table('Content')->where('Id', $content)->fetch(); }		
 
 		if (! $user->isLoggedIn())
 		{
@@ -80,9 +82,9 @@ class Authorizator
 			$ownership = $this->database->table('Ownership')->where(array(
 				'ContentId' => $content['Id'],
 				'UserId' => $user->id
-			))->count();
+			))->count();						
 			$overlord = $ownership > 0;
-		}
+		}		
 
 		if ($overlord)
 		{
@@ -98,7 +100,7 @@ class Authorizator
 				'CanWritePosts' => true,
 				'CanEditPermissions' => true,
 				'CanEditPolls' => true,
-				'Owner' => true
+				'IsOwner' => true
 			);
 		}
 
@@ -137,7 +139,7 @@ class Authorizator
 			$this->cascadeDeny($perms, 'CanViewContent');
 		}	
 		
-		$perms["Owner"] = false;
+		$perms["IsOwner"] = false;
 
 		return $perms;
 	}

@@ -36,69 +36,19 @@
 		<script src="{$basePath}/js/jquery-nette.js"></script>
 		<script src="{$basePath}/tinymce/tinymce.min.js"></script>
 		<script src="{$basePath}/js/jquery.selectbox-0.2.js"></script>
-		<script type="text/javascript">
-		var openWindow;
-		tinymce.init({
-			setup: function(editor) {
-				editor.addButton('furrafinityLinker', {
-					text: false,
-					tooltip: "Furraffinity linker",
-					image: '{!$basePath}\/images\/fur-affinity_icon_sm_zps6825a89d.png',
-					onclick: function() {
-						//editor.insertContent('Main button');
-						openWindow = editor.windowManager.open({
-							title: "Furrafinity linker",
-							url: {link Ajax:furrafinity},
-							width: 600,
-							height: 150,
-							buttons: [{
-										text: 'Vložit',
-										onclick: function(){ 
-												$.ajax({
-													url: "{!$presenter->link('Ajax:furrafinityget')}",
-													data: {
-														url: jQuery(jQuery("#"+openWindow._id+"-body").find('iframe').contents()).contents().find('#urlFurrafinity')[0].value
-													},
-													success: function( data ) {
-														if(data.Error!=0)
-															tinyMCE.activeEditor.windowManager.alert(data.Error);
-														else{
-															editor.insertContent('<a href="'+data.urlDefault+'" target="_blank"><img src="'+data.urlImage+'" border=3></a>');	
-															top.tinymce.activeEditor.windowManager.close();
-														}	
-													}
-												});
-										}
-									}]
-						});
-					}
-				});
-			},
-			selector: "textarea.tinimce",
-			plugins: [
-				"advlist autolink lists link image charmap print preview anchor spellchecker",
-				"searchreplace visualblocks code fullscreen preview",
-				"insertdatetime media table contextmenu paste textcolor mention link"
-			],
-			toolbar: "insertfile undo redo | styleselect | furrafinityLinker | removeformat | bold italic | forecolor backcolor | bullist numlist outdent indent | link image charmap | preview fullscreen ",
-			menubar: false,
-			toolbar_items_size: 'small',
-			//statusbar: false,
-			convert_urls: false,
-			mentions: {
-				delimiter: "#",
-				source: function(query, process) {					
-					$.getJSON('{!$presenter->link('Ajax:autocomplete')}', function(data) {
-						process(data);
-					});
-				},
-				insert: function(item) {
-					return '<a href="http://{!$_SERVER['HTTP_HOST']}{!$presenter->link('User:profile')}/' + item.id + '">' + item.name.trim() + '</a>';
-				}	
-			}
-		});
+		<script> 
+			document.body.className+=' js';
+			windowhosturlu = "{!$_SERVER['HTTP_HOST']}";
+			basepath       = "{!$basePath}";
+			furralinkerurl = "{!$presenter->link('Ajax:furrafinity')}";
+			autocompleteur = "{!$presenter->link('Ajax:autocomplete')}";
+			linktoprofileu = "{!$presenter->link('User:profile')}";			
+			notificationaj = "{!$presenter->link('Ajax:notifications')}";
+			notifcountajax = "{!$presenter->link('Ajax:notificationcount')}";
+			notificationco = "{!$presenter->link('Ajax:notificationnotif')}";
+			furrafinityget = "{!$presenter->link('Ajax:furrafinityget')}";
 		</script>
-		<script> document.body.className+=' js' </script>
+		<script src="{$basePath}/js/natsu.js"></script>
 	{/block}	
 
 	<div n:foreach="$flashes as $flash" class="flash {$flash->type}">{$flash->message}</div>
@@ -165,10 +115,11 @@
 	</div>
 	
 	<div style="float:right;width:0px;height:0px;position:absolute;top: 32px;left: -271px;display:none;" id="notificatons">
-		<div style="background-color:white;width: 300px;color: black;box-shadow: 0 3px 8px rgba(0, 0, 0, 0.8);border-radius: 3px;border: 1px solid rgba(100, 100, 100, 0.4);">
+		<div class="uprow_pan"><div class="uprow"></div></div>
+		<div style="background-color:white;width: 400px;color: black;box-shadow: 0 3px 8px rgba(0, 0, 0, 0.8);border-radius: 3px;border: 1px solid rgba(100, 100, 100, 0.4);">
 			<div style="float:right;padding-top: 5px;padding-right: 7px;display:none;" id="nottifSpin"><img src="{$basePath}/images/spinner.gif"></div>
-			<div style="padding:5px;font-size:12px;"><a href="#" style="text-decoration:none;color:black;font-weight:bold;" id="messageShow">Zprávy</a> · <a href="#" style="text-decoration:none;font-weight:bold;" id="notifShow">Notifikace</a></div>
-			<div style="border-top: 1px solid rgba(100, 100, 100, 0.4);"></div>
+			<div style="padding:5px;font-size:12px;background-color: #BDBDBD;"><a href="#" style="text-decoration:none;color:black;font-weight:bold;" class="notif_button selected" id="messageShow">Zprávy</a> <a href="#" style="text-decoration:none;font-weight:bold;color:black;" id="notifShow" class="notif_button">Notifikace</a></div>
+			<div style="border-top: 1px solid black;"></div>
 			<div id="notificationsText" style="max-height:250px;overflow-y: auto;overflow-x: hidden;"></div>
 		</div>
 	</div>
@@ -180,107 +131,26 @@
 	</div>
 	<script>
 	var jak=0,prevJak=-1;
-	$("#buttonNotification").click( function(){ jak=0;NotifView(0);$("#messageShow").css("color","black");$("#notifShow").css("color",""); });
-	$("#buttonNotificationOther").click( function(){ jak=1;NotifView(0);$("#messageShow").css("color","");$("#notifShow").css("color","black"); });
+	$("#buttonNotification").click( function(){ jak=0;NotifView(0);$("#messageShow").addClass("selected");$("#notifShow").removeClass("selected"); });
+	$("#buttonNotificationOther").click( function(){ jak=1;NotifView(0);$("#messageShow").removeClass("selected");$("#notifShow").addClass("selected"); });
 	
-	$("#messageShow").click( function(){ jak=0;NotifView(5);$("#messageShow").css("color","black");$("#notifShow").css("color","");return false; });
-	$("#notifShow").click( function(){ jak=1;NotifView(5);$("#messageShow").css("color","");$("#notifShow").css("color","black");return false; });
-	function NotifView(op){
-		selectedDIV = "notificatons";
-		if(op!=5){ $("#notificatons").toggle(); }
-		$("#nottifSpin").css('display',"inline")
-		if($("#notificatons").css('display')=="block"){
-			if($("#buttonNotification").css('display')=="none"){ $("#buttonNotification").css('display',"inline");posbut = $("#buttonNotification").offset();$("#buttonNotification").css('display',"none");}
-			else{ posbut = $("#buttonNotification").offset();}
-			$("#notificatons").offset({ top: (posbut.top+24), left: (posbut.left-300+24)});
-			if($("#notificationsText").html()==""){ $("#notificationsText").html("<div style='text-align:center;padding:7px;'>Načítám....</div>"); }
-			$.ajax({
-				url: "{!$presenter->link('Ajax:notifications')}",
-				data: { "jak":jak },
-				success: function( data ) {	
-					$("#nottifSpin").css('display',"none")
-					$("#notificationsText").html("");
-					for(i=0;i<data.length;i++){
-						if(data[i].Url!=""){ divN="a";style=""; }else{ divN="div";style="cursor:default;"; }
-						$("<"+divN+" style='"+style+"' class='notifList "+data[i].Class+"' href='"+data[i].Url+"'><img src='"+data[i].Image+"' class='img'><div class=body><div class='text'>"+data[i].Text+"</div><div class='info'>"+data[i].Info+"</div></div><div style='clear:both;'></div><div style='clear:both;'></div></"+divN+">").appendTo("#notificationsText");
-					}		
-					if(data.length==0){ $("<div style='text-align:center;padding:7px;'>Žádná notifikace k zobrazení!</div>").appendTo("#notificationsText"); }					
-				}
-			});
-		}
-	}
-	/*Notification create*/
-	notifID = 0;
-	function NotificationCreate(text,desc,href,image){
-		if(typeof image!="undefined" && image!="")
-		{ $("<a class='notifAlert' id='notification_"+notifID+"' style='display:none;' href='"+href+"'><img src='"+image+"' style='float:left;width:50px;height:50px;padding-top: 4px;padding-bottom:4px;padding-right: 6px;'><div class=text>"+text+"</div><div class=info style='padding-left: 50px;'>"+desc+"</div><div style='clear:both;'></div></a>").appendTo("#notificatonsAlert"); }
-		else
-		{ $("<a class='notifAlert' id='notification_"+notifID+"' style='display:none;' href='"+href+"'><div class=text>"+text+"</div><div class=info>"+desc+"</div></a>").appendTo("#notificatonsAlert"); }
-		$("#notification_"+notifID).fadeIn( "slow", function() {} );
-		setTimeout(function(bi) { $("#notification_"+bi).fadeOut( "slow", function() {} ); }, 30000, notifID);
-		notifID++;
-	}
+	$("#messageShow").click( function(){ jak=0;NotifView(5);$("#messageShow").addClass("selected");$("#notifShow").removeClass("selected");return false; });
+	$("#notifShow").click( function(){ jak=1;NotifView(5);$("#messageShow").removeClass("selected");$("#notifShow").addClass("selected");return false; });
+	
 	/*Center Notification*/
 	posbut = $("#Header").offset();
 	$("#notificatonsAlert").offset({ top: (posbut.top+45), left: (posbut.left+5)});
 	$( window ).resize(function() {
 		posbut = $("#buttonNotification").offset();
-		$("#notificatons").offset({ top: (posbut.top+24), left: (posbut.left-300+24)});
+		$("#notificatons").offset({ top: (posbut.top+24), left: (posbut.left-400+24)});
 		posbut = $("#Header").offset();
 		$("#notificatonsAlert").offset({ top: (posbut.top+45), left: (posbut.left+5)});
 	});
 	
-	var WindowTitle = document.title;
 	var timeNot = {$time};
 	/*Notification count*/
-	setInterval(function() {
-      // Do something every 1 minute
-		NotificationControl();
-	}, 10000);
-	function NotificationControl(){
-		$.ajax({
-				url: "{!$presenter->link('Ajax:notificationcount')}",
-				data: {},
-				success: function( data ) {					
-					$("#buttonNotification").html(data.Count);
-					$("#buttonNotification").css("display","inline");
-					if(data.Count>0 || data.Notif>0){ $("#buttonNotification").css("background-color","red");document.title = "("+(data.Count+data.Notif)+") "+WindowTitle; }else{ $("#buttonNotification").css("background-color","");document.title = WindowTitle; }
-					if(data.Notif>0 && data.Count>0){
-						$("#buttonNotificationOther").html(data.Notif);
-						$("#buttonNotificationOther").css("display","inline");
-						$("#buttonNotificationOther").css("margin-right",-5);
-						$("#buttonNotificationOther").css("border-top-right-radius",0);
-						$("#buttonNotification").css("border-top-left-radius",0);
-						$("#buttonNotificationOther").css("border-bottom-right-radius",0);
-						$("#buttonNotification").css("border-bottom-left-radius",0);
-					}else if(data.Notif>0){
-						$("#buttonNotification").css("display","none");
-						$("#buttonNotificationOther").html(data.Notif);
-						$("#buttonNotificationOther").css("display","inline");
-						$("#buttonNotificationOther").css("margin-right",0);
-						$("#buttonNotificationOther").css("border-top-right-radius",5);
-						$("#buttonNotification").css("border-top-left-radius",5);
-						$("#buttonNotificationOther").css("border-bottom-right-radius",5);
-						$("#buttonNotification").css("border-bottom-left-radius",5);
-					}else if(data.Count>0){						
-						$("#buttonNotificationOther").html(data.Notif);
-						$("#buttonNotificationOther").css("display","none");
-						$("#buttonNotification").css("border-top-left-radius",5);
-						$("#buttonNotification").css("border-bottom-left-radius",5);
-					}else{ $("#buttonNotificationOther").css("display","none"); }
-				}
-			});					
-		$.ajax({				
-				url: "{!$presenter->link('Ajax:notificationnotif')}?time="+(timeNot-1000),
-				data: {},
-				success: function( data ) {		
-					for(i=1;i<data.length;i++){
-						NotificationCreate(data[i].Text,data[i].Info,data[i].Href,data[i].Image);
-					}
-					timeNot = data[0].time;
-				}
-			});	
-	}
+	setInterval(function() { NotificationControl();	}, 10000);
+	
 	NotificationControl();
 	//$("select").selectbox();
 	//Funkce která nám class s názvem "ratingBox" převede na klikatelné odkazy které nám vyhodí okno s daty z atributu "ajax-user-rating-data"
@@ -343,103 +213,6 @@
 	$(".NoJS").hide();
 	$(".JS").show();
 	
-	function ContextMenuClickable(){
-		$(".ContextMenu").each(function(i)
-		{
-		if($(this).attr("jsed")!=1){
-			$(this).attr("jsed",1);
-			$(this).append(" &#x25bc;");
-			$(this).click(function(){
-				var divi = $(this).attr("dropdown");
-				var ope_ = $(this).attr("dropdown-open");
-				var abs_ = $(this).attr("dropdown-absolute");	
-				var sel_ = $(this).attr("selectType");
-				$("#"+divi).css("width",$(window).width()-$("#"+divi).offset().left-20);
-				if($("#"+divi).css('display')=="none"){			
-					if(abs_=="true"){ top_=$(this).offset().top;left_=$(this).offset().left; }else{ top_=0;left_=0; }
-					if(ope_=="right"){
-						//$("#"+divi).show();
-						$("#"+divi).appendTo("body");
-						$("#"+divi).show();
-						$("#"+divi).css("top",$(this).offset().top+this.offsetHeight-1);						
-						$("#"+divi).css("left",$(this).offset().left-($($("#"+divi).children(".listBox")[0]).outerWidth()-this.offsetWidth));												
-						/*
-						$("#"+divi).css("top",top_+this.offsetHeight-1);
-						$("#"+divi).css("right",left_);//$("#"+divi).children(".listBox")[0].offsetWidth
-						*/
-					}
-					if(ope_=="left"){
-						$("#"+divi).appendTo("body");
-						$("#"+divi).css("top",$(this).offset().top+this.offsetHeight-1);
-						$("#"+divi).css("left",$(this).offset().left);
-						$("#"+divi).show();
-						//$("#"+divi).css("right",$("#"+divi).children(".listBox")[0].offsetWidth);
-					}	
-					if(ope_=="top"){
-						$("#"+divi).appendTo("body");
-						$("#"+divi).show();
-						$("#"+divi).css("top",$(this).offset().top-($($("#"+divi).children(".listBox")[0]).outerHeight()));
-						$("#"+divi).css("left",$(this).offset().left);						
-						//$("#"+divi).css("right",$("#"+divi).children(".listBox")[0].offsetWidth);
-					}						
-					$("#"+divi).css("width",$(window).width()-$("#"+divi).offset().left-20);					
-					$(this).addClass("selected");
-					selectedDIV = divi;
-					selectedBUT = $(this);
-					return false;
-				}
-			});
-			
-			var selectData = new Array();
-			$(this).each(function(i)
-			{
-				var sel_ = $(this).attr("selectType");
-				var divi = $(this).attr("dropdown");
-				selectData[divi] = new Array();
-				selectData[divi][0] = 0;
-				selectData[divi][1] = $(this);		
-				if(sel_=="1"){
-					$(this).html(" &#x25bc;");
-					$(this).attr("value_","");			
-					$("#"+divi).find("li").each(function(i){
-						if($(this).attr("sel")==1){ $(this).addClass("sel");selectData[divi][1].html($(this).find("a")[0].innerHTML+" &#x25bc;");selectData[divi][1].attr("value_",$(this).attr("value_")); }else{ $(this).addClass("nos"); }
-						$(this).attr("divi",divi);
-						$(this).attr("pos",i);
-						$(this).click(function(){
-							divi = $(this).attr("divi");
-							$(this).addClass("sel");
-							selectData[divi][0] = $(this).attr("pos");
-							selectData[divi][1].html($(this).find("a")[0].innerHTML+" &#x25bc;");					
-							selectData[divi][1].attr("value_",$(this).attr("value_"));
-							eval("var value_='"+$(this).attr("value_")+"';"+selectData[divi][1].attr("onChange"));
-							$("#"+divi).find("li").each(function(i){
-								if(selectData[divi][0]!=i){
-									$(this).removeClass("sel");$(this).removeClass("nos");
-									$(this).addClass("nos");
-									//Close!
-									$("#"+selectedDIV).hide();
-									selectedDIV="";
-									selectedBUT.removeClass("selected");
-								}						
-							 });
-						});
-					});
-				}else{
-					$("#"+divi).find("li").each(function(i){
-						$(this).click(function(){
-							//Close!							
-							$("#"+selectedDIV).hide();
-							selectedDIV="";
-							selectedBUT.removeClass("selected");
-							if($($(this).find("a")[0]).attr("href")=="#no"){ return false; }
-						});
-					});
-				}
-			});	
-			$(this).on('selectstart', false);
-			}
-		});
-	}
 	ContextMenuClickable();
 	
 	$(document).mouseup(function (e)
@@ -463,8 +236,6 @@
 		this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
 		return this;
 	}
-	function loading_show(){ $("#dialog-loading").show("scale",400); }
-	function loading_hide(){ $("#dialog-loading").hide("fade",200);  }
 	
 	//Funkce pro načtení a vypisu uživatelu v kategoriich v dialog boxu	
 	var allUserCategory = new Array();
@@ -511,27 +282,6 @@
 				}
 			});		
 	});
-	function UserShowCategory(ids){
-		html="";
-		if(ids==-1){
-			for(i=0;i<allUserCategory.sekcion.length;i++){
-				if(typeof allUserCategory.users[i]!="undefined"){
-					for(a=0;a<allUserCategory.users[i].length;a++){
-						html+="<div class='ratingBoxis'><img src='{!$baseUrl}/images/avatars/"+allUserCategory.users[i][a]["Avatar"]+"' class='ratingAvatar'><div style='float:left;'><b><a style='bacground:white;' href='{!$presenter->link('Intercom:default')}/"+allUserCategory.users[i][a]["Id"]+"/'>"+allUserCategory.users[i][a]["Name"]+"</a></b><br>"+allUserCategory.sekcion[i]+"</div><div style='clear:both;'></div></div>";
-					}
-				}
-			}
-		}else{
-			if(typeof allUserCategory.users[ids] == "undefined"){
-				html = "<div style='font-weight:bold;text-align:center;padding:20px;'>Nebyly nalezeny žádné výsledky.</div>";
-			}else{
-				for(var i=0;i<allUserCategory.users[ids].length;i++){
-					html+="<div class='ratingBoxis'><img src='{!$baseUrl}/images/avatars/"+allUserCategory.users[ids][i]["Avatar"]+"' class='ratingAvatar'><div style='float:left;'><b>"+allUserCategory.users[ids][i]["Name"]+"</b><br><a href='{!$presenter->link('Intercom:default')}/"+allUserCategory.users[ids][i]["Id"]+"/'>Poslat zprávu</a></div><div style='clear:both;'></div></div>";
-				}
-			}
-		}	
-		$("#UserListCategory").html(html);
-	}
 	
 	$("#dialog-loading").center();
 	</script>

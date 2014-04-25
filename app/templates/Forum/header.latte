@@ -1,0 +1,21 @@
+{var $pageTitle = $Name.' - Upravení hlavičky - Topic'}
+
+{block content}
+	<h1 style="position: relative;padding-left:45px;">
+		<a n:href="Forum:Topic $topicId" class=pu style="left:14px;">&lt;</a>
+		Upravit hlavičku: {$Name}
+	</h1>
+	{form headerEdit}
+	<div class=body>
+		<dl>
+			<dt>{label Header /}</dt>
+			<dt>{input Header}</dt>
+			<dt>{label HeaderForDisallowedUsers /}</dt>
+			<dt>{input HeaderForDisallowedUsers}</dt>
+		</dl>
+	</div>
+	<div class="Footer">
+		{input SubmitNewTopic}
+	</div>
+	{/form}
+{/block}

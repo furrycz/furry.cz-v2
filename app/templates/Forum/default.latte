@@ -54,7 +54,7 @@
 			<th width=80 class="right">Zpráv</th>
 			<th style="border-right:0px;">Poslední</th>
 		</tr>
-		<tr n:foreach="$topics as $topic">
+		<tr n:foreach="$topics as $topic" n:if="!(!$presenter->user->isInRole('approved') and $topic->ref('Content')['IsForAdultsOnly']) and !(!$presenter->user->isInRole('approved') and $topic->ref('Content')['IsForRegisteredOnly'])">
 			{if ($topic['CategoryId'] != null)}
 				{var $category = $topic->ref('TopicCategories')->select('Name')}
 			{else}
@@ -68,12 +68,13 @@
 			<td class="Category">{$category['Name']}</td>
 			<td><a class="postUrl" n:href="Forum:topic topicId => $topic['Id']">
 				{if $topic["Type"]==1}<img src="{$basePath}/images/error.png" align=absmiddle title="Duležité téma!">{/if}
+				{if $topic->ref('Content')['IsForAdultsOnly']}<span class=redbox>+18</span>{/if}
 				{$topic['Name']}
 			</a></td>
 			<td class="right">{$count}</td>
 			<td>
 				{if $count>0}
-				<div class="inAvatar"><img src="{$baseUrl}/images/avatars/{$allUserWithInfo[$lastPost["Author"]][1]}" class="avatar"></div><span class="autor">{$allUserWithInfo[$lastPost["Author"]][0]}</span> <span class="time">{$time}</span>
+				<div class="inAvatar"><img src="{$baseUrl}/images/avatars/{$allUserWithInfo[$lastPost["Author"]][1]}" class="avatar"></div><a style="color:white;background:transparent;" href="{$presenter->link('User:profile', $lastPost["Author"])}" class="autor">{$allUserWithInfo[$lastPost["Author"]][0]}</a> <span class="time">{$time}</span>
 				{else}
 				Žádná zpráva...
 				{/if}

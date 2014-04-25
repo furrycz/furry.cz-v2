@@ -12,11 +12,17 @@ abstract class BasePresenter extends UI\Presenter
 
 	private $contentManager = null;
 
+	private $authorizator = null;
+
+
+
 	protected function beforeRender()
 	{
 		$this->template->robots = 'index,follow';
 		$this->template->title = $this->context->parameters['title'];
 	}
+
+
 
 	/**
 	* Create and fetch FileUploadHandler
@@ -44,6 +50,21 @@ abstract class BasePresenter extends UI\Presenter
 			$this->contentManager = new Fcz\ContentManager($this);
 		}
 		return $this->contentManager;
+	}
+
+
+
+	/**
+	* Create and fetch ContentManager
+	* @return Fcz\ContentManager
+	*/
+	public function getAuthorizator()
+	{
+		if ($this->authorizator == null)
+		{
+			$this->authorizator = new Authorizator($this->context->database);
+		}
+		return $this->authorizator;
 	}
 
 

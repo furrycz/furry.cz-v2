@@ -21,7 +21,8 @@ class IntercomPresenter extends BasePresenter
 			$allUsers[] = array($user["Id"],$user["Username"]);
 			$allUserId[$user["Id"]] = $user["Username"];
 			$allUserName[$user["Username"]] = $user["Id"];
-			$allUserWithInfo[$user["Id"]] = array($user["Nickname"], $user["AvatarFilename"]);
+			if($user["AvatarFilename"]==""){$user["AvatarFilename"]="0.jpg";}
+			$allUserWithInfo[$user["Id"]] = array($user["Nickname"], $user["AvatarFilename"], date("d. m. Y H:i", strtotime($user["LastLogin"])));
 		}
 				
 		if($allUsers==NULL){$allUsers=array();}
@@ -33,6 +34,7 @@ class IntercomPresenter extends BasePresenter
 			$this->template->idAdresser = $ID;
 			$this->template->selUser = $allUserWithInfo[$allUserName[$name]][0];
 			$this->template->selUserNick = $name;
+			$this->template->selUserLastLogin = $allUserWithInfo[$allUserName[$name]][2];
 			$this->template->selAvatar = $allUserWithInfo[$allUserName[$name]][1];
 			$this->template->SelectSID = 9999;
 			$this->template->messageCount = NULL;

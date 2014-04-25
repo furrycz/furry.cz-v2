@@ -11,9 +11,22 @@
 {block content}
 	<div class="Header LightBackground">
 		{if $access["IsOwner"]}
-			<span class="HeaderTools">
-				<a n:href="CmsPage:deletePage $cmsPage['Id']">Smazat</a>
-				<a n:href="CmsPage:editPage $cmsPage['Id']">Upravit</a>
+			<div class="JS" style="position: relative;float: right; top: 3px;right: 13px;">
+					<a href=# class="ContextMenu" dropdown="cmsSetting" dropdown-open="right" dropdown-absolute="false" style="color:black;">Nabídka</a>
+					<div class="listDiv" id="cmsSetting">
+						<div class="listBox">
+							<ul>
+							<li><a n:href="CmsPage:editPage $cmsPage['Id']">Upravit</a></li>
+							<li><a n:href="CmsPage:deletePage $cmsPage['Id']">Smazat</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			<span class="HeaderTools">				
+				<div class="NoJS">
+					<a n:href="CmsPage:deletePage $cmsPage['Id']">Smazat</a>
+					<a n:href="CmsPage:editPage $cmsPage['Id']">Upravit</a>
+				</div>
 			</span>
 		{/if}
 		<h1>{$cmsPage['Name']}</h1>

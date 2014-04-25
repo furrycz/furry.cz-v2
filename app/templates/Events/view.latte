@@ -50,10 +50,14 @@
 			</div>
 			<b>Datum a čas zahájení: </b> {$StartTime}<br>
 			<b>Datum a čas ukončení: </b> {$EndTime}<br>
-			<b>Místo konání: </b> {$Place} {if $Kapacita>0}[<i>Kapacita: {$Kapacita}</i>]{/if}<br>
-			<b>GPS souřadnice: </b> 
+			<b>Místo konání: </b> {$Place} {if $Kapacita>0}[<i>Kapacita: {$Kapacita}</i>]{/if}
+			{if !$Ended}
+			<br><b>GPS souřadnice: </b> 
 				<span id="poop" onMouseOver="$(this).hide();$('#poop_gps').show();$('#poop_gps').focus();">{$GPS[0]}, {$GPS[1]}</span>
 				<input type=text onMouseOut="$(this).hide();$('#poop').show();"; id="poop_gps" value="{$GPS[0]}, {$GPS[1]}" style="width:300px;display:none;padding:0px 3px;">
+			{else}
+				<div style="border: 1px dotted #F00;padding: 0px 6px;background: #680000;width: 498px;">Tato akce již skončila!</div>
+			{/if}			
 			<div style="height:1px;width: 57%;margin-top: 5px;border-top:1px solid silver;margin-bottom: 5px;"></div>
 			<span id="aten_" style="display:none;"><img src="{$baseUrl}/images/avatars/{$MyAvatar}" style="width: 20px;height: 20px;" valign="bottom"> <a n:href="User:Profile $MyUserId">{$MyName}</a></span>
 				<div>					
@@ -100,26 +104,30 @@
 								</div>
 							</div>
 						</div>
-						<div class="NoJS">
-						{form eventAttendForm}
-						<b style="float:left;">{label Attend /}</b>
-						{input Attend}
-						{input Change}
-						{/form}	
-						</div>	
-						<div class="JS">	
-							<a href=# class="ContextMenu" dropdown="eventAttendet" selectType="1" onChange="setAttend(value_);" dropdown-open="left" dropdown-absolute="false">- Vyberte -</a>
-							<div class="listDiv" id="eventAttendet">
-								<div class="listBox" style="width:174px;">
-									<ul>									
-									<li value_="Yes" {if $MojeUcast==1}sel="1"{/if}><a>Učastním se</a></li>
-									<li value_="Maybe" {if $MojeUcast==3}sel="1"{/if}><a>Možná se učastním</a></li>
-									<li value_="No" {if $MojeUcast==2}sel="1"{/if}><a>Neučastním se</a></li>
-									</ul>
+						{if !$Ended}
+							<div class="NoJS">
+							{form eventAttendForm}
+							<b style="float:left;">{label Attend /}</b>
+							{input Attend}
+							{input Change}
+							{/form}	
+							</div>	
+							<div class="JS">	
+								<a href=# class="ContextMenu" dropdown="eventAttendet" selectType="1" onChange="setAttend(value_);" dropdown-open="left" dropdown-absolute="false">- Vyberte -</a>
+								<div class="listDiv" id="eventAttendet">
+									<div class="listBox" style="width:174px;">
+										<ul>									
+										<li value_="Yes" {if $MojeUcast==1}sel="1"{/if}><a>Učastním se</a></li>
+										<li value_="Maybe" {if $MojeUcast==3}sel="1"{/if}><a>Možná se učastním</a></li>
+										<li value_="No" {if $MojeUcast==2}sel="1"{/if}><a>Neučastním se</a></li>
+										</ul>
+									</div>
 								</div>
+								<a href="#" class="button DialogUser" ListUserUrl="{!$presenter->link('Ajax:gethostevent')}" ListUserData="{$Id}"><img src="{$basePath}/images/e_mail.png" align=texttop> Zobrazit pozvané</a>
 							</div>
-							<a href="#" class="button DialogUser" ListUserUrl="{!$presenter->link('Ajax:gethostevent')}" ListUserData="{$Id}"><img src="{$basePath}/images/e_mail.png" align=texttop> Zobrazit pozvané</a>
-						</div>
+						{else}
+							<a href="#" class="JS button DialogUser" ListUserUrl="{!$presenter->link('Ajax:gethostevent')}" ListUserData="{$Id}"><img src="{$basePath}/images/e_mail.png" align=texttop> Zobrazit pozvané</a>
+						{/if}	
 					</div>
 					<div class="NoJS">
 					{if $EditVisible==1 or $Edit==1}

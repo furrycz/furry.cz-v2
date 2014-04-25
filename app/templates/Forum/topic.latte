@@ -21,22 +21,22 @@
 {var $pageTitle = $topic['Name'].' - Fórum'}
 
 {block content}
-	<div class="JS" style="position: relative;float: right; top: 13px;right: 13px;">
+	<div class="JS" style="position: relative;float: right; top: 5px;right: 13px;">
 		<a href=# class="ContextMenu" dropdown="topicSetting" dropdown-open="right" dropdown-absolute="false">Nabídka</a>
 		<div class="listDiv" id="topicSetting">
-			<div class="listBox" style="width:240px;">
+			<div class="listBox">
 				<ul>
 				<li><a n:href="Forum:Info $topic['Id']">Informace o tématu</a></li>
 				<li><a href="#">Přidat téma do oblíbených</a></li>
 				{if $access["CanEditPermissions"] or $access["CanEditContentAndAttributes"] or $access["CanEditHeader"]}<li class="cara"></li>{/if}
 				{if $access["CanEditPermissions"]}<li><a n:href="Forum:Permision $topic['Id']">Oprávnění</a></li>{/if}
-				{if $access["CanEditContentAndAttributes"]}<li><a href="#">Upravit</a></li>{/if}
-				{if $access["CanEditHeader"]}<li><a href="#">Upravit hlavičku</a></li>{/if}
+				{if $access["CanEditContentAndAttributes"]}<li><a n:href="Forum:Edit $topic['Id']">Upravit</a></li>{/if}
+				{if $access["CanEditHeader"]}<li><a n:href="Forum:Header $topic['Id']">Upravit hlavičku</a></li>{/if}
 				</ul>
 			</div>
 		</div>
 	</div>
-	<div class="Header" id="TopicHeaderPanel">
+	<div class="Header" id="TopicHeaderPanel" style="line-height: normal;">
 		<div style="border-bottom:1px solid black;">
 
 			<h1>{$topic['Name']}</h1>
@@ -58,13 +58,16 @@
 		</div>
 
 		{if $access['CanViewContent'] == true}
-			<div id="TopicHeader" class="ForMembers">
+			<div id="TopicHeader" class="ForMembers" style="line-height: normal;padding: 8px 0px;">
 				{!$topic->ref('CmsPages', 'Header')->Text}
 			</div>
 		{else}
 			<div id="TopicHeader" class="ForDisallowedUsers">
 				{!$topic->ref('CmsPages', 'HeaderForDisallowedUsers')->Text}
 			</div>
+		{/if}
+		{if $topic["IsFlame"]}
+			<div class="redbox">Toto téma bylo označeno jako flame. Jeho čtení může přivodit nevolnost. Byli jste varováni.</div>
 		{/if}
 		<a id="discussion" class="Position Topic"></a> {* Intentionally lowercase, used in url *}
 		{if $access['CanReadPosts']}

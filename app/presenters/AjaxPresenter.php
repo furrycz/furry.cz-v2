@@ -154,7 +154,7 @@ class AjaxPresenter extends BasePresenter
 			$allUsers[] = array($user["Id"],$user["Username"]);
 			$allUserId[$user["Id"]] = $user["Username"];
 			$allUserName[$user["Username"]] = $user["Id"];
-			if($user["AvatarFilename"]==""){$user["AvatarFilename"]=(\Nette\Environment::getHttpRequest()->getUrl()->getBasePath())."/images/f_nopix.gif";}
+			if($user["AvatarFilename"]==""){$user["AvatarFilename"]="0.jpg";}
 			$allUserWithInfo[$user["Id"]] = array($user["Nickname"], $user["AvatarFilename"]);
 		}
 		
@@ -165,7 +165,7 @@ class AjaxPresenter extends BasePresenter
 				if($message["SenderId"] == $this->user->identity->id){$name_=$allUserId[$message["AddresseeId"]];$id=$message["AddresseeId"];$SID = $message["AddresseeId"].$message["SenderId"];}
 				else{$name_=$allUserId[$message["SenderId"]];$id=$message["SenderId"];$SID = $message["SenderId"].$message["AddresseeId"];}
 			
-				if(!isset($msgFrom[$SID])){
+				if(!isset($msgFrom[$SID])){					
 					$msgFrom[$SID]=1;
 					if($message["SenderId"] == $this->user->identity->id){$read = 1;}else{$read = $message["Read"];}
 					$text = strip_tags($message["Text"]);
@@ -174,7 +174,7 @@ class AjaxPresenter extends BasePresenter
 						"Url" => $this->link("Intercom:default",$allUserId[$id]), 
 						"Class" => "Read_".$read, 
 						"Id" => $id,
-						"Image" => $allUserWithInfo[$id][1], 
+						"Image" => ($this->getHttpRequest()->url->baseUrl)."/images/avatars/".$allUserWithInfo[$id][1], 
 						"Info" => Fcz\CmsUtilities::getTimeElapsedString(strtotime($message["TimeSent"]))."".($read==0?" <b style='color:red;'>NOVÉ!</b>":""),
 						"Text" => "<div style='font-weight:bold;'>".$allUserWithInfo[$id][0]."</div>".$text
 						);
@@ -256,7 +256,7 @@ class AjaxPresenter extends BasePresenter
 		$ucastnici = $database->table('EventAttendances')->where('EventId', $Data);
 		foreach($ucastnici as $ucastnik){
 			if($ucastnik["Attending"]=="Yes"){$u=0;}elseif($ucastnik["Attending"]=="No"){$u=2;}else{$u=1;}			
-			$data["users"][$u][] = array("Name" => $allUserWithInfo[$ucastnik["UserId"]][0], "Avatar" => $allUserWithInfo[$ucastnik["UserId"]][1], "Id" => $ucastnik["UserId"]);
+			$data["users"][$u][] = array("Name" => $allUserWithInfo[$ucastnik["UserId"]][0], "Avatar" => ($this->getHttpRequest()->url->baseUrl)."/images/avatars/".$allUserWithInfo[$ucastnik["UserId"]][1], "Id" => $ucastnik["UserId"]);
 		}
 		$this->sendResponse(new JsonResponse($data));
 	}
