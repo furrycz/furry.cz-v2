@@ -1,6 +1,7 @@
 <?php
 
 use Nette\Application\UI;
+use Nette\Utils\Validators;
 
 /**
  * User accounts presenter
@@ -500,7 +501,7 @@ class UserPresenter extends BasePresenter
 			{
 				$form->addError('Fotka: ' . $errMsg);
 			}
-		}
+		}		
 	}
 
 
@@ -588,6 +589,14 @@ class UserPresenter extends BasePresenter
 		$avatarFilename = $uploadHandler->handleProfileImageUpload($form->getComponent('avatarImage'), 'userAvatar');
 		$photoFilename = $uploadHandler->handleProfileImageUpload($form->getComponent('profilePhoto'), 'userProfilePhoto');
 
+		$favwww = explode("\n",str_replace(" ", "\n", preg_replace( '/\s+/', ' ', $values['favouriteWebsites'])));
+		$values['favouriteWebsites'] = "";		
+		foreach($favwww as $web){
+			if(Validators::isUrl($web)){
+				$values['favouriteWebsites'].=$web." ";
+			}
+		}
+		
 		// Database update
 		$update = array(
 			'Nickname' => $values['nickname'],
