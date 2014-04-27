@@ -39,7 +39,7 @@
 			<li n:foreach="$expositions as $expo">
 				<a n:href="Gallery:exposition $expo['Id']">
 					{if $expo["Thumbnail"] != null}
-						<img src="{$baseUrl}/preview/{$expo->ref("Thumbnail")["Key"]}/expo">
+						<img src="{$baseUrl}/file/{$expo->ref("Thumbnail")["Key"]}">
 					{/if}
 					<span class="Name">{$expo['Name']}</span>
 				</a>

@@ -154,7 +154,7 @@ class AjaxPresenter extends BasePresenter
 			$allUsers[] = array($user["Id"],$user["Username"]);
 			$allUserId[$user["Id"]] = $user["Username"];
 			$allUserName[$user["Username"]] = $user["Id"];
-			if($user["AvatarFilename"]==""){$user["AvatarFilename"]=(\Nette\Environment::getHttpRequest()->getUrl()->getBasePath())."/images/f_nopix.gif";}
+			if($user["AvatarFilename"]==""){$user["AvatarFilename"]="0.jpg";}
 			$allUserWithInfo[$user["Id"]] = array($user["Nickname"], $user["AvatarFilename"]);
 		}
 		
@@ -165,7 +165,7 @@ class AjaxPresenter extends BasePresenter
 				if($message["SenderId"] == $this->user->identity->id){$name_=$allUserId[$message["AddresseeId"]];$id=$message["AddresseeId"];$SID = $message["AddresseeId"].$message["SenderId"];}
 				else{$name_=$allUserId[$message["SenderId"]];$id=$message["SenderId"];$SID = $message["SenderId"].$message["AddresseeId"];}
 			
-				if(!isset($msgFrom[$SID])){
+				if(!isset($msgFrom[$SID])){					
 					$msgFrom[$SID]=1;
 					if($message["SenderId"] == $this->user->identity->id){$read = 1;}else{$read = $message["Read"];}
 					$text = strip_tags($message["Text"]);
@@ -174,7 +174,7 @@ class AjaxPresenter extends BasePresenter
 						"Url" => $this->link("Intercom:default",$allUserId[$id]), 
 						"Class" => "Read_".$read, 
 						"Id" => $id,
-						"Image" => $allUserWithInfo[$id][1], 
+						"Image" => ($this->getHttpRequest()->url->baseUrl)."/images/avatars/".$allUserWithInfo[$id][1], 
 						"Info" => Fcz\CmsUtilities::getTimeElapsedString(strtotime($message["TimeSent"]))."".($read==0?" <b style='color:red;'>NOVÉ!</b>":""),
 						"Text" => "<div style='font-weight:bold;'>".$allUserWithInfo[$id][0]."</div>".$text
 						);
@@ -212,6 +212,64 @@ class AjaxPresenter extends BasePresenter
 		if($ratTop<0){$c="Red";}elseif($ratTop>0){$c="Green";}else{$c="Orange";}
 		
 		$data = array("Class" => $c, "Rating" => $ratTop, "PostId" => $PostId);
+		
+		$this->sendResponse(new JsonResponse($data));
+	}
+
+	public function renderAttendanceschange($EventId, $Attendances = "Maybe"){
+		$database = $this->context->database;
+		$data = array("Id"=>$Attendances);
+
+		$uca = $database->table('EventAttendances')->where('EventId', $EventId)->where('UserId', $this->user->id)->fetch();
+		if($uca == false){
+			$database->table('EventAttendances')->insert(array(
+				'EventId' => $EventId,
+				'UserId' => $this->user->id,
+				"Attending" => $Attendances
+			));
+		}else{
+			$database->table('EventAttendances')->where('EventId', $EventId)->where('UserId', $this->user->id)->update(array(
+				"Attending" => $Attendances
+			));
+		}
+
+		$this->sendResponse(new JsonResponse($data));
+	}
+	public function renderGethostevent($Data){
+		$database = $this->context->database;
+		$data = array("EventId"=>$Data);
+		
+		$userUt = new Fcz\UserUtilities($this);
+		$allUserWithInfo = $userUt->getAllUsers();
+		
+		$data["width"] = 170;
+		$data["title"] = "Seznam pozvaných";
+		$data["sekcion"] = array("Učastní se","Možná se účastní","Neúčastní se","-","Odmítnuto");
+		
+		$ucastnici = $database->table('EventAttendances')->where('EventId', $Data);
+		foreach($ucastnici as $ucastnik){
+			if($ucastnik["Attending"]=="Yes"){$u=0;}elseif($ucastnik["Attending"]=="No"){$u=2;}else{$u=1;}			
+			$data["users"][$u][] = array("Name" => $allUserWithInfo[$ucastnik["UserId"]][0], "Avatar" => $allUserWithInfo[$ucastnik["UserId"]][1], "Id" => $ucastnik["UserId"], "Username" => $allUserWithInfo[$ucastnik["UserId"]][3]);
+		}
+		$this->sendResponse(new JsonResponse($data));
+	}
+	
+	public function renderGetpostlike($Data){
+		$database = $this->context->database;
+		$data = array("PostId"=>$Data);
+		
+		$data["width"] = 170;
+		$data["title"] = "Hodnocení příspěvku v tématu";
+		$data["sekcion"] = array("Líbí se","Nelíbí se");
+		
+		$userUt = new Fcz\UserUtilities($this);
+		$allUserWithInfo = $userUt->getAllUsers();
+		
+		$likes = $database->table('RatingsPost')->where('PostId', $Data);
+		foreach($likes as $like){
+			$u=($like["Rating"]==1?$u=0:$u=1);
+			$data["users"][$u][] = array("Name" => $allUserWithInfo[$like["UserId"]][0], "Avatar" => $allUserWithInfo[$like["UserId"]][1], "Id" => $like["UserId"], "Username" => $allUserWithInfo[$like["UserId"]][3]);
+		}
 		
 		$this->sendResponse(new JsonResponse($data));
 	}

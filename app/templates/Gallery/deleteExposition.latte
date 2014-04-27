@@ -18,12 +18,6 @@
 
 	{form deleteExpositionForm}
 		<div class="Body">
-
-			{* Print errors *}
-			<ul class="errors" n:if="$form->hasErrors()">
-				<li n:foreach="$form->errors as $error">{$error}</li>
-			</ul>
-
 			<p>Opravdu chcete odstranit expozici {$exposition["Name"]}?</p>
 		
 			<p id="DelExpoOptions">

@@ -131,6 +131,7 @@ class CmsPagePresenter extends BasePresenter
 		// Flags
 		$form->addCheckbox('IsForRegisteredOnly', 'Jen pro registrované')->setValue(false);
 		$form->addCheckbox('IsForAdultsOnly', '18+')->setValue(false);
+		$form->addCheckbox('IsFlame', 'Označit jako Flame')->setValue(false);
 		$form->addCheckbox('IsDiscussionAllowed', 'Povolit diskuzi')->setValue(true);
 		$form->addCheckbox('IsRatingAllowed', 'Povolit hodnoceni')->setValue(true);
 

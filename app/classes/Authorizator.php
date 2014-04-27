@@ -2,25 +2,7 @@
 
 use Nette\Diagnostics\Debugger;
 
-/**
-* Authorizes users to perform tasks.
-*
-* Permissions are represented by following array of booleans:
-	'CanListContent'              => Specified in Database/Permissions
-	'CanViewContent'              => Specified in Database/Permissions
-	'CanDeleteContent'            => Only owner (given in Database/Ownership) and admins can delete content.
-	'CanEditContentAndAttributes' => Specified in Database/Permissions
-	'CanEditHeader'               => Specified in Database/Permissions
-	'CanEditOwnPosts'             => Specified in Database/Permissions
-	'CanDeleteOwnPosts'           => Specified in Database/Permissions
-	'CanReadPosts'                => Specified in Database/Permissions
-	'CanDeletePosts'              => Specified in Database/Permissions
-	'CanWritePosts'               => Specified in Database/Permissions
-	'CanEditPermissions'          => Specified in Database/Permissions
-	'CanEditPolls'                => Specified in Database/Permissions
-	'IsOwner'                     => Is user owner? (given in Database/Ownership)
-*/
-class Authorizator extends \Nette\Object
+class Authorizator
 {
 	private $database;
 
@@ -61,6 +43,8 @@ class Authorizator extends \Nette\Object
 	public function authorize($content, $user)
 	{
 		// CHECK FULL ACCESS
+		
+		if(is_numeric($content)){ $content = $this->database->table('Content')->where('Id', $content)->fetch(); }		
 
 		if (! $user->isLoggedIn())
 		{
@@ -94,20 +78,19 @@ class Authorizator extends \Nette\Object
 		$isOwner = false;
 		if (!$overlord)
 		{
-			// Check isOwner (owner is an overlord)
-			$isOwner = $this->database->table('Ownership')->where(array(
+			// Check ownership (owner is an overlord)
+			$ownership = $this->database->table('Ownership')->where(array(
 				'ContentId' => $content['Id'],
 				'UserId' => $user->id
-			))->count() > 0;
-			$overlord = $isOwner;
-		}
+			))->count();						
+			$overlord = $ownership > 0;
+		}		
 
 		if ($overlord)
 		{
 			return array(
 				'CanListContent' => true,
 				'CanViewContent' => true,
-				'CanDeleteContent' => true,
 				'CanEditContentAndAttributes' => true,
 				'CanEditHeader' => true,
 				'CanEditOwnPosts' => true,
@@ -117,7 +100,7 @@ class Authorizator extends \Nette\Object
 				'CanWritePosts' => true,
 				'CanEditPermissions' => true,
 				'CanEditPolls' => true,
-				'IsOwner' => $isOwner
+				'IsOwner' => true
 			);
 		}
 

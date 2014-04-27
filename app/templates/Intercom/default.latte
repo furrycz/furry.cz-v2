@@ -16,7 +16,7 @@
 						<option value="{$user[1]}" {if $user[1]==$selUser}select{/if}>{$user[1]}</option>
 					{/foreach}
 				</select> {input go}
-				<input type=text name=forName id="selector" value="{$selUser}" onClick="this.select();" style="display:none;width:97%;padding:3px;border:1px solid black;border-radius:0px;">
+				<input type=text name=forName id="selector" value="{$selUser}" onClick="this.select();" placeholder="Jméno tvora ktereho chcete kontaktovat" style="display:none;width:97%;padding:3px;border:1px solid black;border-radius:0px;">
 			{/form}
 		</div>
 		<div style="min-height:683px;border-right: 1px solid #494949;background:#636363;overflow:auto;">
@@ -41,23 +41,38 @@
 	<div style="float: right;width: 639px;border: 1px solid #494949;border-left: 0px;min-height: 724px;border-bottom: 0px;">
 		{if $selUser==""}
 			<h2>Intercom V2</h2>
-			<div style="padding:10px;">Vítej v novem intercomu v2... nový... přehlednejší.. rychlejší.. podivuhodnější.. kousavější..</div>
+			<div style="padding:10px;">Vítej v novem intercomu v2... nový... přehlednejší.. rychlejší.. podivuhodnější.. kousavější..
+				<div style="border: 1px solid #4D4C4C;padding: 8px;margin: 12px 0px;border-radius: 6px;background: #727272;text-shadow: 2px 2px 6px #000;">
+					<span style="color:red;font-weight:bold;">Tip:</span> Pokud chcete začít psát tak napiště jmeno tvora kterého chcete kontaktovat vlevo nahoru do políča a stiskněte enter!<br><img src="{$baseUrl}/images/intercom_help.png">
+				</div>	
+			</div>
 		{/if}
 		{if $selUser!=""}			
 			<div style="position: relative;top: 5px;left: 11px;width: 97%;">
 				<div style="float:left;">
-					<b>{$selUser}</b>
+					<b>{$selUser}</b> ( <i style="border-bottom: 1px dotted;cursor: help;" title="Naposledy přihlášen">{$selUserLastLogin}</i> )
 				</div>	
 				<div style="float:right;">
-					<a class="button" style="color:red;border:1px solid red;" {if $ignore!=2}n:href="block!, $selUserNick"{/if}>{if $ignore==1}Odblokovat{/if}{if $ignore==2}Zablokován{/if}{if $ignore==0}Blokovat{/if}</a>
-					<a class="button" n:href="export!, $selUserNick">Exportovat</a>
-					<a class="button">Více</a>
+					<a class="button" style="color:red;border-right:0px;margin-right:-5px;" {if $ignore!=2}n:href="block!, $selUserNick"{/if}>{if $ignore==1}Odblokovat{/if}{if $ignore==2}Zablokován{/if}{if $ignore==0}Blokovat{/if}</a>								
+					<a href=# class="ContextMenu" dropdown="messageSetting" dropdown-open="right" dropdown-absolute="false">Více</a>
+							<div class="listDiv" id="messageSetting">
+								<div class="listBox" style="width:170px;">
+									<ul>
+										<li><a href="#">Vyhledávání</a></li>
+										<li><a n:href="delete!, $selUserNick, -1">Odstranit konverzaci</a></li>
+										<li class="cara"></li>
+										<li><a n:href="export!, $selUserNick">Exportovat konverzaci</a></li>
+										<li class="cara"></li>
+										<li><a n:href="CmsPage:default help_message">Zobrazit nápovědu</a></li>
+									</ul>
+								</div>
+							</div>		
 				</div>
 				<div style="clear:both;"></div>	
 			</div>
 			<div style="margin:10px;border:1px solid #646464;background-color:#CFCFCF;min-height:158px;">
 				{if $ignore==1}
-					<div style="padding: 58px;text-align:center;background-image:url(\/furry\.cz-v2\/www/images/error_big.png);background-repeat:no-repeat;height: 42px;background-position: -26px -21px;color: black;font-weight: bold;">Tohoto uživatele jsi zablokoval!</div>
+					<div style="padding: 58px;text-align:center;background-image:url({$baseUrl}/images/error_big.png);background-repeat:no-repeat;height: 42px;background-position: -26px -21px;color: black;font-weight: bold;">Tohoto uživatele jsi zablokoval!</div>
 				{/if}
 				{if $ignore==2}
 					<div style="padding: 58px;text-align:center;background-image:url(\/furry\.cz-v2\/www/images/error_big.png);background-repeat:no-repeat;height: 42px;background-position: -26px -21px;color: black;font-weight: bold;">Byl jsi zablokován! Nemužeš psát zprávy!</div>

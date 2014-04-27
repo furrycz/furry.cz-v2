@@ -6,9 +6,9 @@
 	<h1>Událost: {$Name}</h1>
 	<div class=Event>
 		<div class="popis">{$Description}</div>
-		<div class="box" style="position:relative;">
-			<div style="float:right;width:375px;height:270px;">							
-				<div id='map-canvas' style='position:absolute;width:375px;height:270px;right:0px;'></div>
+		<div class="box" style="position:relative;min-height:204px;border-radius: 3px;">
+			<div style="float:right;width:375px;height:204px;">							
+				<div id='map-canvas' style='position:absolute;width:375px;height:204px;right:0px;margin-right: 9px;'></div>
 				<script>
 				{syntax double}
 				$("#map-canvas").hover(function() {
@@ -17,7 +17,7 @@
 					}, 300 );
 				}, function() {	
 					$(this).animate({
-						width: "375px", height: "270px"
+						width: "375px", height: "204px"
 					}, 300 );
 				});
 				{{syntax latte}}
@@ -29,19 +29,44 @@
 				map.enableRotation();    
 				var marker = new GMarker(center, {l}draggable: false{r});    
 				map.addOverlay(marker);
+				
+				var prevSpanId="{!$Attending}";
+				function setAttend(Attend){
+					$.ajax({
+						url: "{!$presenter->link('Ajax:attendanceschange')}",
+						data: {
+							"EventId":"{$Id}",
+							"Attendances":Attend
+						},
+						success: function( data ) {
+							prevHTML = $("#aten_"+prevSpanId).html();
+							$("#aten_"+prevSpanId).html("");
+							prevSpanId = data.Id;
+							$("#aten_"+prevSpanId).html(prevHTML);
+						}
+					});
+				}
 				</script>
 			</div>
 			<b>Datum a čas zahájení: </b> {$StartTime}<br>
 			<b>Datum a čas ukončení: </b> {$EndTime}<br>
-			<b>Místo konání: </b> {$Place} {if $Kapacita>0}[<i>Kapacita: {$Kapacita}</i>]{/if}<br>
-			<b>GPS souřadnice: </b> {$GPS[0]}, {$GPS[1]}
-			<div style="height:1px;width: 58%;margin-top: 5px;border-top:1px solid silver;margin-bottom: 5px;"></div>
-				<div>
+			<b>Místo konání: </b> {$Place} {if $Kapacita>0}[<i>Kapacita: {$Kapacita}</i>]{/if}
+			{if !$Ended}
+			<br><b>GPS souřadnice: </b> 
+				<span id="poop" onMouseOver="$(this).hide();$('#poop_gps').show();$('#poop_gps').focus();">{$GPS[0]}, {$GPS[1]}</span>
+				<input type=text onMouseOut="$(this).hide();$('#poop').show();"; id="poop_gps" value="{$GPS[0]}, {$GPS[1]}" style="width:300px;display:none;padding:0px 3px;">
+			{else}
+				<div style="border: 1px dotted #F00;padding: 0px 6px;background: #680000;width: 498px;">Tato akce již skončila!</div>
+			{/if}			
+			<div style="height:1px;width: 57%;margin-top: 5px;border-top:1px solid silver;margin-bottom: 5px;"></div>
+			<span id="aten_" style="display:none;"><img src="{$baseUrl}/images/avatars/{$MyAvatar}" style="width: 20px;height: 20px;" valign="bottom"> <a n:href="User:Profile $MyUserId">{$MyName}</a></span>
+				<div>					
 					<b style="float:left;">Účastní se: </b>
 					<div n:foreach="$Ucastnici[1] as $Ucast" style="float:left;">
 						{if $Ucast[0]!=""}
 						<img src="{$baseUrl}/images/avatars/{$Ucast[1]}" style="width: 20px;height: 20px;" valign="bottom"> <a n:href="User:Profile $Ucast[2]">{$Ucast[0]}</a>
 						{/if}
+						<span id="aten_Yes">{if $MojeUcast==1}<img src="{$baseUrl}/images/avatars/{$MyAvatar}" style="width: 20px;height: 20px;" valign="bottom"> <a n:href="User:Profile $MyUserId">{$MyName}</a>{/if}</span>
 					</div>
 					<div style="clear:left;"></div>
 				</div>
@@ -51,6 +76,7 @@
 						{if $Ucast[0]!=""}
 						<img src="{$baseUrl}/images/avatars/{$Ucast[1]}" style="width: 20px;height: 20px;" valign="bottom"> <a n:href="User:Profile $Ucast[2]">{$Ucast[0]}</a>
 						{/if}
+						<span id="aten_Maybe">{if $MojeUcast==3}<img src="{$baseUrl}/images/avatars/{$MyAvatar}" style="width: 20px;height: 20px;" valign="bottom"> <a n:href="User:Profile $MyUserId">{$MyName}</a>{/if}</span>
 					</div>
 					<div style="clear:left;"></div>
 				</div>
@@ -60,22 +86,56 @@
 						{if $Ucast[0]!=""}
 						<img src="{$baseUrl}/images/avatars/{$Ucast[1]}" style="width: 20px;height: 20px;" valign="bottom"> <a n:href="User:Profile $Ucast[2]">{$Ucast[0]}</a>
 						{/if}
+						<span id="aten_No">{if $MojeUcast==2}<img src="{$baseUrl}/images/avatars/{$MyAvatar}" style="width: 20px;height: 20px;" valign="bottom"> <a n:href="User:Profile $MyUserId">{$MyName}</a>{/if}</span>
 					</div>
 					<div style="clear:left;"></div>
 				</div>
 				<div>
 					<div style="margin-top:7px;">
-					{form eventAttendForm}
-					<b style="float:left;">{label Attend /}</b>
-					{input Attend}
-					{input Change}
-					{/form}
+						<div style="float:right;margin-right:10px;" class="JS">
+							<a href=# class="ContextMenu" dropdown="eventSetting" dropdown-open="right" dropdown-absolute="false">Panel správce</a>
+							<div class="listDiv" id="eventSetting">
+								<div class="listBox" style="width:170px;">
+									<ul>
+									{if $Edit==1}<li><a n:href="Events:edit $EventId">Upravit</a></li>{/if}
+									{if $Owner==1}<li><a n:href="delete!">Smazat</a></li>{/if}
+									{if $EditVisible==1}<li><a n:href="Events:visible $EventId">Nastavení oprávnění</a></li>{/if}
+									</ul>
+								</div>
+							</div>
+						</div>
+						{if !$Ended}
+							<div class="NoJS">
+							{form eventAttendForm}
+							<b style="float:left;">{label Attend /}</b>
+							{input Attend}
+							{input Change}
+							{/form}	
+							</div>	
+							<div class="JS">	
+								<a href=# class="ContextMenu" dropdown="eventAttendet" selectType="1" onChange="setAttend(value_);" dropdown-open="left" dropdown-absolute="false">- Vyberte -</a>
+								<div class="listDiv" id="eventAttendet">
+									<div class="listBox" style="width:174px;">
+										<ul>									
+										<li value_="Yes" {if $MojeUcast==1}sel="1"{/if}><a>Učastním se</a></li>
+										<li value_="Maybe" {if $MojeUcast==3}sel="1"{/if}><a>Možná se učastním</a></li>
+										<li value_="No" {if $MojeUcast==2}sel="1"{/if}><a>Neučastním se</a></li>
+										</ul>
+									</div>
+								</div>
+								<a href="#" class="button DialogUser" ListUserUrl="{!$presenter->link('Ajax:gethostevent')}" ListUserData="{$Id}"><img src="{$basePath}/images/e_mail.png" align=texttop> Zobrazit pozvané</a>
+							</div>
+						{else}
+							<a href="#" class="JS button DialogUser" ListUserUrl="{!$presenter->link('Ajax:gethostevent')}" ListUserData="{$Id}"><img src="{$basePath}/images/e_mail.png" align=texttop> Zobrazit pozvané</a>
+						{/if}	
 					</div>
+					<div class="NoJS">
 					{if $EditVisible==1 or $Edit==1}
 						<div style="background-color: #474747;margin-top:7px;width:57%;padding:6px;">Editačná panel události: <br>
 							{if $Edit==1}<a n:href="Events:edit $EventId">Upravit</a> |{/if}{if $Owner==1} <a n:href="delete!">Smazat</a> |{/if}{if $EditVisible==1} <a n:href="Events:visible $EventId">Nastavení oprávnění</a>{/if}</div>
 						</div>
 					{/if}
+					</div>
 				</div>
 			<div style="clear:both;"></div>
 		</div>

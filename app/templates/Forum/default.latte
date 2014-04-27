@@ -7,28 +7,25 @@
  
 {var $pageTitle = 'Fórum'}
 
-{block scripts}
-	<script src="{$basePath}/js/jquery.js"></script>
-	<script src="{$basePath}/js/netteForms.js"></script>
-	<script src="{$basePath}/js/main.js"></script>
-	<script>
-		$(function(){
-			$('#ForumToolsButton').click(function(){
-				var panel = $('#ForumToolsPanel');
-				if (panel.is(':visible')) {
-					panel.hide();
-				} else {
-					panel.show();
-				}
-			});
-		});
-	</script>
-{/block}
 
 {block content}
 	<div id="ForumListingHeader" class="LightBackground">
 		{if $presenter->user->isInRole('approved')}
-			<button id="ForumToolsButton">&#x25bc; Fórum</button>
+			<button class="NoJS" id="ForumToolsButton">&#x25bc; Fórum</button>
+			<span href=# class="JS ContextMenu" dropdown="forumSetting" dropdown-open="left" dropdown-absolute="true">Fórum</span>
+			<div class="listDiv" id="forumSetting">
+				<div class="listBox" style="">
+					<ul>
+					{if $presenter->user->isInRole('approved')}
+						<li><a n:href="Forum:new-topic">Založit nové téma</a></li>
+						<li><a n:href="Ignorelist:edit">Nastavit ignorelist</a></li>
+					{/if}
+					{if $presenter->user->isInRole('admin')}
+						<li><a n:href="Forum:manage-categories">Spravovat sekce</a></li>
+					{/if}
+					</ul>
+				</div>
+			</div>
 		{else}
 			<strong>Fórum</strong> |
 		{/if}
@@ -50,7 +47,6 @@
 			{/if}
 		</div>
 	</div>
-	{var $database = $presenter->context->database}
 	<table id="ForumListing">
 		<tr style="background-color: #222;border-bottom: 1px solid #000;">
 			<th id="ForumListingCategory">Sekce</th>
@@ -58,41 +54,44 @@
 			<th width=80 class="right">Zpráv</th>
 			<th style="border-right:0px;">Poslední</th>
 		</tr>
-		<tr n:foreach="$topics as $topic">
-
+		<tr n:foreach="$topics as $topic" n:if="!(!$presenter->user->isInRole('approved') and $topic->ref('Content')['IsForAdultsOnly']) and !(!$presenter->user->isInRole('approved') and $topic->ref('Content')['IsForRegisteredOnly'])">
 			{if ($topic['CategoryId'] != null)}
 				{var $category = $topic->ref('TopicCategories')->select('Name')}
 			{else}
 				{var $category = array('Name' => 'Nezařazeno', 'Id' => 0)}
 			{/if}
-
+			{var $lastPost = $presenter->context->database->table('Posts')->where("ContentId",$topic['ContentId'])->where("Deleted",0)->order("TimeCreated DESC");}
+			{var $count = count($lastPost)}		
+			{var $lastPost = $lastPost->fetch()}			
+			{var $time = Fcz\CmsUtilities::getTimeElapsedString(strtotime($lastPost["TimeCreated"]))}
+			{var $content = $topic->ref('Content')}
 			<td class="Category">{$category['Name']}</td>
-			<td>
-				<a class="postUrl" n:href="Forum:topic topicId => $topic['Id']">
-					{if $topic["Type"]==1}
-						<img src="{$basePath}/images/error.png" align=absmiddle title="Duležité téma!">
-					{/if}
-					{$topic['Name']}
-				</a>
-			</td>
-
-			{var $content = $topic->ref("Content", "ContentId")}
-			{var $count = $content->related("Posts")->where("Deleted", 0)->count()}
+			<td><a class="postUrl" n:href="Forum:topic topicId => $topic['Id']">
+				{if $topic["Type"]==1}<img src="{$basePath}/images/error.png" align=absmiddle title="Duležité téma!">{/if}
+				{if $topic->ref('Content')['IsForAdultsOnly']}<span class=redbox>+18</span>{/if}
+				{$topic['Name']}
+			</a></td>
 			<td class="right">{$count}</td>
 			<td>
-				{if $count > 0}
-					{var $lastPost = $content->related("Posts")->order("TimeCreated DESC")->limit(1)->fetch();}
-					{var $time = Fcz\CmsUtilities::getTimeElapsedString(strtotime($lastPost["TimeCreated"]))}
-					{var $author = $lastPost->ref("Users", "Author");}
-					<div class="inAvatar">
-						<img src="{$baseUrl}/images/avatars/{$author['AvatarFilename']}" class="avatar">
-					</div>
-					<span class="autor">{$author["Nickname"]}</span>
-					<span class="time">{$time}</span>
+				{if $count>0}
+				<div class="inAvatar"><img src="{$baseUrl}/images/avatars/{$allUserWithInfo[$lastPost["Author"]][1]}" class="avatar"></div><a style="color:white;background:transparent;" href="{$presenter->link('User:profile', $lastPost["Author"])}" class="autor">{$allUserWithInfo[$lastPost["Author"]][0]}</a> <span class="time">{$time}</span>
 				{else}
-					<span class="NoPosts">Žádné příspěvky</span>
+				Žádná zpráva...
 				{/if}
 			</td>
 		</tr>
 	</table>
+	
+	<script>
+		$(function(){
+			$('#ForumToolsButton').click(function(){
+				var panel = $('#ForumToolsPanel');
+				if (panel.is(':visible')) {
+					panel.hide();
+				} else {
+					panel.show();
+				}
+			});
+		});
+	</script>
 {/block}

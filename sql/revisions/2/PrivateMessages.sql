@@ -1,7 +1,0 @@
-ALTER TABLE `PrivateMessages`
-DROP FOREIGN KEY `PrivateMessages_ibfk_1`,
-ADD FOREIGN KEY (`SenderId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
-ALTER TABLE `PrivateMessages`
-DROP FOREIGN KEY `PrivateMessages_ibfk_2`,
-ADD FOREIGN KEY (`AddresseeId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION;

@@ -27,26 +27,22 @@ class RouterFactory
 		$router[] = new Route('cms', 'CmsPage:default');
 		$router[] = new Route('page[/<idOrAlias>]', 'CmsPage:showPage');
 
-		// Gallery - expositions
+		// Gallery
 		$router[] = new Route('gallery/exposition/create', 'Gallery:createExposition');
 		$router[] = new Route('gallery/exposition/edit/<expositionId>', 'Gallery:editExposition');
 		$router[] = new Route('gallery/exposition/delete/<expositionId>', 'Gallery:deleteExposition');
 		$router[] = new Route('gallery/exposition/<expositionId>', 'Gallery:exposition');
-
-		// Gallery - images
 		$router[] = new Route('gallery/add', 'Gallery:addImage');
 		$router[] = new Route('gallery/show/<imageId>[/<page=1>]', 'Gallery:showImage');
 		$router[] = new Route('gallery/edit/<imageId>', 'Gallery:editImage');
 		$router[] = new Route('gallery/delete/<imageId>', 'Gallery:deleteImage');
-
-		// Gallery
 		$router[] = new Route('gallery/user[/<userId>][/<page=1>]', 'Gallery:user');
 		$router[] = new Route('gallery/<action>[/<userId>][/<page=1>]', 'Gallery:default');
 
 		// Forum
 		$router[] = new Route('forum/<action>[/<topicId>][/<page=1>]', 'Forum:default');
 		
-		// Calendar
+		// Calendar		
 		$router[] = new Route('events/new[/<year>][/<month>]', 'Events:new');
 		$router[] = new Route('events/view[/<eventId>]', 'Events:view');
 		$router[] = new Route('events/visible[/<eventId>]', 'Events:visible');
@@ -68,18 +64,17 @@ class RouterFactory
 		$router[] = new Route('intercom/autocomplete', 'Intercom:autocomplete');
 		$router[] = new Route('intercom[/<name>]', 'Intercom:default');
 		
+		// Chat
+		$router[] = new Route('chat/', 'Chat:default');
+		
 		// Ajax
 		$router[] = new Route('ajax/', 'Ajax:default');
-
-		// Files
-		$router[] = new Route('preview/<key>/<profile>', 'Files:preview');
-		$router[] = new Route('file/<key>', 'Files:default');
 		
 		// Post
 		$router[] = new Route('post/delete[/<postId>]', 'Post:delete');
 		$router[] = new Route('post/edit[/<postId>]', 'Post:edit');
 		$router[] = new Route('post/', 'Post:default');
-
+		
 		// Default route
 		$router[] = new Route('<presenter>/<action>[/<id>]', 'Homepage:default');
 

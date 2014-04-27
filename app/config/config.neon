@@ -32,19 +32,13 @@ common:
 					maxWidth: 200
 					maxHeight: 200
 					maxFilesize: 1000000
-					
-					# Local to application root
-					# IMPORTANT! Currently this path is hardcoded in templates, don't change!
-					directory: www/images/avatars 
+					directory: www/images/avatars # Override, local to application root
 
 				userProfilePhoto:
 					isImage: true
 					maxWidth: 200
 					maxHeight: 200
 					maxFilesize: 1000000
-					
-					# Local to application root
-					# IMPORTANT! Currently this path is hardcoded in templates, don't change!
 					directory: www/images/portraits
 
 				expositionThumbnail:
@@ -53,7 +47,6 @@ common:
 					maxHeight: 200
 					maxFilesize: 1000000
 
-			# Acceptable characters (security check): ASCII { A-Z a-z 0-9 _ }
 			keyGeneratorDictionaries:
 				d1: '_tHGl5Ayw7BjS6m3Y2faRFiW4DbN9vgoQXKLMOZV0ePnd1kqTIExUhJzCrcp8su' # Underscore is printed for illegal zero input
 				d2: '6y1e8lWj4VmYqNsw0H2iOKArthvguSkCRcX7ZaGz3PnF5E9bxDUBfodpTQMLIJ'
@@ -61,28 +54,6 @@ common:
 				d4: 'J2sHxhC984I1lyEXutmRcqvB57MrSnkDWipOg3eVLdNzPbQKUoYZ6aTwjF0AfG'
 				d5: 'Wfc542ztemhqdCUkBylVuT7RE1gjOn6SXP93oQI8KsLGNprHFvbZwAaiM0YxDJ'
 				d6: 'K9kdCa8EzrHQ6eGUlWoy2vhcqnSFsTD5L1YPV0gb3wmBixNZI7uJfXAOpR4Mjt'
-
-			previews:
-				cache:
-					directory: temp/cache/image_previews
-
-				# Presets which the FilesPresenter/thumbnail actions accepts. They'll appear in GET urls.
-				# Acceptable characters (security check): ASCII lowercase { a-z 0-9 - }
-				profiles:
-					recent:
-						maxWidth:    174       # Pixels
-						maxHeight:   174       # Pixels
-						jpegQuality: 85        # 0 (worst) - 100 (best)
-
-					gallery:
-						maxWidth:    164       # Pixels
-						maxHeight:   170       # Pixels
-						jpegQuality: 85        # 0 (worst) - 100 (best)
-
-					expo:
-						maxWidth:    100       # Pixels
-						maxHeight:   80        # Pixels
-						jpegQuality: 85        # 0 (worst) - 100 (best)
 
 	php:
 		date.timezone: Europe/Prague

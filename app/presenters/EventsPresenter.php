@@ -268,29 +268,38 @@ class EventsPresenter extends BasePresenter
 			$this->template->Name = $event["Name"];
 			$this->template->Description = $event["Description"];
 			SetLocale(LC_ALL, "Czech");
+			if(strtotime($event["EndTime"])-time()<0){ $this->template->Ended = true; }else{ $this->template->Ended = false; }
 			$this->template->StartTime = Date("j. m, Y H:i", strtotime($event["StartTime"]));
 			$this->template->EndTime = Date("j. m, Y H:i", strtotime($event["EndTime"]));
 			$this->template->Place = $event["Place"];
 			$pat=explode(", ",substr($event["GPS"],1,-1));
 			$this->template->GPS = array($pat[0],$pat[1]);
-			$this->template->Owner = $access["Owner"];
+			$this->template->Owner = $access["IsOwner"];
 			$this->template->Edit = $access["CanEditContentAndAttributes"];
 			$this->template->EditVisible = $access["CanEditPermissions"];
 			$this->template->EventId = $event["Id"];
 			$this->template->Kapacita = $event["Capacity"];
+			$this->template->Id = $event["Id"];
 			
 			$uca = $database->table('EventAttendances')->where('EventId', $event["Id"])->where('UserId', $this->user->id)->fetch();
 			if($uca == false){$ucast=0;}
 			else{if($uca["Attending"]=="Yes"){$ucast=1;}elseif($uca["Attending"]=="No"){$ucast=2;}else{$ucast=3;}}
-			$this->template->Ucast = $ucast;
+			$this->template->MojeUcast = $ucast;
+			$this->template->Attending = $uca["Attending"];
+			$this->template->MyAvatar = $this->user->identity->avatarFilename;
+			$this->template->MyName = $this->user->identity->nickname;
+			$this->template->MyUserName = $this->user->identity->username;
+			$this->template->MyUserId = $this->user->id;
 			$this['eventAttendForm']->setDefaults(array("Attend"=>$uca["Attending"], "EventId"=>$event["Id"]));
 			
 			$ucasti = "";
 			$ucastnici = $database->table('EventAttendances')->where('EventId', $event["Id"]);
 			foreach($ucastnici as $ucastnik){
-				if($ucastnik["Attending"]=="Yes"){$u=1;}elseif($ucastnik["Attending"]=="No"){$u=2;}else{$u=3;}
-				$user = $database->table("Users")->where(array("Id"=> $ucastnik["UserId"]))->fetch();
-				$ucasti[$u][] = array($user["Nickname"], $user["AvatarFilename"], $ucastnik["UserId"]);
+				if($this->user->id != $ucastnik["UserId"]){
+					if($ucastnik["Attending"]=="Yes"){$u=1;}elseif($ucastnik["Attending"]=="No"){$u=2;}else{$u=3;}
+					$user = $database->table("Users")->where(array("Id"=> $ucastnik["UserId"]))->fetch();
+					$ucasti[$u][] = array($user["Nickname"], $user["AvatarFilename"], $ucastnik["UserId"]);
+				}
 			}
 			if(!isset($ucasti[1][0][0])){$ucasti[1][0][0]="";}
 			if(!isset($ucasti[2][0][0])){$ucasti[2][0][0]="";}
@@ -309,7 +318,7 @@ class EventsPresenter extends BasePresenter
 		$event = $database->table('Events')->where('Id', $eventId)->fetch();
 		$authorizator = new Authorizator($database);
 		$access = $authorizator->authorize($event["ContentId"], $this->user);
-		if ($access['Owner'] == true)
+		if ($access['IsOwner'] == true)
 		{
 			$content = $database->table('Content')->where('Id', $event["ContentId"])->fetch();
 			$database->table('EventAttendances')->where('EventId', $eventId)->delete();

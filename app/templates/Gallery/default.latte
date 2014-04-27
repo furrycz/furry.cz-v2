@@ -23,33 +23,22 @@
 	</div>
 
 	<ul id="GalleryAuthorList">
-		{foreach $authors as $author}
-			<li>
-				<span class="NotVisited">{$author["numImagesNotVisited"]}</span>
-				<a n:href="Gallery:user $author['user']['Id']">{$author["user"]['Nickname']}</a>
-			</li>
-		{/foreach}
+		Autori:
+		<li n:foreach="$authors as $author">
+			<a n:href="Gallery:user $author['Id']">
+				{$author['Nickname']} (6/9)
+			</a>
+		</li>
 	</ul>
 
 	<div id="GalleryLatestPosts">
-		{if count($recentPosts) != 0}
-			<ul class="GalleryThumbnails">
-				{foreach $recentPosts as $post}
-					<li>
-						<a  {if $post['notVisited']}class="NotVisited LightBackground"{/if}
-							n:href="Gallery:showImage $post['image']['Id']">
-
-							<img src="{$baseUrl}/preview/{$post['image']->ref('UploadedFileId')['Key']}/recent">
-
-							<span class="Name">{$post["image"]["Name"]}</span>
-							<span class="Author">{$post["author"]["Nickname"]}</span>
-							<span class="Time">{$post["whenPostedText"]}</span>
-						</a>
-					</li>
-				{/foreach}
-			</ul>
+		{if count($recentPosts) == 0}
+			Zadne nove obrazky
 		{else}
-			<p class="ThisExpoIsEmpty">Žádné nové obrázky za posledních 10 dní</p>
+			Nejnovejsi prispevky:
+			<li n:foreach="$recentPosts as $post">
+
+			</li>
 		{/if}
 	</div>
 

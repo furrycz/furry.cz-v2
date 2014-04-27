@@ -1,6 +1,7 @@
 <?php
 
 use Nette\Application\UI;
+use Nette\Utils\Validators;
 
 /**
  * User accounts presenter
@@ -291,25 +292,27 @@ class UserPresenter extends BasePresenter
 		$profile['LastLogin'] = date("d. m. Y H:i", strtotime($profile["LastLogin"]));
 
 		// Format favourite websites
-		$favouries = array();
+		$favourites = null;
 		foreach (explode(' ', $profile['FavouriteWebsites']) as $fav)
 		{
-			$hasHttp = substr($fav, 0, 7) == 'http://';
-			$hasHttps = substr($fav, 0, 8) == 'https://';
+			if($fav!=""){
+				$hasHttp = substr($fav, 0, 7) == 'http://';
+				$hasHttps = substr($fav, 0, 8) == 'https://';
 
-			if (!$hasHttp && !$hasHttps)
-			{
-				$favourites['http://' . $fav] = $fav;
-			}
-			else if ($hasHttp)
-			{
-				// Trim http://www. if present
-				$favourites[$fav] = (substr($fav, 7, 4) == 'www.') ? substr($fav, 11) : substr($fav, 7);
-			}
-			else
-			{
-				// Trim https://www. if present
-				$favourites[$fav] = (substr($fav, 8, 4) == 'www.') ? substr($fav, 12) : substr($fav, 8);
+				if (!$hasHttp && !$hasHttps)
+				{
+					$favourites['http://' . $fav] = $fav;
+				}
+				else if ($hasHttp)
+				{
+					// Trim http://www. if present
+					$favourites[$fav] = (substr($fav, 7, 4) == 'www.') ? substr($fav, 11) : substr($fav, 7);
+				}
+				else
+				{
+					// Trim https://www. if present
+					$favourites[$fav] = (substr($fav, 8, 4) == 'www.') ? substr($fav, 12) : substr($fav, 8);
+				}
 			}
 		}
 		$profile['FavouriteWebsites'] = $favourites;
@@ -476,11 +479,13 @@ class UserPresenter extends BasePresenter
 	*/
 	public function validateEditProfileForm(UI\Form $form)
 	{
+		$uploadHandler = new Fcz\FileUploadHandler($this);
+
 		// Validate avatar upload
 		$uploadComponent = $form->getComponent('avatarImage', true);
 		if ($uploadComponent->isFilled() == true) // If anything was uploaded...
 		{
-			list($result, $errMsg) = $this->getUploadHandler()->validateUpload($uploadComponent->getValue(), 'userAvatar');
+			list($result, $errMsg) = $uploadHandler->validateUpload($uploadComponent->getValue(), 'userAvatar');
 			if ($result == false)
 			{
 				$form->addError('Avatar: ' . $errMsg);
@@ -491,12 +496,12 @@ class UserPresenter extends BasePresenter
 		$uploadComponent = $form->getComponent('profilePhoto', true);
 		if ($uploadComponent->isFilled() == true) // If anything was uploaded...
 		{
-			list($result, $errMsg) = $this->getUploadHandler()->validateUpload($uploadComponent->getValue(), 'profilePhoto');
+			list($result, $errMsg) = $uploadHandler->validateUpload($uploadComponent->getValue(), 'profilePhoto');
 			if ($result == false)
 			{
 				$form->addError('Fotka: ' . $errMsg);
 			}
-		}
+		}		
 	}
 
 
@@ -584,6 +589,14 @@ class UserPresenter extends BasePresenter
 		$avatarFilename = $uploadHandler->handleProfileImageUpload($form->getComponent('avatarImage'), 'userAvatar');
 		$photoFilename = $uploadHandler->handleProfileImageUpload($form->getComponent('profilePhoto'), 'userProfilePhoto');
 
+		$favwww = explode("\n",str_replace(" ", "\n", preg_replace( '/\s+/', ' ', $values['favouriteWebsites'])));
+		$values['favouriteWebsites'] = "";		
+		foreach($favwww as $web){
+			if(Validators::isUrl($web)){
+				$values['favouriteWebsites'].=$web." ";
+			}
+		}
+		
 		// Database update
 		$update = array(
 			'Nickname' => $values['nickname'],

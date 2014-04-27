@@ -1,0 +1,51 @@
+{var $pageTitle = $Name.' - Editace tématu'}
+
+{block content}
+	<h1 style="position: relative;padding-left:45px;">
+		<a n:href="Forum:Topic $topicId" class=pu style="left:14px;">&lt;</a>Editace tématu: {$Name}
+	</h1>
+
+	{form editTopicForm}
+		<div class="Body">
+			<dl>
+				<dt>{label Name /}</dt>
+				<dd>{input Name}</dd>
+
+				<dt>{label Category /}</dt>
+				<dd>{input Category}</dd>
+
+				<dt>Příznaky:</dt>
+				<dd>{input IsForRegisteredOnly} {label IsForRegisteredOnly /}</dd>
+				<dd>{input IsForAdultsOnly} <span class="redbox" style="padding: 2px 3px;">{label IsForAdultsOnly /}</span></dd>
+				<dd>{input IsFlame} {label IsFlame /}</dd>				
+				
+				<dd>{input SubmitNewTopic}</dd>
+			</dl>
+		</div>
+	{/form}
+	
+	<div class="section">Smazat téma</div>
+	{form deleteTopicForm}
+		<div class="Body">
+			<dl>
+				<dt>Smazání tematu již nelze vzít zpátky!</dt>
+				<dd>{input SubmitDeleteTopic} Téma starší jak jeden měsíc nelze smazat! Musíte požádat o smazani administratora!</dd>
+			</dl>	
+		</div>		
+	{/form}
+
+	<div class="section">Vlastnictví</div>
+	{form ownerTopicForm}
+		<div class="Body">
+			<dl>
+				{if $Owner}
+				<dt>Zde mužeš předat vlastnická práva některému jinému tvorovy. Nezapomeň že tuto akci již nelze vrátit zpět!</dt>
+				{? if($presenter->user->isInRole('admin')){$userWithout = array();}else{$userWithout = array($presenter->user->id);} }
+				<dd>{?$Draw = new Fcz\UserUtilities($presenter);$Draw->drawUserSelect("OwnerId",0,200,$userWithout,"frmownerTopicForm-OwnerId")}{input OwnerId}{input SubmitOwnerTopic}</dd>				
+				{else}
+				<dt>Bohužel, ale nejsi vlastník tohoto tématu</dt>
+				{/if}
+			</dl>	
+		</div>	
+	{/form}	
+{/block}

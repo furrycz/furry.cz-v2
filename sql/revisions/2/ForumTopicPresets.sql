@@ -1,7 +1,0 @@
-ALTER TABLE `ForumTopicPresets`
-DROP FOREIGN KEY `ForumTopicPresets_ibfk_1`,
-ADD FOREIGN KEY (`TopicId`) REFERENCES `Topics` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
-ALTER TABLE `ForumTopicPresets`
-DROP FOREIGN KEY `ForumTopicPresets_ibfk_2`,
-ADD FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION;

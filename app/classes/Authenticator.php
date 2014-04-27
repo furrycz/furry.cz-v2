@@ -3,14 +3,19 @@
 use Nette\Security,
 	Nette\Utils\Strings;
 
+
+/*
+CREATE TABLE users (
+	id int(11) NOT NULL AUTO_INCREMENT,
+	username varchar(50) NOT NULL,
+	password char(60) NOT NULL,
+	role varchar(20) NOT NULL,
+	PRIMARY KEY (id)
+);
+*/
+
 /**
  * Users authenticator.
- *
- * Following roles are used:
- *     member: (Mutually exclusive with "admin") A registered user. Limited access.
- *     approved: A registered and admin-approved user. Full access.
- *     adult: Registered, approved, adult user. Has access to restricted areas,
- *     admin: (Implies "approved", mutually exclusive with "member") Admin access.
  */
 class Authenticator extends Nette\Object implements Security\IAuthenticator
 {
@@ -52,15 +57,7 @@ class Authenticator extends Nette\Object implements Security\IAuthenticator
 		// Enter permissions
 		$roles = array();
 
-		if (($row['IsAdmin'] == true))
-		{
-			$roles[] = 'admin';
-			$roles[] = 'approved'; // Implied
-		}
-		else
-		{
-			$roles[] = 'member';
-		}
+		$roles[] = ($row['IsAdmin'] == true) ? 'admin' : 'member'; // Check admin
 
 		if ($row['IsApproved'] == true)
 		{
@@ -74,5 +71,9 @@ class Authenticator extends Nette\Object implements Security\IAuthenticator
 
 		return new Security\Identity($row['Id'], $roles, $userData);
 	}
+
+
+
+
 
 }

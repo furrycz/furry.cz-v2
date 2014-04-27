@@ -1,3 +1,0 @@
-ALTER TABLE `CalendarReminders`
-DROP FOREIGN KEY `CalendarReminders_ibfk_1`,
-ADD FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION;

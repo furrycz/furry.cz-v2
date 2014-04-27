@@ -1,7 +1,0 @@
-ALTER TABLE `EventAttendances`
-DROP FOREIGN KEY `EventAttendances_ibfk_1`,
-ADD FOREIGN KEY (`EventId`) REFERENCES `Events` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
-ALTER TABLE `EventAttendances`
-DROP FOREIGN KEY `EventAttendances_ibfk_2`,
-ADD FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
