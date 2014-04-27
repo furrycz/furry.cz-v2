@@ -47,6 +47,7 @@
 			notifcountajax = "{!$presenter->link('Ajax:notificationcount')}";
 			notificationco = "{!$presenter->link('Ajax:notificationnotif')}";
 			furrafinityget = "{!$presenter->link('Ajax:furrafinityget')}";
+			intercomlinked = "{!$presenter->link('Intercom:default')}";
 		</script>
 		<script src="{$basePath}/js/natsu.js"></script>
 	{/block}	
@@ -186,7 +187,7 @@
 	  },
 	  width: "auto"
     });
-	
+	/*
 	$(".ratingBox").click(function(){
 		var data = $(this).attr("ajax-user-rating-data");
 		if(data.substr(0,1)==":"){
@@ -203,6 +204,7 @@
 			$("#dialog-rating").dialog("open");
 		}
 	}); 
+	*/
 	$(window).resize(function() {
 		$("#dialog-rating").dialog("option", "position", "center");
 		$("#dialog-users").dialog("option", "position", "center");
@@ -244,7 +246,7 @@
 		Data_   = $(this).attr("ListUserData");
 		loading_show();
 		$.ajax({				
-				url: "{!$presenter->link('Ajax:gethostevent')}",
+				url: Url_,
 				data: {"Data":Data_},
 				success: function( data ) {		
 					loading_hide();

@@ -354,7 +354,7 @@ function UserShowCategory(ids){
 		for(i=0;i<allUserCategory.sekcion.length;i++){
 			if(typeof allUserCategory.users[i]!="undefined"){
 				for(a=0;a<allUserCategory.users[i].length;a++){
-					html+="<div class='ratingBoxis'><img src='{!$baseUrl}/images/avatars/"+allUserCategory.users[i][a]["Avatar"]+"' class='ratingAvatar'><div style='float:left;'><b><a style='bacground:white;' href='{!$presenter->link('Intercom:default')}/"+allUserCategory.users[i][a]["Id"]+"/'>"+allUserCategory.users[i][a]["Name"]+"</a></b><br>"+allUserCategory.sekcion[i]+"</div><div style='clear:both;'></div></div>";
+					html+="<div class='ratingBoxis'><img src='"+basepath+"/images/avatars/"+allUserCategory.users[i][a]["Avatar"]+"' class='ratingAvatar'><div style='float:left;'><b><a style='bacground:white;' href='"+intercomlinked+"/"+allUserCategory.users[i][a]["Username"]+"/'>"+allUserCategory.users[i][a]["Name"]+"</a></b><br>"+allUserCategory.sekcion[i]+"</div><div style='clear:both;'></div></div>";
 				}
 			}
 		}
@@ -363,7 +363,7 @@ function UserShowCategory(ids){
 			html = "<div style='font-weight:bold;text-align:center;padding:20px;'>Nebyly nalezeny žádné výsledky.</div>";
 		}else{
 			for(var i=0;i<allUserCategory.users[ids].length;i++){
-				html+="<div class='ratingBoxis'><img src='{!$baseUrl}/images/avatars/"+allUserCategory.users[ids][i]["Avatar"]+"' class='ratingAvatar'><div style='float:left;'><b>"+allUserCategory.users[ids][i]["Name"]+"</b><br><a href='{!$presenter->link('Intercom:default')}/"+allUserCategory.users[ids][i]["Id"]+"/'>Poslat zprávu</a></div><div style='clear:both;'></div></div>";
+				html+="<div class='ratingBoxis'><img src='"+basepath+"/images/avatars/"+allUserCategory.users[ids][i]["Avatar"]+"' class='ratingAvatar'><div style='float:left;'><b>"+allUserCategory.users[ids][i]["Name"]+"</b><br><a href='"+intercomlinked+"/"+allUserCategory.users[ids][i]["Username"]+"/'>Poslat zprávu</a></div><div style='clear:both;'></div></div>";
 			}
 		}
 	}	

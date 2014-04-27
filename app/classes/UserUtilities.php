@@ -60,4 +60,15 @@ class UserUtilities extends \Nette\Object
 		echo "<script>$(\"#select_".$input."\").remove();setTimeout(function(){ $(\"#".$delete."\").remove(); },100);$(\"#".$input."\").attr(\"name\",\"".$input."\")</script>";		
 		$this->UserListSelect++;
 	}
+	
+	public function getAllUsers(){
+		$database = $this->presenter->context->database;
+		$users = $database->table('Users')->order('Nickname');
+		foreach($users as $user){
+			if($user["AvatarFilename"]==""){$user["AvatarFilename"]="0.jpg";}
+			$allUserWithInfo[$user["Id"]] = array($user["Nickname"], $user["AvatarFilename"], $user["Id"], $user["Username"]);
+			$allUserWithInfo[$user["Username"]] = array($user["Nickname"], $user["AvatarFilename"], $user["Id"], $user["Username"]);
+		}
+		return $allUserWithInfo;
+	}
 }
