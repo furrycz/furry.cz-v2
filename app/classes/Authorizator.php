@@ -5,7 +5,7 @@ use Nette\Diagnostics\Debugger;
 /**
 * Authorizes users to perform tasks.
 *
-* Permissions are represented by following array of booleans:
+* Per-user permissions are represented by following array of booleans:
 	'CanListContent'              => Specified in Database/Permissions
 	'CanViewContent'              => Specified in Database/Permissions
 	'CanDeleteContent'            => Only owner (given in Database/Ownership) and admins can delete content.
@@ -19,6 +19,11 @@ use Nette\Diagnostics\Debugger;
 	'CanEditPermissions'          => Specified in Database/Permissions
 	'CanEditPolls'                => Specified in Database/Permissions
 	'IsOwner'                     => Is user owner? (given in Database/Ownership)
+
+* Default permissions are represented by the same array as above.
+* The values apply only to approved users, except:
+	'CanListContent' ~ Applies to any user
+	'CanViewContent' ~ Applies to any user
 */
 class Authorizator extends \Nette\Object
 {
@@ -64,28 +69,34 @@ class Authorizator extends \Nette\Object
 
 		if (! $user->isLoggedIn())
 		{
+			$perms = array( // Nope! :)
+				"CanListContent" => false,
+				"CanViewContent" => false,
+				"CanDeleteContent" => false,
+				"CanEditContentAndAttributes" => false,
+				"CanEditHeader" => false,
+				"CanEditOwnPosts" => false,
+				"CanDeleteOwnPosts" => false,
+				"CanReadPosts" => false,
+				"CanDeletePosts" => false,
+				"CanWritePosts" => false,
+				"CanEditPermissions" => false,
+				"CanEditPolls" => false,
+				"IsOwner" => false
+			);
+
 			if ($content["IsForRegisteredOnly"] || $content["IsForAdultsOnly"])
 			{
-				return array(
-					"CanListContent" => false,
-					"CanViewContent" => false,
-					"CanDeleteContent" => false,
-					"CanEditContentAndAttributes" => false,
-					"CanEditHeader" => false,
-					"CanEditOwnPosts" => false,
-					"CanDeleteOwnPosts" => false,
-					"CanReadPosts" => false,
-					"CanDeletePosts" => false,
-					"CanWritePosts" => false,
-					"CanEditPermissions" => false,
-					"CanEditPolls" => false,
-					"IsOwner" => false
-				);
+				return $perms;
 			}
 			else
 			{
-				$perms = $content->ref('DefaultPermissions')->toArray();
+				$permsDb = $content->ref('DefaultPermissions');
+
 				$perms["IsOwner"] = false;
+				$perms["CanListContent"] = $permsDb["CanListContent"];
+				$perms["CanViewContent"] = $permsDb["CanViewContent"];
+
 				return $perms;
 			}
 		}
