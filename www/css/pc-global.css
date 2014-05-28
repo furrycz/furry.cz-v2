@@ -306,7 +306,11 @@ div.CmsFormEditorWrapper .CmsPageText { height: 500px; }
 /* Cms index */
 /*************/
 
-#Content-CmsPage-default p { padding-bottom: 10px; }
+#Content-CmsPage-default p { padding-bottom: 10px; font-size: 0.9em; }
+
+#Content-CmsPage-default pre { margin: 0; padding: 0 0 10px 0; font-size: 0.9em; font-family: inherit; }
+
+#Content-CmsPage-default ul { margin: 0; padding: 0 0 0 20px; }
 
 a.CmsLink { font-size: 1.2em; }
 

@@ -21,7 +21,7 @@
 				{var $cmsPage = $content->related("CmsPages")->fetch()}
 				<li>
 					<a class="CmsLink" n:href="CmsPage:showPage $cmsPage['Id']">{$cmsPage["Name"]}</a>
-					<p>{$cmsPage["Description"]}</p>
+					<pre>{$cmsPage["Description"]}</pre>
 				</li>
 			{/foreach}
 		</ul>
