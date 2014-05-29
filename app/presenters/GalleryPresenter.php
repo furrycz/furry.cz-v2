@@ -641,20 +641,27 @@ class GalleryPresenter extends BasePresenter
 		}
 
 		// Flags
-		$form->addCheckbox('IsForRegisteredOnly', 'Jen pro registrované')->setValue(false);
-		$form->addCheckbox('IsForAdultsOnly', '18+')->setValue(false);
 		$form->addCheckbox('IsDiscussionAllowed', 'Povolit diskuzi')->setValue(true);
 		$form->addCheckbox('IsRatingAllowed', 'Povolit hodnoceni')->setValue(true);
 
-		// Permissions
+		// Restriction
+		$form->addSelect("Restriction", "Přístupnost", array(
+			1 => "Všichni",
+			2 => "Pouze schválení",
+			3 => "Pouze schválení 18+",
+		));
 		$form->addCheckbox('CanListContent', 'Vidí téma')->setValue(true);
-		$form->addCheckbox('CanViewContent', 'Může téma navštívit')->setValue(true);
-		$form->addCheckbox('CanEditContentAndAttributes', 'Může měnit název a atributy')->setValue(false);
-		$form->addCheckbox('CanEditHeader', 'Může měnit hlavičku')->setValue(false);
+		$form->addCheckbox('CanViewContent', 'Můžou stránku navštívit')->setValue(true);
+
+		// Default permissions (discussion)
+		$form->addCheckbox('CanWritePosts', 'Může psát příspěvky')->setValue(true);
 		$form->addCheckbox('CanEditOwnPosts', 'Může upravovat vlastní příspěvky')->setValue(true);
 		$form->addCheckbox('CanDeleteOwnPosts', 'Může mazat vlastní příspěvky')->setValue(true);
-		$form->addCheckbox('CanDeletePosts', 'Může mazat jakékoli příspěvky')->setValue(false);
-		$form->addCheckbox('CanWritePosts', 'Může psát příspěvky')->setValue(true);
+		$form->addCheckbox('CanDeletePosts', 'Může moderovat (mazat a upravovat jakékoli příspěvky)')->setValue(false);
+
+		// Default permissions (administration)
+		$form->addCheckbox('CanEditContentAndAttributes', 'Může měnit název a atributy')->setValue(false);
+		$form->addCheckbox('CanEditHeader', 'Může měnit hlavičku')->setValue(false);
 		$form->addCheckbox('CanEditPermissions', 'Může spravovat oprávnění')->setValue(false);
 		$form->addCheckbox('CanEditPolls', 'Může spravovat ankety')->setValue(false);
 
@@ -722,13 +729,13 @@ class GalleryPresenter extends BasePresenter
 
 			// Create content
 			$content = $database->table('Content')->insert(array(
-				'Type' => 'Image',
-				'TimeCreated' => new DateTime,
-				'IsForRegisteredOnly' => $values['IsForRegisteredOnly'],
-				'IsForAdultsOnly' => $values['IsForAdultsOnly'],
+				'Type'                => 'Image',
+				'TimeCreated'         => new DateTime,
+				'IsForRegisteredOnly' => $values["Restriction"] >= 2,
+				'IsForAdultsOnly'     => $values["Restriction"] == 3,
 				"IsDiscussionAllowed" => $values["IsDiscussionAllowed"],
-				"IsRatingAllowed" => $values["IsRatingAllowed"],
-				'DefaultPermissions' => $defaultPermission['Id']
+				"IsRatingAllowed"     => $values["IsRatingAllowed"],
+				'DefaultPermissions'  => $defaultPermission['Id']
 			));
 
 			// Create permission for owner
