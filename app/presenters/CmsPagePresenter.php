@@ -129,20 +129,26 @@ class CmsPagePresenter extends BasePresenter
 			->setAttribute('class', 'tinimce CmsPageText');
 
 		// Flags
-		$form->addCheckbox('IsForRegisteredOnly', 'Jen pro registrované')->setValue(false);
-		$form->addCheckbox('IsForAdultsOnly', '18+')->setValue(false);
 		$form->addCheckbox('IsDiscussionAllowed', 'Povolit diskuzi')->setValue(true);
 		$form->addCheckbox('IsRatingAllowed', 'Povolit hodnoceni')->setValue(true);
 
-		// Default permissions
-		$form->addCheckbox('CanListContent', 'Vidí stránku')->setValue(true);
-		$form->addCheckbox('CanViewContent', 'Může stránku navštívit')->setValue(true);
-		$form->addCheckbox('CanEditContentAndAttributes', 'Může měnit název a atributy')->setValue(false);
-		$form->addCheckbox('CanEditHeader', 'Může měnit hlavičku')->setValue(false);
+		// Restriction
+		$form->addSelect("Restriction", "Přístupnost", array(
+			1 => "Všichni",
+			2 => "Pouze schválení",
+			3 => "Pouze schválení 18+",
+		));
+		$form->addCheckbox('CanViewContent', 'Můžou stránku navštívit')->setValue(true);
+
+		// Default permissions (discussion)
+		$form->addCheckbox('CanWritePosts', 'Může psát příspěvky')->setValue(true);
 		$form->addCheckbox('CanEditOwnPosts', 'Může upravovat vlastní příspěvky')->setValue(true);
 		$form->addCheckbox('CanDeleteOwnPosts', 'Může mazat vlastní příspěvky')->setValue(true);
-		$form->addCheckbox('CanDeletePosts', 'Může mazat a upravovat jakékoli příspěvky')->setValue(false);
-		$form->addCheckbox('CanWritePosts', 'Může psát příspěvky')->setValue(true);
+		$form->addCheckbox('CanDeletePosts', 'Může moderovat (mazat a upravovat jakékoli příspěvky)')->setValue(false);
+
+		// Default permissions (administration)
+		$form->addCheckbox('CanEditContentAndAttributes', 'Může měnit název a atributy')->setValue(false);
+		$form->addCheckbox('CanEditHeader', 'Může měnit hlavičku')->setValue(false);
 		$form->addCheckbox('CanEditPermissions', 'Může spravovat oprávnění')->setValue(false);
 		$form->addCheckbox('CanEditPolls', 'Může spravovat ankety')->setValue(false);
 
@@ -186,7 +192,7 @@ class CmsPagePresenter extends BasePresenter
 		{*/
 			// Create default permission
 			$defaultPermission = $database->table('Permissions')->insert(array(
-				'CanListContent' => $values['CanListContent'],
+				'CanListContent' => true, // This flag has no meaning for CMS: there are no listings.
 				'CanViewContent' => $values['CanViewContent'],
 				'CanEditContentAndAttributes' => $values['CanEditContentAndAttributes'],
 				'CanEditHeader' => $values['CanEditHeader'],
@@ -204,8 +210,8 @@ class CmsPagePresenter extends BasePresenter
 				'Type' => 'CMS',
 				'TimeCreated' => new DateTime,
 				'LastModifiedTime' => new DateTime,
-				'IsForRegisteredOnly' => $values['IsForRegisteredOnly'],
-				'IsForAdultsOnly' => $values['IsForAdultsOnly'],
+				'IsForRegisteredOnly' => $values["Restriction"] >= 2,
+				'IsForAdultsOnly' => $values["Restriction"] == 3,
 				'DefaultPermissions' => $defaultPermission['Id']
 			));
 
