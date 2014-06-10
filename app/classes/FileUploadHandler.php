@@ -304,6 +304,7 @@ class FileUploadHandler extends \Nette\Object
 	
 	/**
 	* Deletes file and it's database entry.
+	* @param string $uploadType Defined in config file [common/parameters/fileUploads/types]
 	*/
 	public function deleteUploadedFile(Database\Table\ActiveRow $entry, $uploadType)
 	{
