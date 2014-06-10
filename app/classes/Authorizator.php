@@ -1,6 +1,9 @@
 <?php
 
 use Nette\Diagnostics\Debugger;
+use Nette\Application\ForbiddenRequestException;
+use Nette\Application\ApplicationException;
+use Nette\Application\BadRequestException;
 
 /**
 * Authorizes users to perform tasks.
@@ -170,5 +173,37 @@ class Authorizator extends \Nette\Object
 		$perms["IsOwner"] = false;
 
 		return $perms;
+	}
+
+
+
+	/**
+	* @throw ForbiddenRequestException if user is'n logged or his/her account isn't approved
+	*/
+	public function verifyAccountApproved(\Nette\Security\User $user)
+	{
+		list($result, $message) = $this->isAccountApproved($user);
+		if (! $result)
+		{
+			throw new ForbiddenRequestException($message);
+		}
+	}
+
+
+
+	/**
+	* @return array($status:bool, $message:string)
+	*/
+	public function isAccountApproved(\Nette\Security\User $user)
+	{
+		if (! $user->isLoggedIn())
+		{
+			return array(false, "Nejste přihlášen(a)");
+		}
+		if (! $user->isInRole('approved'))
+		{
+			return array(false, "Váš uživatelský účet není schválen");
+		}
+		return array(true, "Všechno v pořádku");
 	}
 }

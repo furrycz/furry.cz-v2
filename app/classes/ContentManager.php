@@ -57,11 +57,34 @@ class ContentManager extends \Nette\Object
 
 
 
-	public function updateLastVisit(\Nette\Database\Table\ActiveRow $content, $userId, DateTime $time = null)
+	/**
+	* @param int|\Nette\Security\User $user
+	*/
+	public function updateLastVisit(\Nette\Database\Table\ActiveRow $content, $user, DateTime $time = null)
 	{
-		if (! $userId)
+		if ($user === null)
 		{
-			throw new InvalidArgumentException("Invalid parameter #2 `\$userId`");
+			return; /* Nothing to do */
+		}
+		else if ($user instanceof \Nette\Security\User)
+		{
+			list($approved, $message) = $this->presenter->getAuthorizator()->isAccountApproved($user);
+			if (! $approved)
+			{
+				return; /* Nothing to do */
+			}
+			else
+			{
+				$userId = $user->id;
+			}
+		}
+		else if (is_int($user))
+		{
+			$userId = $user;
+		}
+		else
+		{
+			throw new InvalidArgumentException("Invalid parameter #2 `\$user`");
 		}
 		if ($time === null)
 		{
