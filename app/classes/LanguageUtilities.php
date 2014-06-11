@@ -16,7 +16,7 @@ class LanguageUtilities
 		{
 			return $wordForms[0] . $wordForms[1];
 		}
-		else if ($count <= 2 and $count >= 4)
+		else if ($count >= 2 and $count <= 4)
 		{
 			return $wordForms[0] . $wordForms[2];
 		}

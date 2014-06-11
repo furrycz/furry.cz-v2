@@ -239,9 +239,9 @@ class DiscussionPosts extends Application\UI\Control
 		else
 		{
 			$textDeleted = $numDeleted . " "
-				. Fcz\LanguageUtilities::czechCount($numDeleted, array("smazan", "ý", "é", "ých"));
+				. LanguageUtilities::czechCount($numDeleted, array("smazan", "ý", "é", "ých"));
 			$textIgnored = $numIgnored . " "
-				. Fcz\LanguageUtilities::czechCount($numIgnored, array("ignorovan", "ý", "é", "ých"));
+				. LanguageUtilities::czechCount($numIgnored, array("ignorovan", "ý", "é", "ých"));
 
 			if ($numIgnored > 0 and $numDeleted > 0)
 			{
