@@ -21,18 +21,20 @@ class IntercomPresenter extends BasePresenter
 			$allUsers[] = array($user["Id"],$user["Username"]);
 			$allUserId[$user["Id"]] = $user["Username"];
 			$allUserName[$user["Username"]] = $user["Id"];
-			$allUserWithInfo[$user["Id"]] = array($user["Nickname"], $user["AvatarFilename"]);
+			if($user["AvatarFilename"]==""){$user["AvatarFilename"]="0.jpg";}
+			$allUserWithInfo[$user["Id"]] = array($user["Nickname"], $user["AvatarFilename"], date("d. m. Y H:i", strtotime($user["LastLogin"])));
 		}
 				
 		if($allUsers==NULL){$allUsers=array();}
-		$this->template->allUsers = $allUsers;			
+		$this->template->allUsers = $allUsers;
 		
-		if($name!=NULL){		
+		if($name!=NULL){
 			$ID=NULL;
 			foreach($allUsers as $us){if($us[1]==$name){$ID=$us[0];}}
-			$this->template->idAdresser = $ID;		
+			$this->template->idAdresser = $ID;
 			$this->template->selUser = $allUserWithInfo[$allUserName[$name]][0];
 			$this->template->selUserNick = $name;
+			$this->template->selUserLastLogin = $allUserWithInfo[$allUserName[$name]][2];
 			$this->template->selAvatar = $allUserWithInfo[$allUserName[$name]][1];
 			$this->template->SelectSID = 9999;
 			$this->template->messageCount = NULL;
@@ -100,12 +102,21 @@ class IntercomPresenter extends BasePresenter
 	
 	public function handleDelete($name, $id){
 		$database = $this->presenter->context->database;
-		$message = $database->table('PrivateMessages')->where("id",$id)->fetch();
-		if($message["SenderId"] == $this->user->identity->id or $message["AddresseeId"] == $this->user->identity->id){
-			$database->table('PrivateMessages')->where("id",$id)->update("Deleted",1);
+		if($id==-1){
+			$users = $database->table('Users');
+			foreach($users as $user){
+				$allUserName[$user["Username"]] = $user["Id"];
+			}
+		
+			$database->table('PrivateMessages')->where("(SenderId = ? AND AddresseeId = ?) OR (SenderId = ? AND AddresseeId = ?)",$this->user->identity->id,$allUserName[$name],$this->user->identity->id,$allUserName[$name])->update(array("Deleted"=>1));
 		}else{
-			$this->flashMessage('Tato zpráva nepatří tobě! Nebyla napsána tebou a ani nebyla určena tobě!', 'error');
-		}
+			$message = $database->table('PrivateMessages')->where("Id",$id)->fetch();
+			if($message["SenderId"] == $this->user->identity->id or $message["AddresseeId"] == $this->user->identity->id){
+				$database->table('PrivateMessages')->where("Id",$id)->update(array("Deleted"=>1));
+			}else{
+				$this->flashMessage('Tato zpráva nepatří tobě! Nebyla napsána tebou a ani nebyla určena tobě!', 'error');
+			}
+		}	
 		$this->redirect("Intercom:default", $name);
 	}
 	

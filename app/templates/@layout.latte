@@ -36,69 +36,20 @@
 		<script src="{$basePath}/js/jquery-nette.js"></script>
 		<script src="{$basePath}/tinymce/tinymce.min.js"></script>
 		<script src="{$basePath}/js/jquery.selectbox-0.2.js"></script>
-		<script type="text/javascript">
-		var openWindow;
-		tinymce.init({
-			setup: function(editor) {
-				editor.addButton('furrafinityLinker', {
-					text: false,
-					tooltip: "Furraffinity linker",
-					image: '{!$basePath}\/images\/fur-affinity_icon_sm_zps6825a89d.png',
-					onclick: function() {
-						//editor.insertContent('Main button');
-						openWindow = editor.windowManager.open({
-							title: "Furrafinity linker",
-							url: {link Ajax:furrafinity},
-							width: 600,
-							height: 150,
-							buttons: [{
-										text: 'Vložit',
-										onclick: function(){ 
-												$.ajax({
-													url: "{!$presenter->link('Ajax:furrafinityget')}",
-													data: {
-														url: jQuery(jQuery("#"+openWindow._id+"-body").find('iframe').contents()).contents().find('#urlFurrafinity')[0].value
-													},
-													success: function( data ) {
-														if(data.Error!=0)
-															tinyMCE.activeEditor.windowManager.alert(data.Error);
-														else{
-															editor.insertContent('<a href="'+data.urlDefault+'" target="_blank"><img src="'+data.urlImage+'" border=3></a>');	
-															top.tinymce.activeEditor.windowManager.close();
-														}	
-													}
-												});
-										}
-									}]
-						});
-					}
-				});
-			},
-			selector: "textarea.tinimce",
-			plugins: [
-				"advlist autolink lists link image charmap print preview anchor spellchecker",
-				"searchreplace visualblocks code fullscreen preview",
-				"insertdatetime media table contextmenu paste textcolor mention link"
-			],
-			toolbar: "insertfile undo redo | styleselect | furrafinityLinker | removeformat | bold italic | forecolor backcolor | bullist numlist outdent indent | link image charmap | preview fullscreen ",
-			menubar: false,
-			toolbar_items_size: 'small',
-			//statusbar: false,
-			convert_urls: false,
-			mentions: {
-				delimiter: "#",
-				source: function(query, process) {					
-					$.getJSON('{!$presenter->link('Ajax:autocomplete')}', function(data) {
-						process(data);
-					});
-				},
-				insert: function(item) {
-					return '<a href="http://{!$_SERVER['HTTP_HOST']}{!$presenter->link('User:profile')}/' + item.id + '">' + item.name.trim() + '</a>';
-				}	
-			}
-		});
+		<script> 
+			document.body.className+=' js';
+			windowhosturlu = "{!$_SERVER['HTTP_HOST']}";
+			basepath       = "{!$basePath}";
+			furralinkerurl = "{!$presenter->link('Ajax:furrafinity')}";
+			autocompleteur = "{!$presenter->link('Ajax:autocomplete')}";
+			linktoprofileu = "{!$presenter->link('User:profile')}";			
+			notificationaj = "{!$presenter->link('Ajax:notifications')}";
+			notifcountajax = "{!$presenter->link('Ajax:notificationcount')}";
+			notificationco = "{!$presenter->link('Ajax:notificationnotif')}";
+			furrafinityget = "{!$presenter->link('Ajax:furrafinityget')}";
+			intercomlinked = "{!$presenter->link('Intercom:default')}";
 		</script>
-		<script> document.body.className+=' js' </script>
+		<script src="{$basePath}/js/natsu.js"></script>
 	{/block}	
 
 	<div n:foreach="$flashes as $flash" class="flash {$flash->type}">{$flash->message}</div>
@@ -113,7 +64,19 @@
 						{else}
 							<img src="{$baseUrl}/images/no_avatar.png">
 						{/if}
-						{$presenter->user->identity->nickname}</a> {* No space after text! *}
+						{$presenter->user->identity->nickname}</a>  
+						<a href=# class="JS ContextMenu" style="padding:3px 4px;" dropdown="userSetting" dropdown-open="right" dropdown-absolute="true"></a>
+						<div class="listDiv" id="userSetting">
+							<div class="listBox" style="-width:140px;">
+								<ul>
+									<li><a href="#">Nastavení stránky</a></li>
+									<li><a n:href="User:edit $presenter->user->id">Upravit profil</a></li>
+									<li class="cara"></li>
+									<li><a href="#">Blokování</a></li>
+									<li><a href="#">Oblíbené</a></li>
+								</ul>
+							</div>
+						</div>
 					|
 					<a n:href="Intercom:default">Intercom</a> 
 					{? $countDBM = $presenter->context->database->table('PrivateMessages')->where("AddresseeId = ? AND Read = 0",$presenter->user->identity->id)->count()}
@@ -153,129 +116,54 @@
 	</div>
 	
 	<div style="float:right;width:0px;height:0px;position:absolute;top: 32px;left: -271px;display:none;" id="notificatons">
-		<div style="background-color:white;width: 300px;color: black;box-shadow: 0 3px 8px rgba(0, 0, 0, 0.8);border-radius: 3px;border: 1px solid rgba(100, 100, 100, 0.4);">
+		<div class="uprow_pan"><div class="uprow"></div></div>
+		<div style="background-color:white;width: 400px;color: black;box-shadow: 0 3px 8px rgba(0, 0, 0, 0.8);border-radius: 3px;border: 1px solid rgba(100, 100, 100, 0.4);">
 			<div style="float:right;padding-top: 5px;padding-right: 7px;display:none;" id="nottifSpin"><img src="{$basePath}/images/spinner.gif"></div>
-			<div style="padding:5px;font-size:12px;"><a href="#" style="text-decoration:none;color:black;font-weight:bold;" id="messageShow">Zprávy</a> · <a href="#" style="text-decoration:none;font-weight:bold;" id="notifShow">Notifikace</a></div>
-			<div style="border-top: 1px solid rgba(100, 100, 100, 0.4);"></div>
+			<div style="padding:5px;font-size:12px;background-color: #BDBDBD;"><a href="#" style="text-decoration:none;color:black;font-weight:bold;" class="notif_button selected" id="messageShow">Zprávy</a> <a href="#" style="text-decoration:none;font-weight:bold;color:black;" id="notifShow" class="notif_button">Notifikace</a></div>
+			<div style="border-top: 1px solid black;"></div>
 			<div id="notificationsText" style="max-height:250px;overflow-y: auto;overflow-x: hidden;"></div>
 		</div>
 	</div>
 	<div style="float: right; width: 0px; height: 0px; position: absolute; top: 56px; display: block;margin-left: 1px;" id="notificatonsAlert"></div>
 	<div id="dialog-rating" title="Hodnocení" style="display:none;">Error!</div>
+	<div id="dialog-users" title="Tvorové" style="display:none;">Error!</div>
+	<div id="dialog-loading" style="position:fixed;padding: 12px;width: 300px;text-align: center;display:none;" class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-front">
+		<img src="{$basePath}/images/ajax-loader.gif" style="padding-top:5px;">
+	</div>
 	<script>
 	var jak=0,prevJak=-1;
-	$("#buttonNotification").click( function(){ jak=0;NotifView(0);$("#messageShow").css("color","black");$("#notifShow").css("color",""); });
-	$("#buttonNotificationOther").click( function(){ jak=1;NotifView(0);$("#messageShow").css("color","");$("#notifShow").css("color","black"); });
+	$("#buttonNotification").click( function(){ jak=0;NotifView(0);$("#messageShow").addClass("selected");$("#notifShow").removeClass("selected"); });
+	$("#buttonNotificationOther").click( function(){ jak=1;NotifView(0);$("#messageShow").removeClass("selected");$("#notifShow").addClass("selected"); });
 	
-	$("#messageShow").click( function(){ jak=0;NotifView(5);$("#messageShow").css("color","black");$("#notifShow").css("color","");return false; });
-	$("#notifShow").click( function(){ jak=1;NotifView(5);$("#messageShow").css("color","");$("#notifShow").css("color","black");return false; });
-	function NotifView(op){
-		if(op!=5){ $("#notificatons").toggle(); }
-		$("#nottifSpin").css('display',"inline")
-		if($("#notificatons").css('display')=="block"){
-			if($("#buttonNotification").css('display')=="none"){ $("#buttonNotification").css('display',"inline");posbut = $("#buttonNotification").offset();$("#buttonNotification").css('display',"none");}
-			else{ posbut = $("#buttonNotification").offset();}
-			$("#notificatons").offset({ top: (posbut.top+24), left: (posbut.left-300+24)});
-			if($("#notificationsText").html()==""){ $("#notificationsText").html("<div style='text-align:center;padding:7px;'>Načítám....</div>"); }
-			$.ajax({
-				url: "{!$presenter->link('Ajax:notifications')}",
-				data: { "jak":jak },
-				success: function( data ) {	
-					$("#nottifSpin").css('display',"none")
-					$("#notificationsText").html("");
-					for(i=0;i<data.length;i++){
-						if(data[i].Url!=""){ divN="a";style=""; }else{ divN="div";style="cursor:default;"; }
-						$("<"+divN+" style='"+style+"' class='notifList "+data[i].Class+"' href='"+data[i].Url+"'><img src='"+data[i].Image+"' class='img'><div class=body><div class='text'>"+data[i].Text+"</div><div class='info'>"+data[i].Info+"</div></div><div style='clear:both;'></div><div style='clear:both;'></div></"+divN+">").appendTo("#notificationsText");
-					}		
-					if(data.length==0){ $("<div style='text-align:center;padding:7px;'>Žádná notifikace k zobrazení!</div>").appendTo("#notificationsText"); }					
-				}
-			});
-		}
-	}
-	/*Notification create*/
-	notifID = 0;
-	function NotificationCreate(text,desc,href,image){
-		if(typeof image!="undefined" && image!="")
-		{ $("<a class='notifAlert' id='notification_"+notifID+"' style='display:none;' href='"+href+"'><img src='"+image+"' style='float:left;width:50px;height:50px;padding-top: 4px;padding-bottom:4px;padding-right: 6px;'><div class=text>"+text+"</div><div class=info style='padding-left: 50px;'>"+desc+"</div><div style='clear:both;'></div></a>").appendTo("#notificatonsAlert"); }
-		else
-		{ $("<a class='notifAlert' id='notification_"+notifID+"' style='display:none;' href='"+href+"'><div class=text>"+text+"</div><div class=info>"+desc+"</div></a>").appendTo("#notificatonsAlert"); }
-		$("#notification_"+notifID).fadeIn( "slow", function() {} );
-		setTimeout(function(bi) { $("#notification_"+bi).fadeOut( "slow", function() {} ); }, 30000, notifID);
-		notifID++;
-	}
+	$("#messageShow").click( function(){ jak=0;NotifView(5);$("#messageShow").addClass("selected");$("#notifShow").removeClass("selected");return false; });
+	$("#notifShow").click( function(){ jak=1;NotifView(5);$("#messageShow").removeClass("selected");$("#notifShow").addClass("selected");return false; });
+	
 	/*Center Notification*/
 	posbut = $("#Header").offset();
 	$("#notificatonsAlert").offset({ top: (posbut.top+45), left: (posbut.left+5)});
 	$( window ).resize(function() {
 		posbut = $("#buttonNotification").offset();
-		$("#notificatons").offset({ top: (posbut.top+24), left: (posbut.left-300+24)});
+		$("#notificatons").offset({ top: (posbut.top+24), left: (posbut.left-400+24)});
 		posbut = $("#Header").offset();
 		$("#notificatonsAlert").offset({ top: (posbut.top+45), left: (posbut.left+5)});
 	});
 	
-	var WindowTitle = document.title;
 	var timeNot = {$time};
 	/*Notification count*/
-	setInterval(function() {
-      // Do something every 1 minute
-		NotificationControl();
-	}, 10000);
-	function NotificationControl(){
-		$.ajax({
-				url: "{!$presenter->link('Ajax:notificationcount')}",
-				data: {},
-				success: function( data ) {					
-					$("#buttonNotification").html(data.Count);
-					$("#buttonNotification").css("display","inline");
-					if(data.Count>0 || data.Notif>0){ $("#buttonNotification").css("background-color","red");document.title = "("+(data.Count+data.Notif)+") "+WindowTitle; }else{ $("#buttonNotification").css("background-color","");document.title = WindowTitle; }
-					if(data.Notif>0 && data.Count>0){
-						$("#buttonNotificationOther").html(data.Notif);
-						$("#buttonNotificationOther").css("display","inline");
-						$("#buttonNotificationOther").css("margin-right",-5);
-						$("#buttonNotificationOther").css("border-top-right-radius",0);
-						$("#buttonNotification").css("border-top-left-radius",0);
-						$("#buttonNotificationOther").css("border-bottom-right-radius",0);
-						$("#buttonNotification").css("border-bottom-left-radius",0);
-					}else if(data.Notif>0){
-						$("#buttonNotification").css("display","none");
-						$("#buttonNotificationOther").html(data.Notif);
-						$("#buttonNotificationOther").css("display","inline");
-						$("#buttonNotificationOther").css("margin-right",0);
-						$("#buttonNotificationOther").css("border-top-right-radius",5);
-						$("#buttonNotification").css("border-top-left-radius",5);
-						$("#buttonNotificationOther").css("border-bottom-right-radius",5);
-						$("#buttonNotification").css("border-bottom-left-radius",5);
-					}else if(data.Count>0){						
-						$("#buttonNotificationOther").html(data.Notif);
-						$("#buttonNotificationOther").css("display","none");
-						$("#buttonNotification").css("border-top-left-radius",5);
-						$("#buttonNotification").css("border-bottom-left-radius",5);
-					}else{ $("#buttonNotificationOther").css("display","none"); }
-				}
-			});					
-		$.ajax({				
-				url: "{!$presenter->link('Ajax:notificationnotif')}?time="+(timeNot-1000),
-				data: {},
-				success: function( data ) {		
-					for(i=1;i<data.length;i++){
-						NotificationCreate(data[i].Text,data[i].Info,data[i].Href,data[i].Image);
-					}
-					timeNot = data[0].time;
-				}
-			});	
-	}
+	setInterval(function() { NotificationControl();	}, 10000);
+	
 	NotificationControl();
 	//$("select").selectbox();
 	//Funkce která nám class s názvem "ratingBox" převede na klikatelné odkazy které nám vyhodí okno s daty z atributu "ajax-user-rating-data"
 	$("#dialog-rating").dialog({
       autoOpen: false,
       show: {
-        effect: "fade",
-        duration: 500
+        effect: "scale",
+        duration: 400
       },
       hide: {
         effect: "fade",
-        duration: 500
+        duration: 200
       },
 	  draggable: false,
 	  create: function(event, ui) {
@@ -283,6 +171,23 @@
 	  },
 	  width: "auto"
     });
+	$("#dialog-users").dialog({
+      autoOpen: false,
+      show: {
+        effect: "scale",
+        duration: 400
+      },
+      hide: {
+        effect: "fade",
+        duration: 200
+      },
+	  draggable: false,
+	  create: function(event, ui) {
+        $(event.target).parent().css('position', 'fixed');
+	  },
+	  width: "auto"
+    });
+	/*
 	$(".ratingBox").click(function(){
 		var data = $(this).attr("ajax-user-rating-data");
 		if(data.substr(0,1)==":"){
@@ -299,9 +204,88 @@
 			$("#dialog-rating").dialog("open");
 		}
 	}); 
+	*/
 	$(window).resize(function() {
 		$("#dialog-rating").dialog("option", "position", "center");
+		$("#dialog-users").dialog("option", "position", "center");
+		$("#dialog-loading").center();
 	});
+	var selectedDIV = "";
+	var selectedBUT = "";
+	$(".NoJS").hide();
+	$(".JS").show();
+	
+	ContextMenuClickable();
+	
+	$(document).mouseup(function (e)
+	{
+		if(selectedDIV!=""){
+			var container = $("#"+selectedDIV);
+
+			if (!container.is(e.target) // if the target of the click isn't the container...
+				&& container.has(e.target).length === 0) // ... nor a descendant of the container
+			{
+				container.hide();
+				selectedDIV="";
+				selectedBUT.removeClass("selected");
+			}
+		}
+	});
+	
+	jQuery.fn.center = function () {
+		this.css("position","fixed");
+		this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop()) + "px");
+		this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
+		return this;
+	}
+	
+	//Funkce pro načtení a vypisu uživatelu v kategoriich v dialog boxu	
+	var allUserCategory = new Array();
+	$(".DialogUser").click(function(){
+		Url_    = $(this).attr("ListUserUrl");
+		Data_   = $(this).attr("ListUserData");
+		loading_show();
+		$.ajax({				
+				url: Url_,
+				data: {"Data":Data_},
+				success: function( data ) {		
+					loading_hide();
+					allUserCategory = data;
+					$("#userList").remove();
+					if(allUserCategory.sekcion.length>1){
+						html="<div class='top-bar'>";
+							html+='<a href=# class="ContextMenu" dropdown="userList" selectType="1" onChange="UserShowCategory(value_);" dropdown-open="left" dropdown-absolute="false">Všichni</a>';
+							html+='<div class="listDiv" id="userList">';
+								html+='<div class="listBox" style="">';
+									html+='<ul>';
+										all=0;
+										for(i=0;i<allUserCategory.sekcion.length;i++){
+											if(typeof allUserCategory.users[i]!="undefined"){ all+=allUserCategory.users[i].length; }
+										}
+										html+='<li value_="-1" sel=1><a>Všichni ('+all+')</a></li>';
+										for(i=0;i<data.sekcion.length;i++){ 
+											if(data.sekcion[i]=="-"){ html+='<li class="cara"></li>'; }
+											else{ 
+												kolik="";
+												if(typeof allUserCategory.users[i]!="undefined"){ if(allUserCategory.users[i].length>0){ kolik=" ("+allUserCategory.users[i].length+")"; } }
+												html+='<li value_="'+i+'"><a>'+data.sekcion[i]+kolik+'</a></li>';
+											} 
+										}
+									html+='</ul>';
+								html+='</div>';
+							html+='</div>';
+						html+="</div>";	
+					}
+					$("#dialog-users").html("<div style='height:500px;width:447px;overflow:auto;padding:0px;'>"+html+"<div id=UserListCategory></div></div>");
+					$("#dialog-users").dialog('option', 'title', data.title);
+					$("#dialog-users").dialog("open");
+					ContextMenuClickable();
+					UserShowCategory(-1);
+				}
+			});		
+	});
+	
+	$("#dialog-loading").center();
 	</script>
 </body>
 </html>

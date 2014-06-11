@@ -1,0 +1,14 @@
+{var $pageTitle = $Name.' - Informace - Topic'}
+
+{block content}
+	<h1 style="position: relative;padding-left:45px;"><a n:href="Forum:Topic $topicId" class=pu style="left:14px;">&lt;</a>Informace: {$Name}</h1>
+	<div style="padding:6px;">
+		<table>
+		<tr><td style="font-weight:bold;" width=150>Téma: </td><td>{$Name}</td></tr>
+		<tr><td style="font-weight:bold;">Založeno: </td><td style="color:#008FFF;">{$create->format("d.m.Y H:i")}</td></tr>
+		<tr><td style="font-weight:bold;">Sekce: </td><td>{$sekce["Name"]}</td></tr>
+		<tr><td style="font-weight:bold;">Správce: </td><td><a n:href="Intercom:default $owner[2]">{$owner[1]}</a></td></tr>
+		<tr><td style="font-weight:bold;">Počet příspěvků: </td><td>{$posts}</td></tr>
+		</table>
+	</div>
+{/block}

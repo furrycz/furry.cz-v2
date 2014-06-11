@@ -72,16 +72,17 @@ class CmsUtilities extends \Nette\Object
 			if ($d >= 1)
 			{
 				$r = round($d);
+				if($secs >= 86400 and $r>2) return Date("j.m.Y H:i", $ptime);
 				return "před ".$r . ' ' . ($r > 1 ? $str[1] : $str[0]) . '';
 			}
 		}
 	}
 	
 	public static function parseHTML($html){			
-		$html = preg_replace_callback('/\<a href\=\"(.*)">(.*)\<\/a\>/U', function($match){
+		$html = preg_replace_callback('/\<a href\=\"(.*)\">(.*)\<\/a\>/U', function($match){
 			$time=time();
 			$end = explode(".",$match[1]);
-			if(substr($match[1], 0, strlen("http://www.youtube.com/"))=="http://www.youtube.com/"){
+			if(substr(trim($match[1]), 0, strlen("http://www.youtube.com/"))=="http://www.youtube.com/" or substr(trim($match[1]), 0, strlen("https://www.youtube.com/"))=="https://www.youtube.com/"){
 			   $data = explode("?",$match[1]);
 			   $data = explode("&",$data[1]);
 			   $i=0;$IdVidea="";
