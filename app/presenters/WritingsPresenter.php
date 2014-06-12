@@ -703,9 +703,10 @@ class WritingsPresenter extends BasePresenter
 
 			// Update writing entry
 			$writing->update(array(
-				'Name' => $values['Title'],
+				"Name"        => $values["Title"],
 				"Description" => $values["Description"],
-				"CategoryId" => ($values["Category"] == 0) ? null : $values["Category"]
+				"CategoryId"  => ($values["Category"] == 0) ? null : $values["Category"],
+				"Text"        => $values["Text"]
 			));
 
 			$database->commit();
