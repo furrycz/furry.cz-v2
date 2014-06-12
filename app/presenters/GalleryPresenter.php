@@ -217,7 +217,10 @@ class GalleryPresenter extends BasePresenter
 
 	public function renderAddImage($exposition)
 	{
-		$this->verifyExpositionOwnership($exposition, $this->user);
+		if ($exposition !== null) // NULL = Default exposition
+		{
+			$this->verifyExpositionOwnership($exposition, $this->user);
+		}
 	}
 
 
