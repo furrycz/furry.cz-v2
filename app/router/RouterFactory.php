@@ -25,6 +25,7 @@ class RouterFactory
 		$router[] = new Route('cms/add', 'CmsPage:newPage');
 		$router[] = new Route('cms/edit/<idOrAlias>', 'CmsPage:editPage');
 		$router[] = new Route('cms', 'CmsPage:default');
+		$router[] = new Route('cms/permissions/<idOrAlias>', 'CmsPage:managePermissions');
 		$router[] = new Route('page[/<idOrAlias>]', 'CmsPage:showPage');
 
 		// Gallery - expositions

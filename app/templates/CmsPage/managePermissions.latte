@@ -1,0 +1,11 @@
+/** Permissions page for CMS */
+
+{var $pageTitle = $name.' - Oprávnění - CMS'}
+
+{block content}
+	<h1 style="position: relative;padding-left:45px;">
+		<a n:href="CmsPage:showPage $cmsPageId" class="pu" style="left:14px;">&lt;</a>
+		Oprávnění: {$name}
+	</h1>
+	{control permissions}
+{/block}
