@@ -9,7 +9,6 @@ namespace Fcz
 		private $presenter = null;
 		private $data = null;
 		private $content = null;
-		private $authorizator = null;
 		private $prava = array(
 			"CanListContent","CanViewContent","CanEditContentAndAttributes",
 			"CanEditHeader","CanEditOwnPosts","CanDeleteOwnPosts","CanReadPosts",
@@ -26,11 +25,14 @@ namespace Fcz
 		*	)
 		*
 		*/
-		public function __construct($presenter, $content, $authorizator, $data = null)
+		public function __construct(
+			\Nette\Application\UI\Presenter $presenter,
+			\Nette\Database\Table\ActiveRow $content,
+			$data = null
+			)
 		{
 			$this->presenter = $presenter;
 			$this->content = $content;
-			$this->authorizator = $authorizator;
 			if($data==null)
 			{
 				$data = array(
@@ -63,7 +65,7 @@ namespace Fcz
 		{
 			$database = $this->presenter->context->database;
 			
-			$access = $this->authorizator->authorize($this->content, $this->presenter->user);
+			$access = $this->presenter->getAuthorizator()->authorize($this->content, $this->presenter->user);
 		
 			if ($access['CanEditPermissions'] == true)
 			{			
@@ -109,7 +111,7 @@ namespace Fcz
 				}
 				
 				$template = $this->presenter->template;
-				$template->setFile(__DIR__ . '/../templates/components/permissions.latte');								
+				$template->setFile(__DIR__ . '/../templates/components/permissions.latte');
 				$template->accessAll = $accessAll;
 				$template->allUsers = $allUsers;		
 

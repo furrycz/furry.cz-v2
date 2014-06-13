@@ -345,7 +345,7 @@ class ForumPresenter extends BasePresenter
 				),
 			"DefaultShow" => true
 		);
-		return new Fcz\Permissions($this, $content = $topic->ref("ContentId"), $this->getAuthorizator(), $data);
+		return new Fcz\Permissions($this, $topic->ref("ContentId"), $data);
 	}
 
 
