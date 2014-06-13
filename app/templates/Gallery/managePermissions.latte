@@ -1,0 +1,11 @@
+/** Permissions management page for Image */
+
+{var $pageTitle = $image["Name"].' - Oprávnění - Obrázek'}
+
+{block content}
+	<h1 style="position: relative;padding-left:45px;">
+		<a n:href="Gallery:showImage $image['Id']" class="pu" style="left:14px;">&lt;</a>
+		Oprávnění: {$image["Name"]}
+	</h1>
+	{control permissions}
+{/block}
