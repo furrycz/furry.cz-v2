@@ -20,7 +20,7 @@ namespace Fcz
 		* @param array $data array(
 		*	"Permissions": array,
 		*	"Description" : string,
-		*	"Visibility" : array
+		*	"Visiblity" : array (MIND THE TYPO: VisiBLity !)
 		*	"DefaultShow": bool // Show default permissions?
 		*	)
 		*
