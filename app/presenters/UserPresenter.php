@@ -208,7 +208,8 @@ class UserPresenter extends BasePresenter
 			'FavouriteWebsites' => $values['favouriteWebsites']
 			));
 
-		$this->redirect('CmsPage:default', 'registration-sent-ok');
+		$this->flashMessage("Registrace byla úspěšně zpracována");
+		$this->redirect('Homepage:default');
 	}
 
 
