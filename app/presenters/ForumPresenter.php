@@ -179,13 +179,12 @@ class ForumPresenter extends BasePresenter
 		}
 		$form->addRadioList('Category', 'Sekce:', $radioList)->setValue(0);
 		// Submit
-		$form->addHidden('TopicId');
-		$form->addHidden('ContentId');
 		$form->onSuccess[] = $this->processValidatedEditTopicForm;
 		$form->addSubmit('SubmitNewTopic', 'Upravit');
 
 		return $form;
 	}
+
 
 
 	public function renderPermision($topicId)
@@ -206,25 +205,24 @@ class ForumPresenter extends BasePresenter
 
 	public function processValidatedEditTopicForm($form)
 	{
-		$values = $form->getValues();
-		$database = $this->context->database;
-
-		list($topic, $content, $access) = $this->checkTopicAccess($topicId, $this->user);
+		list($topic, $content, $access) = $this->checkTopicAccess($this->getParameter("topicId"), $this->user);
 
 		if ($access['IsOwner'] == true or $access['CanEditContentAndAttributes'] == true )
 		{
+			$values = $form->getValues();
+
 			$topic->update(array(
 				'Name'       => $values['Name'],
 				'IsFlame'    => $values['IsFlame'],
 				'CategoryId' => $values['Category'] == 0 ? null : $values['Category']
 			));
 
-			$topic->ref('ContentId')->update(array(
+			$content->update(array(
 				'IsForRegisteredOnly' => $values['IsForRegisteredOnly'],
 				'IsForAdultsOnly'     => $values['IsForAdultsOnly']
 			));
 
-			$this->redirect('Forum:topic', $values["TopicId"]);
+			$this->redirect('Forum:topic', $topic["Id"]);
 		}
 		else
 		{
