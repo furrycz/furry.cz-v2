@@ -73,7 +73,7 @@ class WritingsPresenter extends BasePresenter
 			$lastVisit = $content->related("LastVisits")->where("UserId", $this->user->id)->fetch();
 			$whenPostedText = Fcz\CmsUtilities::getTimeElapsedString(strtotime($content["TimeCreated"]));
 
-			if ($this->user->isInRole("approved"))
+			if ($this->user->isInRole("approved") && $author["Id"] != $this->user->id)
 			{
 				$notVisited = ($lastVisit === false || $lastVisit["Time"] < $content["LastModifiedTime"]);
 				if ($notVisited)
