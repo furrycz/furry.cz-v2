@@ -63,7 +63,11 @@
 			</div>
 		{else}
 			<div id="TopicHeader" class="ForDisallowedUsers">
-				{!$topic->ref('CmsPages', 'HeaderForDisallowedUsers')->Text}
+				{if $topic["HeaderForDisallowedUsers"] != NULL}
+					{!$topic->ref('CmsPages', 'HeaderForDisallowedUsers')->Text}
+				{else}
+					Do tohoto diskusního tématu nemáte přístup.
+				{/if}
 			</div>
 		{/if}
 		{if $topic["IsFlame"]}
