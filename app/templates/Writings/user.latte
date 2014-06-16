@@ -49,8 +49,8 @@
 					<li>
 						<div class="Top">
 							<span class="Right">
-								{var $category = $writing->ref("CategoryId")}
-								{if $category}
+								{if $writing["CategoryId"] != NULL}
+									{var $category = $writing->ref("CategoryId")}
 									<a class="Category" n:href="Writings:category $category['Id']">{$category["Name"]}</a>
 								{/if}
 								<span class="Time">{$content["TimeCreated"]}</span>
