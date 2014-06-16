@@ -49,10 +49,7 @@ class GalleryPresenter extends BasePresenter
 		$since = $since->sub(new DateInterval('P10D')); // Today minus 10 days
 		$recentPostsDB = $database
 			->table("Content")
-			->where(array(
-				"Type" => "Image",
-				"LastModifiedTime > ?" => $since
-			))
+			->where('Type = "Image" AND (LastModifiedTime > ? OR LastModifiedTime = "0000-00-00")', $since)
 			->order("LastModifiedTime DESC");
 
 		// Prepare listing
