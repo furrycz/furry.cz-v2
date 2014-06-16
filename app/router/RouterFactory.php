@@ -63,6 +63,7 @@ class RouterFactory
 
 		$router[] = new Route('writings/author/<userId>', 'Writings:user');
 		$router[] = new Route('writings/show/<writingId>', 'Writings:showWriting');
+		$router[] = new Route('writings/permissions/<writingId>', 'Writings:managePermissions');
 		$router[] = new Route('writings/<action>[/<id>]', 'Writings:default');
 
 		// Intercom

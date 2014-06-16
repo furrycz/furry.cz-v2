@@ -644,13 +644,7 @@ class WritingsPresenter extends BasePresenter
 	*/
 	private function checkWritingAccess($writingId, $user)
 	{
-		$database = $this->context->database;
-		// Fetch
-		$item = $database->table("Writings")->where("Id", $writingId)->fetch();
-		if ($item === false)
-		{
-			throw new BadRequestException("Text nenalezen");
-		}
+		$item = $this->fetchWriting($writingId);
 
 		$content = $item->ref("Content");
 		if ($content === false)
@@ -660,6 +654,25 @@ class WritingsPresenter extends BasePresenter
 
 		$access = $this->getAuthorizator()->authorize($content, $user);
 		return array($item, $content, $access);
+	}
+
+
+
+	/**
+	* Fetches item from DB.
+	* @return \Nette\Database\Table\ActiveRow Database entry.
+	* @throws BadRequestException If the item isn't found.
+	*/
+	private function fetchWriting($writingId)
+	{
+		$database = $this->context->database;
+		// Fetch
+		$item = $database->table("Writings")->where("Id", $writingId)->fetch();
+		if ($item === false)
+		{
+			throw new BadRequestException("Text nenalezen");
+		}
+		return $item;
 	}
 
 
@@ -809,5 +822,48 @@ class WritingsPresenter extends BasePresenter
 		$database = $this->context->database;
 		$this->getContentManager()->bulkUpdateLastVisit("Writing", $this->user->id);
 		//$this->redirect($this->backlink());
+	}
+
+
+
+	public function createComponentPermissions()
+	{
+		$image = $this->fetchWriting($this->getParameter("writingId"));
+
+		$data = array(
+			"Permisions" => array(  //Permision data
+				//$Zkratka 1 písmeno(""==Nezobrazí), $Popis, $BarvaPozadí, $Parent(""!=Nezobrazí), $Zařazení práv, $default check
+				"CanListContent"              => array("L","Vidí text v expozici","","CanViewContent","",1),
+				"CanReadPosts"                => array("R","Může číst diskusi","","","",1),
+				"CanViewContent"              => array("V","Může text zobrazit","","CanReadPosts","Context",1),
+				"CanEditContentAndAttributes" => array("E","Může stránku upravit","D80093","","Context - Správce",0),
+				"CanEditHeader"               => array("","","","","",0),
+				"CanEditPermissions"          => array("S","Může upravit práva","D80093","","Context - Správce - NEBEZEPEČNÉ",0),
+				"CanDeleteOwnPosts"           => array("","","","CanEditOwnPosts","",1),
+				"CanWritePosts"               => array("P","Může psát příspěvky","61ADFF","","Context",1),
+				"CanDeletePosts"              => array("D","Může mazat a editovat všechny příspěvky","007AFF","","Moderátor",0),
+				"CanEditPolls"                => array("EP","Muže upravit ankety","007AFF","","Moderátor",0),
+				"CanEditOwnPosts"             => array("U","Může editovat a mazat vlastní příspěvky.","F00","","",1)
+				),
+			"Description" => "!", // "!" means NULL here
+			"Visiblity" => NULL,
+			"DefaultShow" => true
+		);
+		return new Fcz\Permissions($this, $image->ref("ContentId"), $data);
+	}
+
+
+
+	public function renderManagePermissions($writingId)
+	{
+		// Check access
+		list($item, $content, $access) = $this->checkWritingAccess($writingId, $this->user);
+		if (! $access["CanEditPermissions"])
+		{
+			throw new BadRequestException("Nemáte oprávnění upravovat přístupová práva");
+		}
+
+		// Setup template
+		$this->template->item = $item;
 	}
 }

@@ -1,0 +1,15 @@
+/**
+ * Permissions management page for Writing
+ *
+ * @param $item The sub-content
+ */
+
+{var $pageTitle = $item["Name"].' - Oprávnění - Text'}
+
+{block content}
+	<h1 style="position: relative;padding-left:45px;">
+		<a n:href="Writings:showWriting $item['Id']" class="pu" style="left:14px;">&lt;</a>
+		Oprávnění: {$item["Name"]}
+	</h1>
+	{control permissions}
+{/block}
