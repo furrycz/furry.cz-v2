@@ -509,12 +509,6 @@ div#Content-Ignorelist-edit img.Avatar { max-height: 35px; vertical-align: middl
 
 #Content-Writings-user div.Header img.Avatar { float: left; position: relative; top: 10px; margin: 0 10px 0 0; max-width: 200px; max-height: 200px; border-radius: 10px; }
 
-#frmaddWritingForm-Description { height: 50px; }
-
-.WritingText { height: 500px; }
-
-div.WritingFormEditorWrapper { margin: 10px 0 0; }
-
 /*********/
 /* Index */
 /*********/
@@ -559,7 +553,27 @@ div.WritingFormEditorWrapper { margin: 10px 0 0; }
 
 #Content-Writings-showWriting div.Header img.Avatar { float: left; margin: 0 10px 0 0; max-width: 50px; max-height: 50px; border-radius: 10px 0 0; }
 
-#Content-Writings-showWriting section.WritingText { display: block; padding: 10px; }
+#Content-Writings-showWriting .WritingText { display: block; padding: 10px; font-family: serif; }
+
+#Content-Writings-showWriting .WritingText h1 { font-size: 1.7em; color: #aaa46a; margin: 0.7em 0; padding: 0; background: inherit; border-radius: 0; }
+
+#Content-Writings-showWriting .WritingText h2 { font-size: 1.5em; color: #aaa46a; margin: 0.7em 0; padding: 0; background: inherit; border-radius: 0; }
+
+#Content-Writings-showWriting .WritingText h3 { font-size: 1.3em; color: #aaa46a; margin: 0.7em 0; padding: 0; background: inherit; border-radius: 0; }
+
+#Content-Writings-showWriting .WritingText h4 { color: #aaa46a; margin: 0.7em 0; padding: 0;}
+
+#Content-Writings-showWriting .WritingText h5 { color: #aaa46a; margin: 0.7em 0; padding: 0;}
+
+#Content-Writings-showWriting .WritingText h6 { color: #aaa46a; margin: 0.7em 0; padding: 0;}
+
+/* ADD WRITING */
+
+#Content-Writings-addWriting .WritingText { height: 500px; }
+
+#frmaddWritingForm-Description { height: 50px; }
+
+div.WritingFormEditorWrapper { margin: 10px 0 0; }
 
 /********/
 /* User */
