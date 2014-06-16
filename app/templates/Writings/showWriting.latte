@@ -9,19 +9,24 @@
 {var $pageTitle = $writing["Name"]}
 
 {block content}
-	{var $my = $author['Id'] == $presenter->user->id}
 
 	<div class="Header LightBackground">
 		<a n:href="Writings:user $author['Id']" class="ArtistLink">
 			<img src="{$baseUrl}/images/avatars/{$author['AvatarFilename']}" class="Avatar">
 		</a>
-		{if $my}
-			<span class="HeaderTools">
+
+		<span class="HeaderTools">
+			{if $access["CanDeleteContent"]}
 				<a n:href="Writings:deleteWriting $writing['Id']">Odstranit</a>
+			{/if}
+			{if $access["CanEditContentAndAttributes"]}
 				<a n:href="Writings:editWriting $writing['Id']">Upravit</a>
+			{/if}
+			{if $access["CanEditPermissions"]}
 				<a n:href="Writings:managePermissions $writing['Id']">Oprávnění</a>
-			</span>
-		{/if}
+			{/if}
+		</span>
+
 		<h1>{$writing["Name"]}</h1>
 		<div class="Description">{$writing["Description"]}</div>
 	</div>

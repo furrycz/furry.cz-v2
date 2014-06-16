@@ -54,8 +54,10 @@
 									<a class="Category" n:href="Writings:category $category['Id']">{$category["Name"]}</a>
 								{/if}
 								<span class="Time">{$content["TimeCreated"]}</span>
-								<a class="Edit" n:href="Writings:editWriting $writing['Id']">Upravit</a>
-								<a class="Delete" n:href="Writings:deleteWriting $writing['Id']">Smazat</a>
+								{if $my}
+									<a class="Edit" n:href="Writings:editWriting $writing['Id']">Upravit</a>
+									<a class="Delete" n:href="Writings:deleteWriting $writing['Id']">Smazat</a>
+								{/if}
 							</span>
 							<a class="Name" n:href="Writings:showWriting $writing['Id']">{$writing["Name"]}</a>
 						</div>
