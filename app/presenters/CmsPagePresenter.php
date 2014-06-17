@@ -20,7 +20,7 @@ class CmsPagePresenter extends BasePresenter
 	{
 		if (! $this->user->isInRole('approved'))
 		{
-			$this->redirect("Homepage:default");
+			throw new ForbiddenRequestException("Pouze schválení členové mohou používat CMS");
 		}
 
 		$database = $this->context->database;
@@ -48,6 +48,11 @@ class CmsPagePresenter extends BasePresenter
 		}
 
 		list($cmsPage, $content, $access) = $this->checkCmsPageAccess($idOrAlias, $this->user);
+
+		if (! $access["CanViewContent"])
+		{
+			throw new ForbiddenRequestException("Nemáte oprávnění zobrazit tuto CMS stránku");
+		}
 
 		// Display the pages
 		$this->template->setParameters(array(
@@ -110,12 +115,6 @@ class CmsPagePresenter extends BasePresenter
 
 	public function createComponentNewCmsPageForm()
 	{
-		// Permissions
-		if (! $this->user->isInRole('approved'))
-		{
-			throw new ForbiddenRequestException("Nejste oprávněni vytvářet CMS stránky");
-		}
-
 		$form = new UI\Form();
 
 		// CMS page
@@ -295,7 +294,8 @@ class CmsPagePresenter extends BasePresenter
 	public function createComponentCmsPageEditForm()
 	{
 		// Permissions
-		list($cmsPage, $content, $access) = $this->checkCmsPageAccess($this->getParameter("idOrAlias"), $this->user);
+		$cmsPage = $this->fetchCmsPage($this->getParameter("idOrAlias"));
+		$content = $cmsPage->ref("ContentId");
 
 		$form = new UI\Form();
 
@@ -346,6 +346,11 @@ class CmsPagePresenter extends BasePresenter
 		// Permissions
 		list($cmsPage, $content, $access) = $this->checkCmsPageAccess($this->getParameter("idOrAlias"), $this->user);
 
+		if (! $access["CanEditContentAndAttributes"])
+		{
+			throw new ForbiddenRequestException("Nejste oprávněni upravovat tuto CMS stránku");
+		}
+
 		$values = $form->getValues();
 		$database = $this->context->database;
 		$database->beginTransaction();
@@ -385,15 +390,6 @@ class CmsPagePresenter extends BasePresenter
 
 	public function createComponentDeleteCmsPageForm()
 	{
-		// Get data
-		list($cmsPage, $content, $access) = $this->checkCmsPageAccess($this->getParameter("idOrAlias"), $this->user);
-
-		// Access
-		if (! $access["CanDeleteContent"])
-		{
-			throw new ForbiddenRequestException("Nejste oprávněni smazat tuto CMS stránku");
-		}
-
 		// Create form
 		$form = new UI\Form;
 
